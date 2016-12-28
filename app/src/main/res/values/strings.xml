@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Router</string>
+    <string name="go_to">go to %s</string>
+    <string name="dynamic_route">dynamic route</string>
+</resources>

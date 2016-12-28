@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:id="@+id/activity_for_result"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.chenenyu.router.demo.ForResultActivity">
+
+    <TextView
+        android:id="@+id/text_extra"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="extra"/>
+
+    <Button
+        android:id="@+id/btn_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="setResult"/>
+
+</FrameLayout>
