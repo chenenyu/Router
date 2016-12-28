@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.AnimRes;
 import android.support.annotation.Nullable;
 
 import java.lang.reflect.Constructor;
@@ -24,11 +25,14 @@ public class RealRouter {
     private Matcher defaultMatcher = new DefaultMatcher();
 
     private Uri uri;
-    @Nullable
-    private RouteCallBack callback;
+    private int flags;
     private int requestCode = -1;
     @Nullable
+    private RouteCallBack callback;
+    @Nullable
     private Bundle extras;
+    private int enterAnim;
+    private int exitAnim;
 
     private RealRouter() {
         initMapping();
@@ -43,16 +47,19 @@ public class RealRouter {
      * Reset fields.
      */
     private void reset() {
-        callback = null;
         uri = null;
+        flags = 0;
         requestCode = -1;
+        callback = null;
         extras = null;
+        enterAnim = 0;
+        exitAnim = 0;
     }
 
     /**
      * Init annotated route table.
      */
-    void initMapping() {
+    private void initMapping() {
         try {
             Class<?> annotatedRouteTable = Class.forName("com.chenenyu.router.AnnotatedRouteTable");
             Constructor constructor = annotatedRouteTable.getConstructor();
@@ -118,6 +125,34 @@ public class RealRouter {
     }
 
     /**
+     * Add additional flags to the intent (or with existing flags value).
+     *
+     * @param flags The new flags to set, such as {@link Intent#FLAG_ACTIVITY_CLEAR_TOP}
+     * @return this
+     * @see Intent#addFlags(int)
+     */
+    public RealRouter addFlags(int flags) {
+        this.flags |= flags;
+        return this;
+    }
+
+    /**
+     * Specify an explicit transition animation.
+     *
+     * @param enterAnim A resource ID of the animation resource to use for the incoming activity.
+     *                  Use 0 for no animation.
+     * @param exitAnim  A resource ID of the animation resource to use for the outgoing activity.
+     *                  Use 0 for no animation.
+     * @return this
+     * @see Activity#overridePendingTransition(int, int)
+     */
+    public RealRouter anim(@AnimRes int enterAnim, @AnimRes int exitAnim) {
+        this.enterAnim = enterAnim;
+        this.exitAnim = exitAnim;
+        return this;
+    }
+
+    /**
      * {@link RouteCallBack} succeed.
      *
      * @param uri Uri
@@ -132,7 +167,7 @@ public class RealRouter {
      * {@link RouteCallBack} error.
      *
      * @param uri     Uri
-     * @param message error message
+     * @param message Error message
      */
     private void error(Uri uri, String message) {
         if (callback != null) {
@@ -143,7 +178,7 @@ public class RealRouter {
     /**
      * Generate an {@link Intent} according to the given uri.
      *
-     * @param context Context
+     * @param context Strongly recommend an activity instance.
      * @return Intent
      */
     @Nullable
@@ -187,15 +222,23 @@ public class RealRouter {
 
     private Intent generateIntent(Context context, Class<? extends Activity> clz) {
         Intent intent = new Intent(context, clz);
-        if (!(context instanceof Activity)) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        }
         if (extras != null) {
             intent.putExtras(extras);
+        }
+        if (!(context instanceof Activity)) {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        if (this.flags != 0) {
+            intent.addFlags(this.flags);
         }
         return intent;
     }
 
+    /**
+     * Execute transition.
+     *
+     * @param context Strongly recommend an activity instance.
+     */
     public void go(Context context) {
         Intent intent = getIntent(context);
         if (intent == null) {
@@ -210,6 +253,10 @@ public class RealRouter {
             }
         } else {
             context.startActivity(intent);
+        }
+        if (enterAnim != 0 && exitAnim != 0 && context instanceof Activity) {
+            // Add transition animation.
+            ((Activity) context).overridePendingTransition(enterAnim, exitAnim);
         }
         succeed(uri);
     }
