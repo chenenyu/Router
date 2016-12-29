@@ -15,5 +15,5 @@ public interface RouteTable {
      *
      * @param map Activity map.
      */
-    void initActivityTable(Map<String, Class<? extends Activity>> map);
+    void handleActivityTable(Map<String, Class<? extends Activity>> map);
 }

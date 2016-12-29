@@ -146,7 +146,7 @@ public class Compiler extends AbstractProcessor {
                         WildcardTypeName.subtypeOf(ClassName.get(activityType))));
         ParameterSpec mapParameterSpec = ParameterSpec.builder(mapTypeName, "map").build();
 
-        MethodSpec.Builder initActivityTable = MethodSpec.methodBuilder("initActivityTable")
+        MethodSpec.Builder initActivityTable = MethodSpec.methodBuilder("handleActivityTable")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(mapParameterSpec);

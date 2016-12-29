@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final String TAG = "RouterDemo";
     private EditText editRoute;
     private String uri;
-    private Button btn0, btn1, btn2, btn3, btn4, btn5;
+    private Button btn0, btn1, btn2, btn3, btn4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +36,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn2 = (Button) findViewById(R.id.btn2);
         btn3 = (Button) findViewById(R.id.btn3);
         btn4 = (Button) findViewById(R.id.btn4);
-        btn5 = (Button) findViewById(R.id.btn5);
 
         btn0.setOnClickListener(this);
         btn1.setOnClickListener(this);
         btn2.setOnClickListener(this);
         btn3.setOnClickListener(this);
         btn4.setOnClickListener(this);
-        btn5.setOnClickListener(this);
         editRoute.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -65,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 动态添加路由表
         Router.addRouteTable(new RouteTable() {
             @Override
-            public void initActivityTable(Map<String, Class<? extends Activity>> map) {
+            public void handleActivityTable(Map<String, Class<? extends Activity>> map) {
                 map.put("dynamic", DynamicActivity.class);
             }
         });
@@ -93,6 +91,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Bundle bundle = new Bundle();
             bundle.putString("extra", "Bundle from MainActivity.");
             Router.build("result").requestCode(0).extras(bundle).go(this);
+        } else if (v == btn4) {
+            Router.build("test")
+                    .anim(android.R.anim.fade_in, android.R.anim.fade_out).go(this);
         }
     }
 

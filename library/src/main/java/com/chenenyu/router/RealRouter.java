@@ -21,7 +21,6 @@ import java.util.Map;
 public class RealRouter {
     private static RealRouter instance = new RealRouter();
     private Map<String, Class<? extends Activity>> mapping = new HashMap<>();
-
     private Matcher defaultMatcher = new DefaultMatcher();
 
     private Uri uri;
@@ -64,7 +63,7 @@ public class RealRouter {
             Class<?> annotatedRouteTable = Class.forName("com.chenenyu.router.AnnotatedRouteTable");
             Constructor constructor = annotatedRouteTable.getConstructor();
             RouteTable instance = (RouteTable) constructor.newInstance();
-            instance.initActivityTable(mapping);
+            instance.handleActivityTable(mapping);
         } catch (Exception e) {
             RLog.i("Failed to find/generate class 'com.chenenyu.router.AnnotatedRouteTable'.", e);
         }
@@ -78,7 +77,7 @@ public class RealRouter {
      */
     void addRouteTable(RouteTable routeTable) {
         if (routeTable != null) {
-            routeTable.initActivityTable(mapping);
+            routeTable.handleActivityTable(mapping);
         }
     }
 
