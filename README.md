@@ -71,3 +71,5 @@ Router.build(uri)
 Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more infomations.
 
 ## License
+
+[Apache 2.0](https://github.com/chenenyu/Router/blob/master/LICENSE)
