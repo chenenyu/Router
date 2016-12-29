@@ -1,0 +1,53 @@
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+def GROUP = 'com.chenenyu.router'
+def ARTIFACT_ID = 'annotation'
+def VERSION = '0.1.0'
+
+group = GROUP
+version = VERSION
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+publishing {
+    publications {
+        bintray(MavenPublication) {
+            groupId GROUP
+            artifactId ARTIFACT_ID
+            version VERSION
+
+            artifact sourcesJar
+            from components.java
+        }
+    }
+}
+
+
+bintray {
+    Properties properties = new Properties()
+    properties.load(project.file('../local.properties').newDataInputStream())
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    publications = ['bintray']
+    pkg {
+        repo = "maven"
+        name = "router-annotation"
+        websiteUrl = 'https://github.com/chenenyu/Router'
+        issueTrackerUrl = 'https://github.com/chenenyu/Router/issues'
+        vcsUrl = 'https://github.com/chenenyu/Router.git'
+        desc = "Annotation compiler for Router library."
+        labels = ["Android", "Router", "annotation"]
+        licenses = ["Apache-2.0"]
+        publicDownloadNumbers = true
+        publish = true
+    }
+}
