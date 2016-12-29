@@ -32,5 +32,8 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     provided 'com.android.support:support-annotations:25.1.0'
-    compile project(':annotation')
+//    compile project(':annotation')
+    compile 'com.chenenyu.router:annotation:0.1.0'
 }
+
+apply from: 'publish.gradle'
