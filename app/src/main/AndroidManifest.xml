@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.chenenyu.router.demo"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.chenenyu.router.demo">
 
     <application
         android:allowBackup="true"
@@ -11,22 +11,29 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".TestActivity"
-            android:label="TestActivity">
-        </activity>
+            android:label="TestActivity" />
         <activity
             android:name=".DynamicActivity"
-            android:label="DynamicActivity">
-        </activity>
+            android:label="DynamicActivity" />
         <activity
             android:name=".ForResultActivity"
-            android:label="ForResultActivity">
+            android:label="ForResultActivity" />
+
+        <activity android:name=".SchemeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:host="host"
+                    android:scheme="router" />
+            </intent-filter>
         </activity>
     </application>
 

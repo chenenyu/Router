@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.chenenyu.router.RouteCallBack;
+import com.chenenyu.router.RouteCallback;
 import com.chenenyu.router.RouteTable;
 import com.chenenyu.router.Router;
 
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == btn0) {
-            Router.build(uri).callback(new RouteCallBack() { // 添加结果回调
+            Router.build(uri).callback(new RouteCallback() { // 添加结果回调
                 @Override
                 public void succeed(Uri uri) {
                     Toast.makeText(MainActivity.this, "succeed: " + uri.toString(), Toast.LENGTH_SHORT).show();
@@ -92,6 +92,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (v == btn4) {
             Router.build("test")
                     .anim(android.R.anim.fade_in, android.R.anim.fade_out).go(this);
+        } else if (v.getId() == R.id.btn5) {
+            Router.build(Uri.parse("router://host")).go(this);
         }
     }
 

@@ -3,6 +3,7 @@ package com.chenenyu.router;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.AnimRes;
@@ -213,6 +214,15 @@ public class RealRouter {
                 || uri.toString().toLowerCase().startsWith("https://")) {
             RLog.i("It seems that you are trying to open a http(s) url.");
             return new Intent(Intent.ACTION_VIEW, uri);
+        }
+
+        Intent intent = new Intent();
+        intent.setData(uri);
+        if (context.getPackageManager().resolveActivity(intent,
+                PackageManager.MATCH_DEFAULT_ONLY) != null) {
+            return intent;
+        } else {
+            RLog.i("could not find uri: " + uri);
         }
 
         error(uri, "Can not find an Activity that matches the given uri.");
