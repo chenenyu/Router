@@ -27,7 +27,7 @@ public class RealRouter {
     private int flags;
     private int requestCode = -1;
     @Nullable
-    private RouteCallBack callback;
+    private RouteCallback callback;
     @Nullable
     private Bundle extras;
     private int enterAnim;
@@ -89,10 +89,10 @@ public class RealRouter {
     /**
      * Route result callback.
      *
-     * @param callback RouteCallBack
+     * @param callback RouteCallback
      * @return this
      */
-    public RealRouter callback(RouteCallBack callback) {
+    public RealRouter callback(RouteCallback callback) {
         this.callback = callback;
         return this;
     }
@@ -152,7 +152,7 @@ public class RealRouter {
     }
 
     /**
-     * {@link RouteCallBack} succeed.
+     * {@link RouteCallback} succeed.
      *
      * @param uri Uri
      */
@@ -163,7 +163,7 @@ public class RealRouter {
     }
 
     /**
-     * {@link RouteCallBack} error.
+     * {@link RouteCallback} error.
      *
      * @param uri     Uri
      * @param message Error message
