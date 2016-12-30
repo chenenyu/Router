@@ -32,7 +32,7 @@ dependencies {
 }
 ```
 
-(Note: current `router` version: ![router](https://img.shields.io/bintray/v/chenenyu/maven/router.svg), current `compiler` version: ![compiler](https://img.shields.io/bintray/v/chenenyu/maven/router-compiler.svg))
+(Note: current `router` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router/images/download.svg), current `compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg))
 
 ## Simple useage
 
