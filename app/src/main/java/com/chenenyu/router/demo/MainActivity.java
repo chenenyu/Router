@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +28,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Uri testUri = Uri.parse("http://byteam.com:8080?e=1&f=3?def");
+        Log.d("调试", "getScheme=" + testUri.getScheme() + ",isAbsolute=" + testUri.isAbsolute()
+                + ",getPort=" + testUri.getPort() + ",getAuthority=" + testUri.getAuthority()
+                + ",getPath=" + testUri.getPath() + ",getQuery=" + testUri.getQuery());
+
+        String query = "e=1&f=abf&";
+        String[] params = query.split("&");
+        Log.d("调试", "params= " + params[0]);
 
         editRoute = (EditText) findViewById(R.id.edit_route);
         btn0 = (Button) findViewById(R.id.btn0);
