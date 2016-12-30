@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,7 +19,6 @@ import com.chenenyu.router.Router;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private final String TAG = "RouterDemo";
     private EditText editRoute;
     private String uri;
     private Button btn0, btn1, btn2, btn3, btn4;
@@ -75,12 +73,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Router.build(uri).callback(new RouteCallBack() { // 添加结果回调
                 @Override
                 public void succeed(Uri uri) {
-                    Log.i(TAG, "succeed: " + uri.toString());
+                    Toast.makeText(MainActivity.this, "succeed: " + uri.toString(), Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void error(Uri uri, String message) {
-                    Log.w(TAG, "error: " + uri + ", " + message);
+                    Toast.makeText(MainActivity.this, "error: " + uri + ", " + message, Toast.LENGTH_SHORT).show();
                 }
             }).go(this);
         } else if (v == btn1) {
