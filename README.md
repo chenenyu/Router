@@ -1,10 +1,10 @@
-![license](https://img.shields.io/badge/license-Apache%202-yellow.svg) [![version](https://img.shields.io/github/release/chenenyu/Router.svg)]  (https://github.com/chenenyu/Router/releases) ![API](https://img.shields.io/badge/API-9%2B-orange.svg) 
+![license](https://img.shields.io/badge/license-Apache%202-yellow.svg) [![version](https://img.shields.io/github/release/chenenyu/Router.svg)]  (https://github.com/chenenyu/Router/releases) ![API](https://img.shields.io/badge/API-9%2B-orange.svg) ![PullRequest](https://img.shields.io/badge/PullRequest-welcome-brightgreen.svg)
 
 # Router
 
 > A router library for Android paltform, featuring *simple* and *flexible*.
 
-[中文wiki](https://github.com/chenenyu/Router/wiki)
+建议浏览[中文wiki](https://github.com/chenenyu/Router/wiki).
 
 ## Getting started
 
