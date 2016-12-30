@@ -6,6 +6,8 @@
 
 建议浏览[中文wiki](https://github.com/chenenyu/Router/wiki).
 
+![screenshot](static/screenshot.gif)
+
 ## Getting started
 
 * Add buildscript classpath:  
