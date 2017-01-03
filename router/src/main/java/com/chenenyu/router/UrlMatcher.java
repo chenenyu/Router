@@ -2,7 +2,6 @@ package com.chenenyu.router;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,14 +56,11 @@ public class UrlMatcher implements Matcher {
                     // parse entry from given uri.
                     Map<String, String> params = new HashMap<>();
                     parseParams(params, uri.getQuery());
-                    Log.d("UrlMatcher", "uri.getQuery(): " + uri.getQuery());
-                    Log.d("UrlMatcher", "params: " + params);
 
                     String[] placeholders = route.getQuery().split("&");
                     for (String placeholder : placeholders) {
                         if (placeholder.startsWith("{") && placeholder.endsWith("}")) {
                             placeholder = placeholder.substring(1, placeholder.length() - 1);
-                            Log.d("UrlMatcher", "placeholder: " + placeholder);
                             if (params.containsKey(placeholder)) {
                                 Bundle bundle = routeOptions.getBundle();
                                 if (bundle == null) {
