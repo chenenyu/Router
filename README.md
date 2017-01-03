@@ -30,11 +30,11 @@ apply plugin: 'com.neenbedankt.android-apt'
 ```Groovy
 dependencies {
     apt 'com.chenenyu.router:compiler:0.1.0'
-    compile 'com.chenenyu.router:router:0.1.0'
+    compile 'com.chenenyu.router:router:0.2.0'
 }
 ```
 
-(Note: current `router` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router/images/download.svg), current `compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg))
+(Note: current `compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg), current `router` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router/images/download.svg))
 
 ## Simple useage
 
