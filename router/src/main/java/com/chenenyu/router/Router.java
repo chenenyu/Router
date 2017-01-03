@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class Router {
     private static List<RouteInterceptor> mRouteInterceptors = new ArrayList<>();
-    private static List<Matcher> mMatchers = new ArrayList<>();
+    private static List<Matcher> mMatcher = new ArrayList<>();
 
     public static RealRouter build(String path) {
         return build(path == null ? null : Uri.parse(path));
@@ -20,6 +20,10 @@ public class Router {
 
     public static RealRouter build(Uri uri) {
         return RealRouter.get().build(uri);
+    }
+
+    public static void openLog() {
+        RLog.openLog();
     }
 
     public static void addRouteTable(RouteTable routeTable) {
@@ -30,31 +34,16 @@ public class Router {
         mRouteInterceptors.add(routeInterceptor);
     }
 
-    public static void removeRouteInterceptor(RouteInterceptor routeInterceptor) {
-        mRouteInterceptors.remove(routeInterceptor);
-    }
-
     public static List<RouteInterceptor> getRouteInterceptors() {
         return mRouteInterceptors;
     }
 
-    public static void clearRouteInterceptors() {
-        mRouteInterceptors.clear();
-    }
-
     public static void addMatcher(Matcher matcher) {
-        mMatchers.add(matcher);
+        mMatcher.add(matcher);
     }
 
-    public static void removeMatcher(Matcher matcher) {
-        mMatchers.remove(matcher);
+    public static List<Matcher> getMatcher() {
+        return mMatcher;
     }
 
-    public static List<Matcher> getMatchers() {
-        return mMatchers;
-    }
-
-    public static void clearMatchers() {
-        mMatchers.clear();
-    }
 }

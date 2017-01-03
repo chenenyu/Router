@@ -20,40 +20,27 @@ import java.util.Map;
  * Created by Cheney on 2016/12/20.
  */
 public class RealRouter {
-    private static RealRouter instance = new RealRouter();
+    private static RealRouter _instance = new RealRouter();
     private Map<String, Class<? extends Activity>> mapping = new HashMap<>();
     private Matcher defaultMatcher = new DefaultMatcher();
-
+    private RouteOptions routeOptions = new RouteOptions();
     private Uri uri;
-    private int flags;
-    private int requestCode = -1;
-    @Nullable
-    private RouteCallback callback;
-    @Nullable
-    private Bundle extras;
-    private int enterAnim;
-    private int exitAnim;
 
     private RealRouter() {
         initMapping();
     }
 
     static RealRouter get() {
-        instance.reset();
-        return instance;
+        _instance.reset();
+        return _instance;
     }
 
     /**
-     * Reset fields.
+     * Reset uri and options.
      */
     private void reset() {
         uri = null;
-        flags = 0;
-        requestCode = -1;
-        callback = null;
-        extras = null;
-        enterAnim = 0;
-        exitAnim = 0;
+        routeOptions.reset();
     }
 
     /**
@@ -94,7 +81,7 @@ public class RealRouter {
      * @return this
      */
     public RealRouter callback(RouteCallback callback) {
-        this.callback = callback;
+        routeOptions.setCallback(callback);
         return this;
     }
 
@@ -106,7 +93,7 @@ public class RealRouter {
      */
     public RealRouter requestCode(int requestCode) {
         if (requestCode >= 0) {
-            this.requestCode = requestCode;
+            routeOptions.setRequestCode(requestCode);
         } else {
             RLog.w("Invalid requestCode");
         }
@@ -120,7 +107,7 @@ public class RealRouter {
      * @return this
      */
     public RealRouter extras(Bundle extras) {
-        this.extras = extras;
+        routeOptions.setBundle(extras);
         return this;
     }
 
@@ -132,7 +119,7 @@ public class RealRouter {
      * @see Intent#addFlags(int)
      */
     public RealRouter addFlags(int flags) {
-        this.flags |= flags;
+        routeOptions.addFlags(flags);
         return this;
     }
 
@@ -147,8 +134,7 @@ public class RealRouter {
      * @see Activity#overridePendingTransition(int, int)
      */
     public RealRouter anim(@AnimRes int enterAnim, @AnimRes int exitAnim) {
-        this.enterAnim = enterAnim;
-        this.exitAnim = exitAnim;
+        routeOptions.setAnim(enterAnim, exitAnim);
         return this;
     }
 
@@ -158,8 +144,8 @@ public class RealRouter {
      * @param uri Uri
      */
     private void succeed(Uri uri) {
-        if (callback != null) {
-            callback.succeed(uri);
+        if (routeOptions.getCallback() != null) {
+            routeOptions.getCallback().succeed(uri);
         }
     }
 
@@ -170,15 +156,15 @@ public class RealRouter {
      * @param message Error message
      */
     private void error(Uri uri, String message) {
-        if (callback != null) {
-            callback.error(uri, message);
+        if (routeOptions.getCallback() != null) {
+            routeOptions.getCallback().error(uri, message);
         }
     }
 
     /**
      * Generate an {@link Intent} according to the given uri.
      *
-     * @param context Strongly recommend an activity instance.
+     * @param context Strongly recommend an activity _instance.
      * @return Intent
      */
     @Nullable
@@ -193,20 +179,20 @@ public class RealRouter {
         }
 
         for (RouteInterceptor interceptor : Router.getRouteInterceptors()) {
-            if (interceptor.intercept(context, uri, extras)) {
+            if (interceptor.intercept(context, uri, routeOptions.getBundle())) {
                 error(uri, "intercepted.");
                 return null;
             }
         }
 
         for (Map.Entry<String, Class<? extends Activity>> entry : mapping.entrySet()) {
-            List<Matcher> customMatchers = Router.getMatchers();
-            for (Matcher matcher : customMatchers) {
-                if (matcher.match(uri, entry.getKey())) {
+            List<Matcher> customMatcher = Router.getMatcher();
+            for (Matcher matcher : customMatcher) {
+                if (matcher.match(uri, entry.getKey(), routeOptions)) {
                     return generateIntent(context, entry.getValue());
                 }
             }
-            if (defaultMatcher.match(uri, entry.getKey())) {
+            if (defaultMatcher.match(uri, entry.getKey(), routeOptions)) {
                 return generateIntent(context, entry.getValue());
             }
         }
@@ -221,24 +207,22 @@ public class RealRouter {
         if (context.getPackageManager().resolveActivity(intent,
                 PackageManager.MATCH_DEFAULT_ONLY) != null) {
             return intent;
-        } else {
-            RLog.i("could not find uri: " + uri);
         }
 
-        error(uri, "Can not find an Activity that matches the given uri.");
+        error(uri, "Could not find an Activity that matches the given uri.");
         return null;
     }
 
     private Intent generateIntent(Context context, Class<? extends Activity> clz) {
         Intent intent = new Intent(context, clz);
-        if (extras != null) {
-            intent.putExtras(extras);
+        if (routeOptions.getBundle() != null && !routeOptions.getBundle().isEmpty()) {
+            intent.putExtras(routeOptions.getBundle());
         }
         if (!(context instanceof Activity)) {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
-        if (this.flags != 0) {
-            intent.addFlags(this.flags);
+        if (routeOptions.getFlags() != 0) {
+            intent.addFlags(routeOptions.getFlags());
         }
         return intent;
     }
@@ -246,16 +230,16 @@ public class RealRouter {
     /**
      * Execute transition.
      *
-     * @param context Strongly recommend an activity instance.
+     * @param context Strongly recommend an activity _instance.
      */
     public void go(Context context) {
         Intent intent = getIntent(context);
         if (intent == null) {
             return;
         }
-        if (requestCode >= 0) {
+        if (routeOptions.getRequestCode() >= 0) {
             if (context instanceof Activity) {
-                ((Activity) context).startActivityForResult(intent, requestCode);
+                ((Activity) context).startActivityForResult(intent, routeOptions.getRequestCode());
             } else {
                 RLog.w("Please pass an Activity context to call method 'startActivityForResult'");
                 context.startActivity(intent);
@@ -263,9 +247,11 @@ public class RealRouter {
         } else {
             context.startActivity(intent);
         }
-        if (enterAnim != 0 && exitAnim != 0 && context instanceof Activity) {
+        if (routeOptions.getEnterAnim() != 0 && routeOptions.getExitAnim() != 0
+                && context instanceof Activity) {
             // Add transition animation.
-            ((Activity) context).overridePendingTransition(enterAnim, exitAnim);
+            ((Activity) context).overridePendingTransition(
+                    routeOptions.getEnterAnim(), routeOptions.getExitAnim());
         }
         succeed(uri);
     }

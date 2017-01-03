@@ -11,6 +11,10 @@ class RLog {
     private static final String TAG = "Router";
     private static boolean loggable = false;
 
+    protected static void openLog() {
+        loggable = true;
+    }
+
     public static void v(String tag, String msg) {
         if (loggable) {
             Log.v(tag, msg);
