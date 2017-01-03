@@ -1,0 +1,29 @@
+language: android
+
+notifications:
+  email: false
+
+sudo: false
+
+android:
+  components:
+    - tools
+    - build-tools
+    - android-25
+    - extra-android-m2repository
+    - extra-android-support
+
+before_install:
+  - chmod +x gradlew
+
+script:
+  - ./gradlew assembleRelease
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
