@@ -33,9 +33,13 @@ publishing {
 
 bintray {
     Properties properties = new Properties()
-    properties.load(project.file('../local.properties').newDataInputStream())
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
+    boolean hasLocalFile = false
+    if (project.rootProject.file('local.properties') != null) {
+        hasLocalFile = true
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    }
+    user = hasLocalFile ? properties.getProperty("bintray.user") : ""
+    key = hasLocalFile ? properties.getProperty("bintray.apikey") : ""
 
     publications = ['bintray']
     pkg {
