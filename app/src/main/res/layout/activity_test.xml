@@ -8,6 +8,7 @@
     tools:context="com.chenenyu.router.demo.TestActivity">
 
     <TextView
+        android:id="@+id/text_test"
         android:text="test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
