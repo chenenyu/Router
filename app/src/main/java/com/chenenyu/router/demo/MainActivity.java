@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Router.build("test")
                     .anim(android.R.anim.fade_in, android.R.anim.fade_out).go(this);
         } else if (v == btn5) {
-            Router.build(Uri.parse("router://host")).go(this);
+            Router.build(Uri.parse("router://host?id=9527&key=hello")).go(this);
         } else if (v == btn6) {
             Router.build(btn6.getText().toString()).go(this);
         }
