@@ -3,7 +3,6 @@ package com.chenenyu.router;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.AnimRes;
@@ -23,6 +22,7 @@ public class RealRouter {
     private static RealRouter _instance = new RealRouter();
     private Map<String, Class<? extends Activity>> mapping = new HashMap<>();
     private Matcher defaultMatcher = new DefaultMatcher();
+    private Matcher schemeMatcher = new SchemeMatcher();
     private RouteOptions routeOptions = new RouteOptions();
     private Uri uri;
 
@@ -186,6 +186,10 @@ public class RealRouter {
             }
         }
 
+        if (schemeMatcher.match(context, uri, uri.toString(), routeOptions)) {
+            return generateIntent(context, new Intent().setData(uri));
+        }
+
         for (Map.Entry<String, Class<? extends Activity>> entry : mapping.entrySet()) {
             List<Matcher> customMatcher = Router.getMatcher();
             for (Matcher matcher : customMatcher) {
@@ -202,20 +206,15 @@ public class RealRouter {
             RLog.i("It seems that you are trying to open a http(s) url.");
             return new Intent(Intent.ACTION_VIEW, uri);
         }
-
-        Intent intent = new Intent();
-        intent.setData(uri);
-        if (context.getPackageManager().resolveActivity(intent,
-                PackageManager.MATCH_DEFAULT_ONLY) != null) {
-            return intent;
-        }
-
         error(uri, "Could not find an Activity that matches the given uri.");
         return null;
     }
 
     private Intent generateIntent(Context context, Class<? extends Activity> clz) {
-        Intent intent = new Intent(context, clz);
+        return generateIntent(context, new Intent(context, clz));
+    }
+
+    private Intent generateIntent(Context context, Intent intent) {
         if (routeOptions.getBundle() != null && !routeOptions.getBundle().isEmpty()) {
             intent.putExtras(routeOptions.getBundle());
         }
