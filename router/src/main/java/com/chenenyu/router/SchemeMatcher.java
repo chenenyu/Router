@@ -22,13 +22,13 @@ public class SchemeMatcher implements Matcher {
             if (uri.getQuery() != null) {
                 Map<String, String> map = new HashMap<>();
                 parseParams(map, uri.getQuery());
-                Bundle bundle = routeOptions.getBundle();
-                for (Map.Entry<String, String> entry : map.entrySet()) {
-                    if (bundle == null) {
-                        bundle = new Bundle();
-                        routeOptions.setBundle(bundle);
+                if (!map.isEmpty()) {
+                    Bundle bundle = routeOptions.getBundle() == null ?
+                            new Bundle() : routeOptions.getBundle();
+                    routeOptions.setBundle(bundle);
+                    for (Map.Entry<String, String> entry : map.entrySet()) {
+                        bundle.putString(entry.getKey(), entry.getValue());
                     }
-                    bundle.putString(entry.getKey(), entry.getValue());
                 }
             }
             return true;
