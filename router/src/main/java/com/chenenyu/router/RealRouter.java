@@ -186,10 +186,11 @@ public class RealRouter {
             }
         }
 
+        // Implicit intent
         if (schemeMatcher.match(context, uri, uri.toString(), routeOptions)) {
             return generateIntent(context, new Intent().setData(uri));
         }
-
+        // Explicit intent
         for (Map.Entry<String, Class<? extends Activity>> entry : mapping.entrySet()) {
             List<Matcher> customMatcher = Router.getMatcher();
             for (Matcher matcher : customMatcher) {
@@ -201,11 +202,13 @@ public class RealRouter {
                 return generateIntent(context, entry.getValue());
             }
         }
+        // Web browser
         if (uri.toString().toLowerCase().startsWith("http://")
                 || uri.toString().toLowerCase().startsWith("https://")) {
             RLog.i("It seems that you are trying to open a http(s) url.");
             return new Intent(Intent.ACTION_VIEW, uri);
         }
+
         error(uri, "Could not find an Activity that matches the given uri.");
         return null;
     }

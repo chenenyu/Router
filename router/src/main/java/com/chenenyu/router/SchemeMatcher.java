@@ -10,22 +10,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Support for implicit intent.
+ * <p>
  * Created by zhangleilei on 04/01/2017.
  */
-
 public class SchemeMatcher implements Matcher {
     @Override
     public boolean match(Context context, Uri uri, String path, RouteOptions routeOptions) {
-        if (context.getPackageManager()
-                .resolveActivity(new Intent().setData(uri), PackageManager.MATCH_DEFAULT_ONLY) != null) {
-            Map<String, String> map = new HashMap<>();
-            parseParams(map, uri.getQuery());
-            Bundle bundle = new Bundle();
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                bundle.putString(entry.getKey(), entry.getValue());
+        if (context.getPackageManager().resolveActivity(
+                new Intent().setData(uri), PackageManager.MATCH_DEFAULT_ONLY) != null) {
+            if (uri.getQuery() != null) {
+                Map<String, String> map = new HashMap<>();
+                parseParams(map, uri.getQuery());
+                Bundle bundle = routeOptions.getBundle();
+                for (Map.Entry<String, String> entry : map.entrySet()) {
+                    if (bundle == null) {
+                        bundle = new Bundle();
+                        routeOptions.setBundle(bundle);
+                    }
+                    bundle.putString(entry.getKey(), entry.getValue());
+                }
             }
-            routeOptions.setBundle(bundle);
             return true;
         }
         return false;
