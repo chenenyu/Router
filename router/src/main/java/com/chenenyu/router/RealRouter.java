@@ -168,7 +168,7 @@ public class RealRouter {
      * @return Intent
      */
     @Nullable
-    public Intent getIntent(Context context) {
+    private Intent getIntent(Context context) {
         if (uri == null) {
             error(null, "uri == null.");
             return null;
@@ -206,6 +206,15 @@ public class RealRouter {
         intent.setData(uri);
         if (context.getPackageManager().resolveActivity(intent,
                 PackageManager.MATCH_DEFAULT_ONLY) != null) {
+            Uri uri = intent.getData();
+            String queryString = uri.getQuery();
+            Map<String, String> params = new HashMap<>();
+            Utils.parseParams(params, queryString);
+            Bundle bundle = new Bundle();
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                bundle.putString(entry.getKey(), entry.getValue());
+            }
+            intent.putExtras(bundle);
             return intent;
         }
 
