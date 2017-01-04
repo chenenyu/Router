@@ -26,6 +26,7 @@ public class RealRouter {
     private RouteOptions routeOptions = new RouteOptions();
     private Uri uri;
 
+
     private RealRouter() {
         initMapping();
     }
@@ -188,11 +189,11 @@ public class RealRouter {
         for (Map.Entry<String, Class<? extends Activity>> entry : mapping.entrySet()) {
             List<Matcher> customMatcher = Router.getMatcher();
             for (Matcher matcher : customMatcher) {
-                if (matcher.match(uri, entry.getKey(), routeOptions)) {
+                if (matcher.match(context, uri, entry.getKey(), routeOptions)) {
                     return generateIntent(context, entry.getValue());
                 }
             }
-            if (defaultMatcher.match(uri, entry.getKey(), routeOptions)) {
+            if (defaultMatcher.match(context, uri, entry.getKey(), routeOptions)) {
                 return generateIntent(context, entry.getValue());
             }
         }

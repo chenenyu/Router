@@ -1,5 +1,6 @@
 package com.chenenyu.router;
 
+import android.content.Context;
 import android.net.Uri;
 
 /**
@@ -12,11 +13,12 @@ public interface Matcher {
     /**
      * Determines if the given uri matches current path.
      *
+     * @param context      Context.
      * @param uri          the given uri.
      * @param path         path in route table.
      * @param routeOptions {@link RouteOptions}.
      * @return True if matched, false otherwise.
      */
-    boolean match(Uri uri, String path, RouteOptions routeOptions);
+    boolean match(Context context, Uri uri, String path, RouteOptions routeOptions);
 
 }

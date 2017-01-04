@@ -1,5 +1,6 @@
 package com.chenenyu.router;
 
+import android.content.Context;
 import android.net.Uri;
 
 /**
@@ -9,7 +10,7 @@ import android.net.Uri;
  */
 public class DefaultMatcher implements Matcher {
     @Override
-    public boolean match(Uri uri, String path, RouteOptions routeOptions) {
+    public boolean match(Context context, Uri uri, String path, RouteOptions routeOptions) {
         return uri.toString().equals(path);
     }
 }
