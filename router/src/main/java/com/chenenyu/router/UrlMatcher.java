@@ -1,5 +1,6 @@
 package com.chenenyu.router;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -30,7 +31,7 @@ import java.util.Map;
  */
 public class UrlMatcher implements Matcher {
     @Override
-    public boolean match(Uri uri, String path, RouteOptions routeOptions) {
+    public boolean match(Context context, Uri uri, String path, RouteOptions routeOptions) {
         if (uri.toString().equals(path)) {
             return true;
         }

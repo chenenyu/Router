@@ -10,41 +10,29 @@
 
 ## Getting started
 
-* Add buildscript classpath:  
-```Groovy
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-    }
-}
-```
-* Add apt plugin:  
-```  groovy
-apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
-```
 *  Add dependencies by adding the following lines to your `app/build.gradle`:  
 ```Groovy
 dependencies {
-    apt 'com.chenenyu.router:compiler:0.1.0'
+    annotationProcessor 'com.chenenyu.router:compiler:0.1.0'
     compile 'com.chenenyu.router:router:0.2.0'
 }
 ```
+
+If you're using a version of the Android gradle plugin below 2.2, see https://bitbucket.org/hvisser/android-apt.  
 
 (Note: current `compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg), current `router` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router/images/download.svg))
 
 ## Simple useage
 
 `Router` uses annotation to specify the mapping relationship.
+
 ```java
 @Route("test")
 public class TestActivity extends AppCompatActivity {
 	...
 }
 ```
+
 Then you can just call `Router.build("test").go(context)` to open `TestActivity`, so cool! ​:clap:​​:clap:​​:clap:​
 
 If you configed multiple route `@Route({"test","wtf"})`, both `test` and `wtf` can lead to `TestActivity`.
@@ -52,6 +40,7 @@ If you configed multiple route `@Route({"test","wtf"})`, both `test` and `wtf` c
 ## Advanced useage
 
 The whole api looks like this:  
+
 ```java
 Router.build(uri)
 	.extras(bundle)
@@ -70,6 +59,7 @@ Router.build(uri)
         }
     }).go(this);
 ```
+
 Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more infomations.
 
 ## License
