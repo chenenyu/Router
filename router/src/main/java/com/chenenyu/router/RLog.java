@@ -49,6 +49,12 @@ class RLog {
         }
     }
 
+    public static void e(String msg) {
+        if (loggable) {
+            Log.e(TAG, msg);
+        }
+    }
+
     public static void e(String tag, String msg) {
         if (loggable) {
             Log.e(tag, msg);

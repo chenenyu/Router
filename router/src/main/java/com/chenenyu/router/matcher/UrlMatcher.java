@@ -1,8 +1,11 @@
-package com.chenenyu.router;
+package com.chenenyu.router.matcher;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+
+import com.chenenyu.router.RouteOptions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,36 +32,40 @@ import java.util.Map;
  * <p>
  * Created by Cheney on 2016/12/30.
  */
-public class UrlMatcher implements Matcher {
+public class UrlMatcher extends Matcher {
+    public UrlMatcher(int priority) {
+        super(priority);
+    }
+
     @Override
-    public boolean match(Context context, Uri uri, String path, RouteOptions routeOptions) {
-        if (uri.toString().equals(path)) {
-            return true;
+    public boolean match(Context context, Uri uri, @Nullable String route, RouteOptions routeOptions) {
+        if (isEmpty(route)) {
+            return false;
         }
-        Uri route = Uri.parse(path);
-        if (uri.isAbsolute() && route.isAbsolute()) { // scheme != null
-            if (!uri.getScheme().equals(route.getScheme())) {
+        Uri routeUri = Uri.parse(route);
+        if (uri.isAbsolute() && routeUri.isAbsolute()) { // scheme != null
+            if (!uri.getScheme().equals(routeUri.getScheme())) {
                 // http != https
                 return false;
             }
-            if (isEmpty(uri.getAuthority()) && isEmpty(route.getAuthority())) {
+            if (isEmpty(uri.getAuthority()) && isEmpty(routeUri.getAuthority())) {
                 // host1 == host2 == empty
                 return true;
             }
             // google.com == google.com (include port)
-            if (!isEmpty(uri.getAuthority()) && !isEmpty(route.getAuthority())
-                    && uri.getAuthority().equals(route.getAuthority())) {
-                if (!cutSlash(uri.getPath()).equals(cutSlash(route.getPath()))) {
+            if (!isEmpty(uri.getAuthority()) && !isEmpty(routeUri.getAuthority())
+                    && uri.getAuthority().equals(routeUri.getAuthority())) {
+                if (!cutSlash(uri.getPath()).equals(cutSlash(routeUri.getPath()))) {
                     return false;
                 }
 
                 // bundle parser
-                if (route.getQuery() != null && uri.getQuery() != null) {
+                if (routeUri.getQuery() != null && uri.getQuery() != null) {
                     // parse entry from given uri.
                     Map<String, String> params = new HashMap<>();
                     parseParams(params, uri.getQuery());
 
-                    String[] placeholders = route.getQuery().split("&");
+                    String[] placeholders = routeUri.getQuery().split("&");
                     for (String placeholder : placeholders) {
                         if (placeholder.startsWith("{") && placeholder.endsWith("}")) {
                             placeholder = placeholder.substring(1, placeholder.length() - 1);
@@ -95,24 +102,4 @@ public class UrlMatcher implements Matcher {
         return path;
     }
 
-    /**
-     * {@link android.text.TextUtils#isEmpty(CharSequence)}.
-     */
-    private boolean isEmpty(CharSequence str) {
-        return str == null || str.length() == 0;
-    }
-
-    private void parseParams(Map<String, String> map, String query) {
-        if (query != null && !query.isEmpty()) {
-            String[] entries = query.split("&");
-            for (String entry : entries) {
-                if (entry.contains("=")) {
-                    String[] kv = entry.split("=");
-                    if (kv.length > 1) {
-                        map.put(kv[0], kv[1]);
-                    }
-                }
-            }
-        }
-    }
 }

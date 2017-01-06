@@ -2,6 +2,9 @@ package com.chenenyu.router;
 
 import android.net.Uri;
 
+import com.chenenyu.router.matcher.Matcher;
+import com.chenenyu.router.matcher.MatcherRepository;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +15,6 @@ import java.util.List;
  */
 public class Router {
     private static List<RouteInterceptor> mRouteInterceptors = new ArrayList<>();
-    private static List<Matcher> mMatcher = new ArrayList<>();
 
     public static RealRouter build(String path) {
         return build(path == null ? null : Uri.parse(path));
@@ -38,12 +40,11 @@ public class Router {
         return mRouteInterceptors;
     }
 
-    public static void addMatcher(Matcher matcher) {
-        mMatcher.add(matcher);
+    public static void registerMatcher(Matcher matcher) {
+        MatcherRepository.register(matcher);
     }
 
-    public static List<Matcher> getMatcher() {
-        return mMatcher;
+    public static void clearMatcher() {
+        MatcherRepository.clear();
     }
-
 }
