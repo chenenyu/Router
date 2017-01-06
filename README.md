@@ -14,7 +14,7 @@
 ```Groovy
 dependencies {
     annotationProcessor 'com.chenenyu.router:compiler:0.1.0'
-    compile 'com.chenenyu.router:router:0.2.0'
+    compile 'com.chenenyu.router:router:0.3.0'
 }
 ```
 
