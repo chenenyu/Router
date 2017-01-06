@@ -1,5 +1,6 @@
 package com.chenenyu.router.matcher;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -49,6 +50,12 @@ public class SchemeMatcher extends Matcher {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public Intent onMatched(Context context, Uri uri, @Nullable Class<? extends Activity> target,
+                            RouteOptions routeOptions) {
+        return generateIntent(context, new Intent().setData(uri), routeOptions);
     }
 
 }

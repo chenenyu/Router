@@ -1,6 +1,8 @@
 package com.chenenyu.router.matcher;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -84,6 +86,15 @@ public class UrlMatcher extends Matcher {
             }
         }
         return false;
+    }
+
+    @Override
+    public Intent onMatched(Context context, Uri uri, @Nullable Class<? extends Activity> target,
+                            RouteOptions routeOptions) {
+        if (target == null) {
+            return null;
+        }
+        return generateIntent(context, new Intent(context, target), routeOptions);
     }
 
     /**

@@ -8,10 +8,8 @@ import android.os.Bundle;
 import android.support.annotation.AnimRes;
 import android.support.annotation.Nullable;
 
-import com.chenenyu.router.matcher.BrowserMatcher;
 import com.chenenyu.router.matcher.Matcher;
 import com.chenenyu.router.matcher.MatcherRepository;
-import com.chenenyu.router.matcher.SchemeMatcher;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -198,30 +196,13 @@ public class RealRouter {
             if (mapping.isEmpty()) {
                 if (matcher.match(context, uri, null, routeOptions)) {
                     RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                    if (matcher instanceof SchemeMatcher) {
-                        // Implicit intent
-                        RLog.i("Trying to open an Activity by implicit intent.");
-                        return generateIntent(context, new Intent().setData(uri));
-                    } else if (matcher instanceof BrowserMatcher) {
-                        return new Intent(Intent.ACTION_VIEW, uri);
-                    } else {
-                        return null;
-                    }
+                    return matcher.onMatched(context, uri, null, routeOptions);
                 }
             } else {
                 for (Map.Entry<String, Class<? extends Activity>> entry : entries) {
                     if (matcher.match(context, uri, entry.getKey(), routeOptions)) {
                         RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                        if (matcher instanceof SchemeMatcher) {
-                            // Implicit intent
-                            RLog.i("Trying to open an Activity by implicit intent.");
-                            return generateIntent(context, new Intent().setData(uri));
-                        } else if (matcher instanceof BrowserMatcher) {
-                            return new Intent(Intent.ACTION_VIEW, uri);
-                        } else {
-                            // Explicit intent
-                            return generateIntent(context, entry.getValue());
-                        }
+                        return matcher.onMatched(context, uri, null, routeOptions);
                     }
                 }
             }
@@ -229,23 +210,6 @@ public class RealRouter {
 
         error(uri, "Could not find an Activity that matches the given uri.");
         return null;
-    }
-
-    private Intent generateIntent(Context context, Class<? extends Activity> clz) {
-        return generateIntent(context, new Intent(context, clz));
-    }
-
-    private Intent generateIntent(Context context, Intent intent) {
-        if (routeOptions.getBundle() != null && !routeOptions.getBundle().isEmpty()) {
-            intent.putExtras(routeOptions.getBundle());
-        }
-        if (!(context instanceof Activity)) {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        }
-        if (routeOptions.getFlags() != 0) {
-            intent.addFlags(routeOptions.getFlags());
-        }
-        return intent;
     }
 
     /**

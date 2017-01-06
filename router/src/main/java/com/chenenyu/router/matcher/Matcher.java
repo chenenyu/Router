@@ -1,6 +1,8 @@
 package com.chenenyu.router.matcher;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,7 +35,25 @@ public abstract class Matcher implements Comparable<Matcher> {
      * @param routeOptions {@link RouteOptions}.
      * @return True if matched, false otherwise.
      */
-    public abstract boolean match(Context context, Uri uri, @Nullable String route, RouteOptions routeOptions);
+    public abstract boolean match(Context context, Uri uri, @Nullable String route,
+                                  RouteOptions routeOptions);
+
+    public abstract Intent onMatched(Context context, Uri uri,
+                                     @Nullable Class<? extends Activity> target,
+                                     RouteOptions routeOptions);
+
+    protected Intent generateIntent(Context context, Intent intent, RouteOptions routeOptions) {
+        if (routeOptions.getBundle() != null && !routeOptions.getBundle().isEmpty()) {
+            intent.putExtras(routeOptions.getBundle());
+        }
+        if (!(context instanceof Activity)) {
+            routeOptions.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        if (routeOptions.getFlags() != 0) {
+            intent.addFlags(routeOptions.getFlags());
+        }
+        return intent;
+    }
 
     protected void parseParams(Map<String, String> map, String query) {
         if (query != null && !query.isEmpty()) {
