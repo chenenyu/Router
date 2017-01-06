@@ -8,10 +8,16 @@ import android.os.Bundle;
 import android.support.annotation.AnimRes;
 import android.support.annotation.Nullable;
 
+import com.chenenyu.router.matcher.BrowserMatcher;
+import com.chenenyu.router.matcher.Matcher;
+import com.chenenyu.router.matcher.MatcherRepository;
+import com.chenenyu.router.matcher.SchemeMatcher;
+
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Real router manager, a singleton.
@@ -19,10 +25,8 @@ import java.util.Map;
  * Created by Cheney on 2016/12/20.
  */
 public class RealRouter {
-    private static RealRouter _instance = new RealRouter();
+    private static RealRouter instance = new RealRouter();
     private Map<String, Class<? extends Activity>> mapping = new HashMap<>();
-    private Matcher defaultMatcher = new DefaultMatcher();
-    private Matcher schemeMatcher = new SchemeMatcher();
     private RouteOptions routeOptions = new RouteOptions();
     private Uri uri;
 
@@ -32,8 +36,8 @@ public class RealRouter {
     }
 
     static RealRouter get() {
-        _instance.reset();
-        return _instance;
+        instance.reset();
+        return instance;
     }
 
     /**
@@ -157,6 +161,7 @@ public class RealRouter {
      * @param message Error message
      */
     private void error(Uri uri, String message) {
+        RLog.e(message);
         if (routeOptions.getCallback() != null) {
             routeOptions.getCallback().error(uri, message);
         }
@@ -165,17 +170,13 @@ public class RealRouter {
     /**
      * Generate an {@link Intent} according to the given uri.
      *
-     * @param context Strongly recommend an activity _instance.
+     * @param context Strongly recommend an activity instance.
      * @return Intent
      */
     @Nullable
     public Intent getIntent(Context context) {
         if (uri == null) {
             error(null, "uri == null.");
-            return null;
-        }
-        if (mapping.isEmpty()) {
-            error(null, "the route table is empty.");
             return null;
         }
 
@@ -186,27 +187,44 @@ public class RealRouter {
             }
         }
 
-        // Implicit intent
-        if (schemeMatcher.match(context, uri, uri.toString(), routeOptions)) {
-            return generateIntent(context, new Intent().setData(uri));
+        List<Matcher> matcherList = MatcherRepository.getMatcher();
+        if (matcherList.isEmpty()) {
+            error(uri, "The MatcherRepository contains no Matcher.");
+            return null;
         }
-        // Explicit intent
-        for (Map.Entry<String, Class<? extends Activity>> entry : mapping.entrySet()) {
-            List<Matcher> customMatcher = Router.getMatcher();
-            for (Matcher matcher : customMatcher) {
-                if (matcher.match(context, uri, entry.getKey(), routeOptions)) {
-                    return generateIntent(context, entry.getValue());
+        Set<Map.Entry<String, Class<? extends Activity>>> entries = mapping.entrySet();
+
+        for (Matcher matcher : matcherList) {
+            if (mapping.isEmpty()) {
+                if (matcher.match(context, uri, null, routeOptions)) {
+                    RLog.i("Caught by " + matcher.getClass().getCanonicalName());
+                    if (matcher instanceof SchemeMatcher) {
+                        // Implicit intent
+                        RLog.i("Trying to open an Activity by implicit intent.");
+                        return generateIntent(context, new Intent().setData(uri));
+                    } else if (matcher instanceof BrowserMatcher) {
+                        return new Intent(Intent.ACTION_VIEW, uri);
+                    } else {
+                        return null;
+                    }
+                }
+            } else {
+                for (Map.Entry<String, Class<? extends Activity>> entry : entries) {
+                    if (matcher.match(context, uri, entry.getKey(), routeOptions)) {
+                        RLog.i("Caught by " + matcher.getClass().getCanonicalName());
+                        if (matcher instanceof SchemeMatcher) {
+                            // Implicit intent
+                            RLog.i("Trying to open an Activity by implicit intent.");
+                            return generateIntent(context, new Intent().setData(uri));
+                        } else if (matcher instanceof BrowserMatcher) {
+                            return new Intent(Intent.ACTION_VIEW, uri);
+                        } else {
+                            // Explicit intent
+                            return generateIntent(context, entry.getValue());
+                        }
+                    }
                 }
             }
-            if (defaultMatcher.match(context, uri, entry.getKey(), routeOptions)) {
-                return generateIntent(context, entry.getValue());
-            }
-        }
-        // Web browser
-        if (uri.toString().toLowerCase().startsWith("http://")
-                || uri.toString().toLowerCase().startsWith("https://")) {
-            RLog.i("It seems that you are trying to open a http(s) url.");
-            return new Intent(Intent.ACTION_VIEW, uri);
         }
 
         error(uri, "Could not find an Activity that matches the given uri.");
@@ -233,7 +251,7 @@ public class RealRouter {
     /**
      * Execute transition.
      *
-     * @param context Strongly recommend an activity _instance.
+     * @param context Strongly recommend an activity instance.
      */
     public void go(Context context) {
         Intent intent = getIntent(context);

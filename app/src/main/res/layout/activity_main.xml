@@ -17,42 +17,49 @@
 
     <Button
         android:id="@+id/btn0"
+        android:onClick="onClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="跳转到"/>
 
     <Button
         android:id="@+id/btn1"
+        android:onClick="onClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="https://m.baidu.com"/>
 
     <Button
         android:id="@+id/btn2"
+        android:onClick="onClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/dynamic_route"/>
 
     <Button
         android:id="@+id/btn3"
+        android:onClick="onClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="startActivityForResult"/>
 
     <Button
         android:id="@+id/btn4"
+        android:onClick="onClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="anim"/>
 
     <Button
         android:id="@+id/btn5"
+        android:onClick="onClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="隐式跳转"/>
 
     <Button
         android:id="@+id/btn6"
+        android:onClick="onClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="http://example.com/user?id=9527&amp;status=0"/>

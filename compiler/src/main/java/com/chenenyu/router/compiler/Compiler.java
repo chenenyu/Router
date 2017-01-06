@@ -19,6 +19,7 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -29,21 +30,16 @@ import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 
 /**
+ * Route annotation processor.
  * <p>
  * Created by Cheney on 2016/12/20.
  */
+@SupportedAnnotationTypes("com.chenenyu.router.annotation.Route")
 public class Compiler extends AbstractProcessor {
     private Elements elementUtils = null;
     private Filer filer = null;
     private Messager messager = null;
     private Types typeUtils = null;
-
-    @Override
-    public Set<String> getSupportedAnnotationTypes() {
-        Set<String> set = new HashSet<>();
-        set.add(Route.class.getCanonicalName());
-        return set;
-    }
 
     @Override
     public SourceVersion getSupportedSourceVersion() {

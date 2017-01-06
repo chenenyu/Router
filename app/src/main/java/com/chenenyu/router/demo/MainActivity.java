@@ -15,11 +15,11 @@ import android.widget.Toast;
 import com.chenenyu.router.RouteCallback;
 import com.chenenyu.router.RouteTable;
 import com.chenenyu.router.Router;
-import com.chenenyu.router.UrlMatcher;
 
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    private final String TAG = "MainActivity";
     private String uri;
     private Button btn0, btn1, btn2, btn3, btn4, btn5, btn6;
 
@@ -36,14 +36,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn4 = (Button) findViewById(R.id.btn4);
         btn5 = (Button) findViewById(R.id.btn5);
         btn6 = (Button) findViewById(R.id.btn6);
-
-        btn0.setOnClickListener(this);
-        btn1.setOnClickListener(this);
-        btn2.setOnClickListener(this);
-        btn3.setOnClickListener(this);
-        btn4.setOnClickListener(this);
-        btn5.setOnClickListener(this);
-        btn6.setOnClickListener(this);
 
         editRoute.addTextChangedListener(new TextWatcher() {
             @Override
@@ -63,7 +55,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        // 动态添加路由表
+        // 开启log
+        if (BuildConfig.DEBUG) {
+            Router.openLog();
+        }
+
+        // 动态添加路由
         Router.addRouteTable(new RouteTable() {
             @Override
             public void handleActivityTable(Map<String, Class<? extends Activity>> map) {
@@ -71,8 +68,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        // 添加内置的url匹配规则
-        Router.addMatcher(new UrlMatcher());
+        // 注册匹配规则
+//        Router.registerMatcher(new Matcher(0x10000));
+
     }
 
     @Override
