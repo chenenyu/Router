@@ -196,13 +196,17 @@ public class RealRouter {
             if (mapping.isEmpty()) {
                 if (matcher.match(context, uri, null, routeOptions)) {
                     RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                    return matcher.onMatched(context, uri, null, routeOptions);
+                    Intent intent = matcher.onMatched(context, uri, null, routeOptions);
+                    assembleIntent(context, intent, routeOptions);
+                    return intent;
                 }
             } else {
                 for (Map.Entry<String, Class<? extends Activity>> entry : entries) {
                     if (matcher.match(context, uri, entry.getKey(), routeOptions)) {
                         RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                        return matcher.onMatched(context, uri, null, routeOptions);
+                        Intent intent = matcher.onMatched(context, uri, null, routeOptions);
+                        assembleIntent(context, intent, routeOptions);
+                        return intent;
                     }
                 }
             }
@@ -210,6 +214,21 @@ public class RealRouter {
 
         error(uri, "Could not find an Activity that matches the given uri.");
         return null;
+    }
+
+    private void assembleIntent(Context context, Intent intent, RouteOptions routeOptions) {
+        if (intent == null) {
+            return;
+        }
+        if (routeOptions.getBundle() != null && !routeOptions.getBundle().isEmpty()) {
+            intent.putExtras(routeOptions.getBundle());
+        }
+        if (!(context instanceof Activity)) {
+            routeOptions.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        if (routeOptions.getFlags() != 0) {
+            intent.addFlags(routeOptions.getFlags());
+        }
     }
 
     /**

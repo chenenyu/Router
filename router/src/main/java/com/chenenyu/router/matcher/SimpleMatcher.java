@@ -30,7 +30,7 @@ public class SimpleMatcher extends Matcher {
         if (target == null) {
             return null;
         }
-        return generateIntent(context, new Intent(context, target), routeOptions);
+        return new Intent(context, target);
     }
 
 }
