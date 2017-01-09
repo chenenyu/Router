@@ -204,7 +204,7 @@ public class RealRouter {
                 for (Map.Entry<String, Class<? extends Activity>> entry : entries) {
                     if (matcher.match(context, uri, entry.getKey(), routeOptions)) {
                         RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                        Intent intent = matcher.onMatched(context, uri, null, routeOptions);
+                        Intent intent = matcher.onMatched(context, uri, entry.getValue(), routeOptions);
                         assembleIntent(context, intent, routeOptions);
                         return intent;
                     }
