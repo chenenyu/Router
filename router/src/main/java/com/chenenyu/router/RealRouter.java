@@ -9,7 +9,7 @@ import android.support.annotation.AnimRes;
 import android.support.annotation.Nullable;
 
 import com.chenenyu.router.matcher.Matcher;
-import com.chenenyu.router.matcher.MatcherRepository;
+import com.chenenyu.router.matcher.MatcherRegistry;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -185,9 +185,9 @@ public class RealRouter {
             }
         }
 
-        List<Matcher> matcherList = MatcherRepository.getMatcher();
+        List<Matcher> matcherList = MatcherRegistry.getMatcher();
         if (matcherList.isEmpty()) {
-            error(uri, "The MatcherRepository contains no Matcher.");
+            error(uri, "The MatcherRegistry contains no Matcher.");
             return null;
         }
         Set<Map.Entry<String, Class<? extends Activity>>> entries = mapping.entrySet();

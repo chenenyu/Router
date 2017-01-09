@@ -12,8 +12,6 @@ import com.chenenyu.router.RouteOptions;
  * This matcher will generate an intent with an {@link android.content.Intent#ACTION_VIEW} action
  * and open a browser.
  * <p>
- * Do not put it into {@link MatcherRepository}, cause it maybe intercept the {@link UrlMatcher}.
- * <p>
  * Created by Cheney on 2017/1/5.
  */
 public class BrowserMatcher extends Matcher {

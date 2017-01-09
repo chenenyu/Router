@@ -5,11 +5,11 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Matcher repository.
+ * Matcher registry.
  * <p>
  * Created by Cheney on 2017/1/5.
  */
-public class MatcherRepository {
+public class MatcherRegistry {
 
     private static final List<Matcher> registry = new ArrayList<>();
 

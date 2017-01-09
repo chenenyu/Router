@@ -3,7 +3,7 @@ package com.chenenyu.router;
 import android.net.Uri;
 
 import com.chenenyu.router.matcher.Matcher;
-import com.chenenyu.router.matcher.MatcherRepository;
+import com.chenenyu.router.matcher.MatcherRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +41,10 @@ public class Router {
     }
 
     public static void registerMatcher(Matcher matcher) {
-        MatcherRepository.register(matcher);
+        MatcherRegistry.register(matcher);
     }
 
     public static void clearMatcher() {
-        MatcherRepository.clear();
+        MatcherRegistry.clear();
     }
 }

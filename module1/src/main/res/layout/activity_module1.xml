@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
-    android:id="@+id/activity_test"
+    android:id="@+id/activity_module1"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TestActivity">
+    tools:context="com.chenenyu.router.module.Module1Activity">
 
-    <TextView
-        android:id="@+id/text_test"
-        android:text="test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
 </FrameLayout>

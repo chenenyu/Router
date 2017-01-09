@@ -8,6 +8,6 @@ public class DynamicActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_not_annotated);
+        setContentView(R.layout.activity_dynamic);
     }
 }

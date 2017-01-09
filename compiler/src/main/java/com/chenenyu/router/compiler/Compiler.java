@@ -57,6 +57,8 @@ public class Compiler extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+        System.out.println("Compiler:process+" + roundEnvironment.toString());
+        // todo Class.forName("AnnotatedRouteTable")
         Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(Route.class);
         if (elements == null || elements.isEmpty()) {
             return true;
@@ -125,6 +127,10 @@ public class Compiler extends AbstractProcessor {
                 && (type.getQualifiedName().toString().equals(superClass)
                 || veritySuperClass((TypeElement) typeUtils.asElement(
                 type.getSuperclass()), superClass));
+    }
+
+    private void note(Element element, String message, Object... args) {
+        messager.printMessage(Diagnostic.Kind.NOTE, String.format(message, args), element);
     }
 
     private void error(Element element, String message, Object... args) {
