@@ -37,20 +37,19 @@ class RouterPlugin implements Plugin<Project> {
             boolean isApp = project.plugins.hasPlugin(AppPlugin)
             project.android.buildTypes.all { BuildType buildType ->
                 buildType.buildConfigField("boolean", "IS_APP", Boolean.toString(isApp))
+                buildType.buildConfigField("String", "MODULE_NAME", "\"$project.name\"")
                 if (isApp) { // com.android.application
                     Set<Project> libs = project.rootProject.subprojects.findAll {
                         it.plugins.hasPlugin(LibraryPlugin)
                     }
+                    StringBuilder sb = new StringBuilder();
                     if (!libs.empty) {
-                        StringBuilder sb = new StringBuilder();
                         libs.each { Project p ->
                             sb.append(p.name.replace('.', '_')).append(",")
                         }
-                        String modules = sb.substring(0, sb.length() - 1)
-                        buildType.buildConfigField("String", "MODULES_NAME", "\"$modules\"")
                     }
-                } else { // com.android.library
-                    buildType.buildConfigField("String", "MODULE_NAME", "\"$project.name\"")
+                    sb.append(project.name.replace('.', '_'))
+                    buildType.buildConfigField("String", "MODULES_NAME", "\"$sb\"")
                 }
             }
         }
