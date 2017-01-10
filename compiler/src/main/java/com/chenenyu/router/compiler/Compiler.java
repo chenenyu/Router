@@ -21,6 +21,7 @@ import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedOptions;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -36,6 +37,7 @@ import javax.tools.Diagnostic;
  * Created by Cheney on 2016/12/20.
  */
 @SupportedAnnotationTypes("com.chenenyu.router.annotation.Route")
+@SupportedOptions("moduleName")
 public class Compiler extends AbstractProcessor {
     private Elements elementUtils = null;
     private Filer filer = null;
@@ -56,8 +58,13 @@ public class Compiler extends AbstractProcessor {
         typeUtils = processingEnvironment.getTypeUtils();
     }
 
+    /**
+     * This method will be called some times.
+     */
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+        // todo processingEnv.getOptions()
+
         Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(Route.class);
         if (elements == null || elements.isEmpty()) {
             return true;
@@ -85,6 +92,7 @@ public class Compiler extends AbstractProcessor {
         if (moduleName != null) {
             generateCode(moduleName, typeElements);
         }
+        generateCode("App", typeElements);
         return true;
     }
 
@@ -99,27 +107,20 @@ public class Compiler extends AbstractProcessor {
         for (Element element : rootElements) {
             if (element.getKind() == ElementKind.CLASS &&
                     element.getSimpleName().contentEquals("BuildConfig")) {
-                TypeElement buildConfig = (TypeElement) element;
+                String fullClzName = ((TypeElement) element).getQualifiedName().toString();
                 try {
-                    Class<?> buildConfigClz = Class.forName(buildConfig.getQualifiedName().toString());
-                    Field IS_APP = buildConfigClz.getField("IS_APP");
-                    boolean isApp = IS_APP.getBoolean(buildConfigClz);
-                    if (isApp) {
-                        return "App";
-                    } else {
-                        Field MODULE_NAME = buildConfigClz.getField("MODULE_NAME");
-                        String module_name = (String) MODULE_NAME.get(buildConfigClz);
-                        return module_name;
-                    }
+                    Class<?> buildConfigClz = Class.forName(fullClzName);
+                    Field MODULE_NAME = buildConfigClz.getField("MODULE_NAME");
+                    return (String) MODULE_NAME.get(buildConfigClz);
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
-                    error(element, "Can not find the class: " + buildConfig.getQualifiedName().toString());
+                    error(element, "Can not find the class: " + fullClzName);
                 } catch (NoSuchFieldException e) {
                     e.printStackTrace();
-                    error(element, "Can not find the field: IS_APP");
+                    error(element, "Can not find the field: MODULE_NAME");
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
-                    error(element, "Field \"IS_APP\" is not a boolean type.");
+                    error(element, "Field \"MODULE_NAME\" is not a String type.");
                 }
             }
         }
@@ -146,7 +147,7 @@ public class Compiler extends AbstractProcessor {
                     typeElement.getQualifiedName().toString(), Route.class.getSimpleName());
             return false;
         }
-        // not an activity or a service, error.
+        // not an activity, error.
 //        if (!veritySuperClass(typeElement, "android.app.Activity")
 //                || !veritySuperClass(typeElement, "android.app.Service")) {
 //            throw new RouteException(String.format("The class %s is not an Activity or a Service.",
@@ -156,21 +157,13 @@ public class Compiler extends AbstractProcessor {
     }
 
     /**
-     * Verify an Activity or a Service.
-     *
-     * @param type       TypeElement
-     * @param superClass Super class name.
-     * @return True if verified, false otherwise.
+     * Verify an Activity.
      */
     private boolean veritySuperClass(TypeElement type, String superClass) {
         return !(type == null || "java.lang.Object".equals(type.getQualifiedName().toString()))
                 && (type.getQualifiedName().toString().equals(superClass)
                 || veritySuperClass((TypeElement) typeUtils.asElement(
                 type.getSuperclass()), superClass));
-    }
-
-    private void note(Element element, String message, Object... args) {
-        messager.printMessage(Diagnostic.Kind.NOTE, String.format(message, args), element);
     }
 
     private void error(Element element, String message, Object... args) {
@@ -202,7 +195,7 @@ public class Compiler extends AbstractProcessor {
         TypeElement routeTableType = elementUtils.getTypeElement("com.chenenyu.router.RouteTable");
 
         TypeSpec type = TypeSpec.classBuilder(capitalize(moduleName + "RouteTable"))
-                .addJavadoc("Generated by Router. Do not edit it!")
+//                .addJavadoc("Generated by Router. Do not edit it!")
                 .addSuperinterface(ClassName.get(routeTableType))
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(initActivityTable.build())
