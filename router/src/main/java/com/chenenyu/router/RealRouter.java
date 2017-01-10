@@ -25,18 +25,23 @@ import java.util.Set;
  * Created by Cheney on 2016/12/20.
  */
 public class RealRouter {
-    private static RealRouter instance = new RealRouter();
+    private static RealRouter instance;
     private Map<String, Class<? extends Activity>> mapping = new HashMap<>();
     private boolean initialized = false;
     private RouteOptions routeOptions = new RouteOptions();
     private Uri uri;
 
-
     private RealRouter() {
-        initAppMapping();
     }
 
     static RealRouter get() {
+        if (instance == null) {
+            synchronized (RealRouter.class) {
+                if (instance == null) {
+                    instance = new RealRouter();
+                }
+            }
+        }
         instance.reset();
         return instance;
     }
@@ -50,24 +55,18 @@ public class RealRouter {
     }
 
     /**
-     * Init app route table.
+     * Init route table.
      */
-    private void initAppMapping() {
-        try {
-            Class<?> appRouteTable = Class.forName("com.chenenyu.router.AppRouteTable");
-            Constructor constructor = appRouteTable.getConstructor();
-            RouteTable instance = (RouteTable) constructor.newInstance();
-            instance.handleActivityTable(mapping);
-        } catch (Exception e) {
-            RLog.i("Failed to find/generate class 'com.chenenyu.router.AppRouteTable'.", e);
+    @SuppressWarnings("all")
+    void initMapping(Context context) {
+        if (initialized) {
+            RLog.e("Initialized mapping.");
+            return;
+        } else {
+            initialized = true;
         }
-    }
-
-    /**
-     * Init modules route table.
-     */
-    private void initModulesMapping(Context context) {
         String packageName = context.getPackageName();
+        String fullTableName = null;
         try {
             Class<?> buildConfig = Class.forName(packageName + ".BuildConfig");
             Field MODULES_NAME = buildConfig.getField("MODULES_NAME");
@@ -75,7 +74,8 @@ public class RealRouter {
             String[] modules = modules_name.split(",");
 
             for (String moduleName : modules) {
-                Class<?> moduleRouteTable = Class.forName(packageName + "." + moduleName + "RouteTable");
+                fullTableName = packageName + "." + capitalize(moduleName) + "RouteTable";
+                Class<?> moduleRouteTable = Class.forName(fullTableName);
                 Constructor constructor = moduleRouteTable.getConstructor();
                 RouteTable instance = (RouteTable) constructor.newInstance();
                 instance.handleActivityTable(mapping);
@@ -113,6 +113,9 @@ public class RealRouter {
     }
 
     RealRouter build(Uri uri) {
+        if (!initialized) {
+            throw new RuntimeException("Please initialize router first.");
+        }
         this.uri = uri;
         return this;
     }
@@ -213,11 +216,6 @@ public class RealRouter {
      */
     @Nullable
     public Intent getIntent(Context context) {
-        if (!initialized) {
-            initModulesMapping(context);
-            initialized = true;
-        }
-
         if (uri == null) {
             error(null, "uri == null.");
             return null;

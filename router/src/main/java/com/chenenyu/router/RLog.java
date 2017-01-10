@@ -15,18 +15,6 @@ class RLog {
         loggable = true;
     }
 
-    public static void v(String tag, String msg) {
-        if (loggable) {
-            Log.v(tag, msg);
-        }
-    }
-
-    public static void d(String tag, String msg) {
-        if (loggable) {
-            Log.d(tag, msg);
-        }
-    }
-
     public static void i(String msg) {
         if (loggable) {
             Log.i(TAG, msg);
@@ -40,12 +28,14 @@ class RLog {
     }
 
     public static void w(String msg) {
-        w(TAG, msg);
+        if (loggable) {
+            Log.w(TAG, msg);
+        }
     }
 
-    public static void w(String tag, String msg) {
+    public static void w(String msg, Throwable tr) {
         if (loggable) {
-            Log.w(tag, msg);
+            Log.w(TAG, msg, tr);
         }
     }
 
@@ -55,10 +45,9 @@ class RLog {
         }
     }
 
-    public static void e(String tag, String msg) {
+    public static void e(String msg, Throwable tr) {
         if (loggable) {
-            Log.e(tag, msg);
+            Log.e(TAG, msg, tr);
         }
     }
-
 }

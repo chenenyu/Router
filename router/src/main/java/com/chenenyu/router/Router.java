@@ -1,5 +1,6 @@
 package com.chenenyu.router;
 
+import android.content.Context;
 import android.net.Uri;
 
 import com.chenenyu.router.matcher.Matcher;
@@ -16,16 +17,27 @@ import java.util.List;
 public class Router {
     private static List<RouteInterceptor> mRouteInterceptors = new ArrayList<>();
 
+    public static void initialize(Context context) {
+        RealRouter.get().initMapping(context);
+    }
+
+    public static void initialize(Context context, boolean loggable) {
+        RealRouter.get().initMapping(context);
+        if (loggable) {
+            RLog.openLog();
+        }
+    }
+
+    public static void openLog() {
+        RLog.openLog();
+    }
+
     public static RealRouter build(String path) {
         return build(path == null ? null : Uri.parse(path));
     }
 
     public static RealRouter build(Uri uri) {
         return RealRouter.get().build(uri);
-    }
-
-    public static void openLog() {
-        RLog.openLog();
     }
 
     public static void addRouteTable(RouteTable routeTable) {
