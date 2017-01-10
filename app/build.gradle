@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.chenenyu.router'
 
 android {
     compileSdkVersion 25
@@ -30,9 +31,9 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     annotationProcessor project(':compiler')
-//    compile project(':router')
+    compile project(':router')
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     compile project(':module1')
-    compile project(':module2')
+//    compile project(':module2')
 }
