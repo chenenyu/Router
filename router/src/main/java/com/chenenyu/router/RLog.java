@@ -21,9 +21,9 @@ class RLog {
         }
     }
 
-    public static void i(String msg, Throwable tr) {
+    public static void i(String tag, String msg) {
         if (loggable) {
-            Log.i(TAG, msg, tr);
+            Log.i(tag, msg);
         }
     }
 

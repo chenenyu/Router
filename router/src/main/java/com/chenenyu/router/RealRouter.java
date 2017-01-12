@@ -74,12 +74,14 @@ public class RealRouter {
             String[] modules = modules_name.split(",");
 
             for (String moduleName : modules) {
-                fullTableName = packageName + "." + capitalize(moduleName) + "RouteTable";
+                fullTableName = "com.chenenyu.router." + capitalize(moduleName) + "RouteTable";
                 Class<?> moduleRouteTable = Class.forName(fullTableName);
                 Constructor constructor = moduleRouteTable.getConstructor();
                 RouteTable instance = (RouteTable) constructor.newInstance();
                 instance.handleActivityTable(mapping);
             }
+
+            RLog.i("RouteTable", mapping.toString());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
@@ -233,6 +235,7 @@ public class RealRouter {
             error(uri, "The MatcherRegistry contains no Matcher.");
             return null;
         }
+
         Set<Map.Entry<String, Class<? extends Activity>>> entries = mapping.entrySet();
 
         for (Matcher matcher : matcherList) {
@@ -247,7 +250,7 @@ public class RealRouter {
                 for (Map.Entry<String, Class<? extends Activity>> entry : entries) {
                     if (matcher.match(context, uri, entry.getKey(), routeOptions)) {
                         RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                        Intent intent = matcher.onMatched(context, uri, null, routeOptions);
+                        Intent intent = matcher.onMatched(context, uri, entry.getValue(), routeOptions);
                         assembleIntent(context, intent, routeOptions);
                         return intent;
                     }

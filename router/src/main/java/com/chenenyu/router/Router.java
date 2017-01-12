@@ -22,10 +22,10 @@ public class Router {
     }
 
     public static void initialize(Context context, boolean loggable) {
-        RealRouter.get().initMapping(context);
         if (loggable) {
             RLog.openLog();
         }
+        RealRouter.get().initMapping(context);
     }
 
     public static void openLog() {
