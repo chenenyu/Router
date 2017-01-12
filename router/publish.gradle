@@ -1,8 +1,11 @@
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
+Properties config = new Properties()
+config.load(project.file('../publish_version.properties').newDataInputStream())
+def VERSION = config.getProperty("ROUTER_VERSION")
 group = "com.chenenyu.router"
-version = "0.3.0"
+version = VERSION
 
 def siteUrl = 'https://github.com/chenenyu/Router'
 def issuesUrl = 'https://github.com/chenenyu/Router/issues'
@@ -12,7 +15,7 @@ install {
     repositories.mavenInstaller.pom.project {
         packaging 'jar'
         name 'Router'
-        artifactId 'router'
+        artifactId "router"
         description 'Simple and flexible router library for Android platform.'
         url siteUrl
 

@@ -1,7 +1,12 @@
 apply plugin: 'groovy'
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+    }
 }
 
 repositories {
@@ -16,3 +21,5 @@ dependencies {
     compile localGroovy()
     compile 'com.android.tools.build:gradle:2.3.0-beta1'
 }
+
+apply from: 'publish.gradle'
