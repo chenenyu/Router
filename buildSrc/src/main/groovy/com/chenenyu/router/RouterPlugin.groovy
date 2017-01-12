@@ -1,8 +1,11 @@
 package com.chenenyu.router
 
+import com.android.build.gradle.AppExtension
 import com.android.build.gradle.AppPlugin
+import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
-import com.android.build.gradle.internal.dsl.BuildType
+import com.android.build.gradle.internal.api.ApplicationVariantImpl
+import com.android.build.gradle.internal.api.LibraryVariantImpl
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -32,15 +35,17 @@ class RouterPlugin implements Plugin<Project> {
             project.dependencies.add("annotationProcessor", "com.chenenyu.router:compiler:latest.integration")
         }
 
-        // Modify BuildConfig
+        // Modify build config
         project.afterEvaluate {
-            boolean isApp = project.plugins.hasPlugin(AppPlugin)
-            project.android.buildTypes.all { BuildType buildType ->
-                buildType.buildConfigField("boolean", "IS_APP", Boolean.toString(isApp))
-                buildType.buildConfigField("String", "MODULE_NAME", "\"$project.name\"")
-                if (isApp) { // com.android.application
+            if (project.plugins.hasPlugin(AppPlugin)) {
+                ((AppExtension) project.android).applicationVariants.all { ApplicationVariantImpl variant ->
+                    // What the f**k, the flowing line wasted me some days.
+                    // Inspired by com.android.build.gradle.tasks.factory.JavaCompileConfigAction.
+                    // F**king source code!
+                    variant.variantData.javacTask.options.compilerArgs.add("-AmoduleName=${project.name}")
+
                     Set<Project> libs = project.rootProject.subprojects.findAll {
-                        it.plugins.hasPlugin(LibraryPlugin)
+                        it.plugins.hasPlugin(LibraryPlugin) && it.plugins.hasPlugin("com.chenenyu.router")
                     }
                     StringBuilder sb = new StringBuilder();
                     if (!libs.empty) {
@@ -49,7 +54,11 @@ class RouterPlugin implements Plugin<Project> {
                         }
                     }
                     sb.append(project.name.replace('.', '_'))
-                    buildType.buildConfigField("String", "MODULES_NAME", "\"$sb\"")
+                    variant.buildConfigField("String", "MODULES_NAME", "\"$sb\"")
+                }
+            } else {
+                ((LibraryExtension) project.android).libraryVariants.all { LibraryVariantImpl variant ->
+                    variant.variantData.javacTask.options.compilerArgs.add("-AmoduleName=${project.name}")
                 }
             }
         }
