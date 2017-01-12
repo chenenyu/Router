@@ -14,12 +14,21 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        maven {
-            url "https://dl.bintray.com/chenenyu/maven"
-        }
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+ext {
+    compileSdkVersion = 25
+    buildToolsVersion = "25.0.2"
+    minSdkVersion = 14
+    targetSdkVersion = 25
+
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
+
+    supportVersion = "25.1.0"
 }

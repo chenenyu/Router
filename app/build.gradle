@@ -2,32 +2,34 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.chenenyu.router'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
         applicationId "com.chenenyu.router.demo"
-        minSdkVersion 14
-        targetSdkVersion 25
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
 
-        // for test
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ['test': 'cey']
-            }
-        }
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility rootProject.ext.sourceCompatibility
+        targetCompatibility rootProject.ext.targetCompatibility
     }
 }
 
@@ -37,10 +39,9 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testCompile 'junit:junit:4.12'
-//    annotationProcessor project(':compiler')
-//    compile project(':router')
-    compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
-//    compile project(':module1')
-//    compile project(':module2')
+    compile "com.android.support:appcompat-v7:${rootProject.ext.supportVersion}"
+    compile 'com.android.support:multidex:1.0.1'
+    compile project(':module1')
+    compile project(':module2')
 }

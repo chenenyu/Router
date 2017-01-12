@@ -12,7 +12,7 @@ dependencies {
     compile 'com.chenenyu.router:annotation:0.1.0'
 }
 
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"
+sourceCompatibility = rootProject.ext.sourceCompatibility
+targetCompatibility = rootProject.ext.targetCompatibility
 
 apply from: 'publish.gradle'
