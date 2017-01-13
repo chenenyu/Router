@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.chenenyu.router.annotation.Route;
+import com.chenenyu.router.module1.R;
 
 @Route("module1")
 public class Module1Activity extends AppCompatActivity {
