@@ -6,7 +6,7 @@
               android:layout_height="match_parent"
               android:orientation="vertical"
               android:padding="16dp"
-              tools:context="com.chenenyu.router.demo.MainActivity">
+              tools:context=".MainActivity">
 
     <EditText
         android:id="@+id/edit_route"

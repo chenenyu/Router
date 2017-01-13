@@ -67,10 +67,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 map.put("dynamic", DynamicActivity.class);
             }
         });
-
-        // 注册匹配规则
-//        Router.registerMatcher(new Matcher(0x10000));
-
     }
 
     @Override

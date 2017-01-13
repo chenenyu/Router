@@ -1,9 +1,11 @@
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
+Properties config = new Properties()
+config.load(project.file('../publish_version.properties').newDataInputStream())
+def VERSION = config.getProperty("COMPILER_VERSION")
 def GROUP = 'com.chenenyu.router'
 def ARTIFACT_ID = 'compiler'
-def VERSION = '0.1.0'
 
 group = GROUP
 version = VERSION

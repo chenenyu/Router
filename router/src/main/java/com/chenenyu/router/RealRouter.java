@@ -9,9 +9,11 @@ import android.support.annotation.AnimRes;
 import android.support.annotation.Nullable;
 
 import com.chenenyu.router.matcher.Matcher;
-import com.chenenyu.router.matcher.MatcherRepository;
+import com.chenenyu.router.matcher.MatcherRegistry;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,17 +25,23 @@ import java.util.Set;
  * Created by Cheney on 2016/12/20.
  */
 public class RealRouter {
-    private static RealRouter instance = new RealRouter();
+    private static RealRouter instance;
     private Map<String, Class<? extends Activity>> mapping = new HashMap<>();
+    private boolean initialized = false;
     private RouteOptions routeOptions = new RouteOptions();
     private Uri uri;
 
-
     private RealRouter() {
-        initMapping();
     }
 
     static RealRouter get() {
+        if (instance == null) {
+            synchronized (RealRouter.class) {
+                if (instance == null) {
+                    instance = new RealRouter();
+                }
+            }
+        }
         instance.reset();
         return instance;
     }
@@ -47,17 +55,51 @@ public class RealRouter {
     }
 
     /**
-     * Init annotated route table.
+     * Init route table.
      */
-    private void initMapping() {
-        try {
-            Class<?> annotatedRouteTable = Class.forName("com.chenenyu.router.AnnotatedRouteTable");
-            Constructor constructor = annotatedRouteTable.getConstructor();
-            RouteTable instance = (RouteTable) constructor.newInstance();
-            instance.handleActivityTable(mapping);
-        } catch (Exception e) {
-            RLog.i("Failed to find/generate class 'com.chenenyu.router.AnnotatedRouteTable'.", e);
+    @SuppressWarnings("all")
+    void initMapping(Context context) {
+        if (initialized) {
+            RLog.e("Initialized mapping.");
+            return;
+        } else {
+            initialized = true;
         }
+        String packageName = context.getPackageName();
+        String fullTableName = null;
+        try {
+            Class<?> buildConfig = Class.forName(packageName + ".BuildConfig");
+            Field MODULES_NAME = buildConfig.getField("MODULES_NAME");
+            String modules_name = (String) MODULES_NAME.get(buildConfig);
+            String[] modules = modules_name.split(",");
+
+            for (String moduleName : modules) {
+                fullTableName = "com.chenenyu.router." + capitalize(moduleName) + "RouteTable";
+                Class<?> moduleRouteTable = Class.forName(fullTableName);
+                Constructor constructor = moduleRouteTable.getConstructor();
+                RouteTable instance = (RouteTable) constructor.newInstance();
+                instance.handleActivityTable(mapping);
+            }
+
+            RLog.i("RouteTable", mapping.toString());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String capitalize(CharSequence self) {
+        return self.length() == 0 ? "" :
+                "" + Character.toUpperCase(self.charAt(0)) + self.subSequence(1, self.length());
     }
 
     /**
@@ -73,6 +115,9 @@ public class RealRouter {
     }
 
     RealRouter build(Uri uri) {
+        if (!initialized) {
+            throw new RuntimeException("Please initialize router first.");
+        }
         this.uri = uri;
         return this;
     }
@@ -185,11 +230,12 @@ public class RealRouter {
             }
         }
 
-        List<Matcher> matcherList = MatcherRepository.getMatcher();
+        List<Matcher> matcherList = MatcherRegistry.getMatcher();
         if (matcherList.isEmpty()) {
-            error(uri, "The MatcherRepository contains no Matcher.");
+            error(uri, "The MatcherRegistry contains no Matcher.");
             return null;
         }
+
         Set<Map.Entry<String, Class<? extends Activity>>> entries = mapping.entrySet();
 
         for (Matcher matcher : matcherList) {

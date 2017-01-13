@@ -1,9 +1,11 @@
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
+Properties config = new Properties()
+config.load(project.file('../publish_version.properties').newDataInputStream())
+def VERSION = config.getProperty("ANNOTATION_VERSION")
 def GROUP = 'com.chenenyu.router'
 def ARTIFACT_ID = 'annotation'
-def VERSION = '0.1.0'
 
 group = GROUP
 version = VERSION
@@ -48,7 +50,7 @@ bintray {
         websiteUrl = 'https://github.com/chenenyu/Router'
         issueTrackerUrl = 'https://github.com/chenenyu/Router/issues'
         vcsUrl = 'https://github.com/chenenyu/Router.git'
-        desc = "Annotation compiler for Router library."
+        desc = "Annotation for Router library."
         labels = ["Android", "Router", "annotation"]
         licenses = ["Apache-2.0"]
         publicDownloadNumbers = true
