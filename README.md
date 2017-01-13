@@ -1,8 +1,8 @@
-[![Build Status](https://travis-ci.org/chenenyu/Router.svg?branch=master)](https://travis-ci.org/chenenyu/Router) ![license](https://img.shields.io/badge/license-Apache%202-yellow.svg) [![version](https://img.shields.io/github/release/chenenyu/Router.svg)]  (https://github.com/chenenyu/Router/releases) ![API](https://img.shields.io/badge/API-9%2B-orange.svg) ![PullRequest](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+[![Build Status](https://travis-ci.org/chenenyu/Router.svg?branch=master)](https://travis-ci.org/chenenyu/Router) ![license](https://img.shields.io/badge/license-Apache%202-yellow.svg) [![version](https://img.shields.io/github/release/chenenyu/Router.svg)]  (https://github.com/chenenyu/Router/releases) ![API](https://img.shields.io/badge/API-9%2B-orange.svg) ![PullRequest](https://img.shields.io/badge/PRs-welcome-brightgreen.svg) 
 
 # Router
 
-> A router library for Android paltform, featuring *simple* and *flexible*.
+> A *component* based router library, featuring simple and flexible.
 
 建议浏览[中文wiki](https://github.com/chenenyu/Router/wiki).
 
@@ -10,17 +10,35 @@
 
 ## Getting started
 
-*  Add dependencies by adding the following lines to your `app/build.gradle`:  
+*  Add dependencies by adding the following lines to your top level `project/build.gradle`:  
+
 ```Groovy
-dependencies {
-    annotationProcessor 'com.chenenyu.router:compiler:0.1.0'
-    compile 'com.chenenyu.router:router:0.3.0'
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.x ↑'
+        classpath 'com.chenenyu.router:gradle-plugin:latest.integration'
+    }
 }
 ```
 
-If you're using a version of the Android gradle plugin below 2.2, see https://bitbucket.org/hvisser/android-apt.  
+You should use a version of the Android gradle plugin 2.2 or above to supoort annotation processor.  
 
-(Note: current `compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg), current `router` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router/images/download.svg))
+* Apply router plugin in your `app/build.gradle` or `lib/build.gradle`:  
+
+```  Groovy
+apply plugin: 'com.android.application/library'
+apply plugin: 'com.chenenyu.router'
+```  
+
+current `router-gradle-plugin` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router-gradle-plugin/images/download.svg)
+
+current `router` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router/images/download.svg)
+
+current `router-compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg)  
+
 
 ## Simple useage
 
