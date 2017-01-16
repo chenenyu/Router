@@ -21,7 +21,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private final String TAG = "MainActivity";
     private String uri;
-    private Button btn0, btn1, btn2, btn3, btn4, btn5, btn6;
+    private Button btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn4 = (Button) findViewById(R.id.btn4);
         btn5 = (Button) findViewById(R.id.btn5);
         btn6 = (Button) findViewById(R.id.btn6);
+        btn7 = (Button) findViewById(R.id.btn7);
+        btn8 = (Button) findViewById(R.id.btn8);
 
         editRoute.addTextChangedListener(new TextWatcher() {
             @Override
@@ -98,6 +100,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Router.build(Uri.parse("router://host?id=9527&status=success")).go(this);
         } else if (v == btn6) {
             Router.build(btn6.getText().toString()).go(this);
+        } else if (v == btn7) {
+            Router.build("module1").go(this);
+        } else if (v == btn8) {
+            Router.build("module2").go(this);
         }
     }
 
