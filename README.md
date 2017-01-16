@@ -10,6 +10,8 @@
 
 ## Getting started
 
+You should use a version of the Android gradle plugin 2.2 or above to supoort annotation processor.
+
 *  Add dependencies by adding the following lines to your top level `project/build.gradle`:  
 
 ```Groovy
@@ -22,9 +24,14 @@ buildscript {
         classpath 'com.chenenyu.router:gradle-plugin:latest.integration'
     }
 }
-```
 
-You should use a version of the Android gradle plugin 2.2 or above to supoort annotation processor.  
+// Optional. Specify the dependencies version, default to the latest version.
+ext {
+    ...
+	routerVersion = "x.y.z"
+	compilerVersion = "x.y.z"
+}
+```
 
 * Apply router plugin in your `app/build.gradle` or `lib/build.gradle`:  
 
