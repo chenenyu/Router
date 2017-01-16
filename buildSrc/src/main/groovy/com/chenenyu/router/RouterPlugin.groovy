@@ -8,6 +8,7 @@ import com.android.build.gradle.internal.api.ApplicationVariantImpl
 import com.android.build.gradle.internal.api.LibraryVariantImpl
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtraPropertiesExtension
 
 /**
  * <p>
@@ -31,13 +32,22 @@ class RouterPlugin implements Plugin<Project> {
                 annotationProcessor compiler
             }
         } else {
-            project.dependencies.add("compile", "com.chenenyu.router:router:latest.integration")
-            project.dependencies.add("annotationProcessor", "com.chenenyu.router:compiler:latest.integration")
+            String routerVersion = "latest.integration"
+            String compilerVersion = "latest.integration"
+            // org.gradle.api.internal.plugins.DefaultExtraPropertiesExtension
+            ExtraPropertiesExtension ext = project.rootProject.ext
+            if (ext.has("routerVersion")) {
+                routerVersion = ext.get("routerVersion")
+            }
+            if (ext.has("compilerVersion")) {
+                compilerVersion = ext.get("compilerVersion")
+            }
+            project.dependencies.add("compile", "com.chenenyu.router:router:${routerVersion}")
+            project.dependencies.add("annotationProcessor", "com.chenenyu.router:compiler:${compilerVersion}")
         }
 
-        String validModuleName = project.name.replace('.', '_')
-
         // Modify build config
+        String validModuleName = project.name.replace('.', '_')
         project.afterEvaluate {
             if (project.plugins.hasPlugin(AppPlugin)) {
                 ((AppExtension) project.android).applicationVariants.all { ApplicationVariantImpl variant ->
@@ -47,7 +57,7 @@ class RouterPlugin implements Plugin<Project> {
                     variant.variantData.javacTask.options.compilerArgs.add("-AmoduleName=${validModuleName}")
 
                     Set<Project> libs = project.rootProject.subprojects.findAll {
-                        it.plugins.hasPlugin(LibraryPlugin) && it.plugins.hasPlugin("com.chenenyu.router")
+                        it.plugins.hasPlugin(LibraryPlugin) && it.plugins.hasPlugin(RouterPlugin)
                     }
                     StringBuilder sb = new StringBuilder();
                     if (!libs.empty) {
