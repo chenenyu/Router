@@ -15,8 +15,8 @@ public class MatcherRegistry {
 
     static {
         registry.add(new SimpleMatcher(0x1000));
-        registry.add(new UrlMatcher(0x0100));
-        registry.add(new SchemeMatcher(0x0010));
+        registry.add(new SchemeMatcher(0x0100));
+        registry.add(new ImplicitMatcher(0x0010));
         registry.add(new BrowserMatcher(0x0000));
         Collections.sort(registry);
     }

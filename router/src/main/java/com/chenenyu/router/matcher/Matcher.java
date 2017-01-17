@@ -44,12 +44,10 @@ public abstract class Matcher implements Comparable<Matcher> {
      * @param context      Context.
      * @param uri          The given uri.
      * @param target       Route target.
-     * @param routeOptions {@link RouteOptions}.
      * @return An intent that the matcher generated.
      */
     public abstract Intent onMatched(Context context, Uri uri,
-                                     @Nullable Class<? extends Activity> target,
-                                     RouteOptions routeOptions);
+                                     @Nullable Class<? extends Activity> target);
 
     protected void parseParams(Map<String, String> map, String query) {
         if (query != null && !query.isEmpty()) {

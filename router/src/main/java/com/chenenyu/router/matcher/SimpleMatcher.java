@@ -25,8 +25,7 @@ public class SimpleMatcher extends Matcher {
     }
 
     @Override
-    public Intent onMatched(Context context, Uri uri, @Nullable Class<? extends Activity> target,
-                            RouteOptions routeOptions) {
+    public Intent onMatched(Context context, Uri uri, @Nullable Class<? extends Activity> target) {
         if (target == null) {
             return null;
         }

@@ -26,8 +26,7 @@ public class BrowserMatcher extends Matcher {
     }
 
     @Override
-    public Intent onMatched(Context context, Uri uri, @Nullable Class<? extends Activity> target,
-                            RouteOptions routeOptions) {
+    public Intent onMatched(Context context, Uri uri, @Nullable Class<? extends Activity> target) {
         return new Intent(Intent.ACTION_VIEW, uri);
     }
 }

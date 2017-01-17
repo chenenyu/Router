@@ -3,7 +3,6 @@ package com.chenenyu.router.matcher;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,11 +13,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Support for <strong>implicit intent</strong> exclude scheme "http(s)",
- * cause we may want to resolve them in custom matcher, such as {@link UrlMatcher},
- * otherwise the {@link BrowserMatcher} brings up the rear.
+ * Standard scheme matcher. It matches scheme, authority(host, port) and path(if offered),
+ * then transfers the query part(if offered) to bundle.
  * <p>
- * Created by Cheney on 2017/01/08.
+ * If you configured a route like this:
+ * <code>
+ * <p>
+ * -> @Route("http://example.com/user")
+ * <p>
+ * </code>
+ * Then <a href="">http://example.com/user</a> will match this route,
+ * <a href="">http://example.com/user?id=9527&status=0</a> also does and puts bundles for you:
+ * <code>
+ * <p>
+ * bundle.putString("id", "9527");
+ * <br>
+ * bundle.putString("status", "0");
+ * <p>
+ * </code>
+ * <p>
+ * Created by Cheney on 2016/12/30.
  */
 public class SchemeMatcher extends Matcher {
     public SchemeMatcher(int priority) {
@@ -27,35 +41,71 @@ public class SchemeMatcher extends Matcher {
 
     @Override
     public boolean match(Context context, Uri uri, @Nullable String route, RouteOptions routeOptions) {
-        if (uri.toString().toLowerCase().startsWith("http://")
-                || uri.toString().toLowerCase().startsWith("https://")) {
+        if (isEmpty(route)) {
             return false;
         }
-        if (context.getPackageManager().resolveActivity(
-                new Intent(Intent.ACTION_VIEW, uri), PackageManager.MATCH_DEFAULT_ONLY) != null) {
-            if (uri.getQuery() != null) {
-                Map<String, String> map = new HashMap<>();
-                parseParams(map, uri.getQuery());
-                if (!map.isEmpty()) {
-                    Bundle bundle = routeOptions.getBundle();
-                    if (bundle == null) {
-                        bundle = new Bundle();
-                        routeOptions.setBundle(bundle);
-                    }
-                    for (Map.Entry<String, String> entry : map.entrySet()) {
-                        bundle.putString(entry.getKey(), entry.getValue());
+        Uri routeUri = Uri.parse(route);
+        if (uri.isAbsolute() && routeUri.isAbsolute()) { // scheme != null
+            if (!uri.getScheme().equals(routeUri.getScheme())) {
+                // http != https
+                return false;
+            }
+            if (isEmpty(uri.getAuthority()) && isEmpty(routeUri.getAuthority())) {
+                // host1 == host2 == empty
+                return true;
+            }
+            // google.com == google.com (include port)
+            if (!isEmpty(uri.getAuthority()) && !isEmpty(routeUri.getAuthority())
+                    && uri.getAuthority().equals(routeUri.getAuthority())) {
+                if (!cutSlash(uri.getPath()).equals(cutSlash(routeUri.getPath()))) {
+                    return false;
+                }
+
+                // bundle parser
+                if (uri.getQuery() != null) {
+                    // parse entry from given uri.
+                    Map<String, String> params = new HashMap<>();
+                    parseParams(params, uri.getQuery());
+
+                    if (!params.isEmpty()) {
+                        Bundle bundle = routeOptions.getBundle();
+                        if (bundle == null) {
+                            bundle = new Bundle();
+                            routeOptions.setBundle(bundle);
+                        }
+                        for (Map.Entry<String, String> entry : params.entrySet()) {
+                            bundle.putString(entry.getKey(), entry.getValue());
+                        }
                     }
                 }
+                return true;
             }
-            return true;
         }
         return false;
     }
 
     @Override
-    public Intent onMatched(Context context, Uri uri, @Nullable Class<? extends Activity> target,
-                            RouteOptions routeOptions) {
-        return new Intent(Intent.ACTION_VIEW, uri);
+    public Intent onMatched(Context context, Uri uri, @Nullable Class<? extends Activity> target) {
+        if (target == null) {
+            return null;
+        }
+        return new Intent(context, target);
+    }
+
+    /**
+     * 剔除path头部和尾部的斜杠/
+     *
+     * @param path 路径
+     * @return 无/的路径
+     */
+    private String cutSlash(String path) {
+        if (path.startsWith("/")) {
+            return cutSlash(path.substring(1));
+        }
+        if (path.endsWith("/")) {
+            return cutSlash(path.substring(0, path.length() - 1));
+        }
+        return path;
     }
 
 }

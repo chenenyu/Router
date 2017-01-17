@@ -21,13 +21,6 @@ public class Router {
         RealRouter.get().initMapping(context);
     }
 
-    public static void initialize(Context context, boolean loggable) {
-        if (loggable) {
-            RLog.openLog();
-        }
-        RealRouter.get().initMapping(context);
-    }
-
     public static void openLog() {
         RLog.openLog();
     }
