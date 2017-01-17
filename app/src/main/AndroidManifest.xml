@@ -28,8 +28,8 @@
             android:label="ForResultActivity"/>
 
         <activity
-            android:name=".SchemeActivity"
-            android:label="SchemeActivity">
+            android:name=".ImplicitActivity"
+            android:label="ImplicitActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>

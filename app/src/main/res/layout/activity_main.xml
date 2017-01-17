@@ -62,7 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onClick"
-        android:text="http://example.com/user"/>
+        android:text="http://example.com/user?id=9527&amp;status=success"/>
 
     <Button
         android:id="@+id/btn7"

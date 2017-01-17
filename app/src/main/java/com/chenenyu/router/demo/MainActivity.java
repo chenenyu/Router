@@ -57,11 +57,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        // 开启log
-        if (BuildConfig.DEBUG) {
-            Router.openLog();
-        }
-
         // 动态添加路由
         Router.addRouteTable(new RouteTable() {
             @Override
