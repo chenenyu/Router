@@ -23,3 +23,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Router
+-keep class **RouteTable { *; }
+-keep class com.chenenyu.router.demo.BuildConfig { *; }
