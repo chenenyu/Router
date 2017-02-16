@@ -47,7 +47,7 @@ current `router` version: ![Download](https://api.bintray.com/packages/chenenyu/
 current `router-compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg)  
 
 
-## Simple useage
+## Simple usage
 
 `Router` uses annotation to specify the mapping relationship.
 
@@ -60,9 +60,9 @@ public class TestActivity extends AppCompatActivity {
 
 Then you can just call `Router.build("test").go(context)` to open `TestActivity`, so cool! ​:clap:​​:clap:​​:clap:​
 
-If you configed multiple route `@Route({"test","wtf"})`, both `test` and `wtf` can lead to `TestActivity`.
+If you configured multiple route `@Route({"test","wtf"})`, both `test` and `wtf` can lead to `TestActivity`.
 
-## Advanced useage
+## Advanced usage
 
 The whole api looks like this:  
 
@@ -85,7 +85,18 @@ Router.build(uri)
     }).go(this);
 ```
 
-Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more infomations.
+Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more informations.
+
+## Contact
+
+QQ group: 271849001
+
+## Other Libraries
+
+[SuperAdater](https://github.com/byteam/SuperAdapter): Adapter knife(万能的Adapter).
+
+[img-optimizer-gradle-plugin](https://github.com/chenenyu/img-optimizer-gradle-plugin)
+: 一款用于优化png图片的gradle插件.
 
 ## License
 
