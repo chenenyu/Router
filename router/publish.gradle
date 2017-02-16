@@ -2,7 +2,7 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
 Properties config = new Properties()
-config.load(project.file('../publish_version.properties').newDataInputStream())
+config.load(project.file('../VERSION.properties').newDataInputStream())
 def VERSION = config.getProperty("ROUTER_VERSION")
 group = "com.chenenyu.router"
 version = VERSION
