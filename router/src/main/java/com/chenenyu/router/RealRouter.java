@@ -56,7 +56,6 @@ public class RealRouter {
     /**
      * Init route table.
      */
-    @SuppressWarnings("all")
     void initMapping(Context context) {
         if (initialized) {
             RLog.e("Initialized mapping.");
@@ -67,9 +66,9 @@ public class RealRouter {
         String packageName = context.getPackageName();
         String fullTableName = null;
         try {
-            Class<?> buildConfig = Class.forName(packageName + ".BuildConfig");
-            Field MODULES_NAME = buildConfig.getField("MODULES_NAME");
-            String modules_name = (String) MODULES_NAME.get(buildConfig);
+            Class<?> configClz = Class.forName("com.chenenyu.router.RouterBuildConfig");
+            Field allModules = configClz.getField("ALL_MODULES");
+            String modules_name = (String) allModules.get(configClz);
             String[] modules = modules_name.split(",");
 
             for (String moduleName : modules) {
@@ -82,7 +81,7 @@ public class RealRouter {
 
             RLog.i("RouteTable", mapping.toString());
         } catch (Exception e) {
-            e.printStackTrace();
+            RLog.e(e.getMessage());
         }
     }
 
