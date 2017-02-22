@@ -46,16 +46,10 @@ class RouterPlugin implements Plugin<Project> {
             project.dependencies.add("annotationProcessor", "com.chenenyu.router:compiler:${compilerVersion}")
         }
 
-        // Modify build config
         String validModuleName = project.name.replace('.', '_').replace('-', '_')
         project.afterEvaluate {
             if (project.plugins.hasPlugin(AppPlugin)) {
                 ((AppExtension) project.android).applicationVariants.all { ApplicationVariantImpl variant ->
-                    // What the f**k, the flowing line wasted me some days.
-                    // Inspired by com.android.build.gradle.tasks.factory.JavaCompileConfigAction.
-                    // F**king source code!
-                    variant.variantData.javacTask.options.compilerArgs.add("-AmoduleName=${validModuleName}")
-
                     Set<Project> libs = project.rootProject.subprojects.findAll {
                         it.plugins.hasPlugin(LibraryPlugin) && it.plugins.hasPlugin(RouterPlugin)
                     }
@@ -66,7 +60,12 @@ class RouterPlugin implements Plugin<Project> {
                         }
                     }
                     sb.append(validModuleName)
-                    variant.buildConfigField("String", "MODULES_NAME", "\"$sb\"")
+
+                    // What the f**k, the flowing lines wasted me some days.
+                    // Inspired by com.android.build.gradle.tasks.factory.JavaCompileConfigAction.
+                    List args = variant.variantData.javacTask.options.compilerArgs
+                    args.add("-AmoduleName=${validModuleName}")
+                    args.add("-AallModules=${sb}")
                 }
             } else {
                 ((LibraryExtension) project.android).libraryVariants.all { LibraryVariantImpl variant ->
@@ -74,7 +73,6 @@ class RouterPlugin implements Plugin<Project> {
                 }
             }
         }
-
     }
 
 }
