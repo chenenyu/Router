@@ -25,5 +25,4 @@
 #-renamesourcefileattribute SourceFile
 
 # Router
--keep class **RouteTable { *; }
--keep class com.chenenyu.router.demo.BuildConfig { *; }
+-keep class com.chenenyu.router.**

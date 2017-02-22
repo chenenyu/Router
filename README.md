@@ -87,6 +87,13 @@ Router.build(uri)
 
 Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more informations.
 
+## ProGuard
+
+```Java
+# Router
+-keep class com.chenenyu.router.**
+```
+
 ## Contact
 
 QQ group: 271849001
