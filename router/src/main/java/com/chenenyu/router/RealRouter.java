@@ -13,7 +13,6 @@ import com.chenenyu.router.matcher.MatcherRegistry;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,17 +81,7 @@ public class RealRouter {
             }
 
             RLog.i("RouteTable", mapping.toString());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -187,6 +176,16 @@ public class RealRouter {
     }
 
     /**
+     * Green channel, i.e. skip all the interceptors.
+     *
+     * @return this
+     */
+    public RealRouter skipInterceptors() {
+        routeOptions.setSkipInterceptors(true);
+        return this;
+    }
+
+    /**
      * {@link RouteCallback} succeed.
      *
      * @param uri Uri
@@ -223,10 +222,12 @@ public class RealRouter {
             return null;
         }
 
-        for (RouteInterceptor interceptor : Router.getRouteInterceptors()) {
-            if (interceptor.intercept(context, uri, routeOptions.getBundle())) {
-                error(uri, "intercepted.");
-                return null;
+        if (!routeOptions.isSkipInterceptors()) {
+            for (RouteInterceptor interceptor : Router.getRouteInterceptors()) {
+                if (interceptor.intercept(context, uri, routeOptions.getBundle())) {
+                    error(uri, "intercepted.");
+                    return null;
+                }
             }
         }
 

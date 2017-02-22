@@ -15,6 +15,8 @@ public class RouteOptions {
     private RouteCallback callback;
     @Nullable
     private Bundle bundle;
+    private boolean skipInterceptors;
+
     private int enterAnim;
     private int exitAnim;
 
@@ -50,6 +52,14 @@ public class RouteOptions {
     @Nullable
     public Bundle getBundle() {
         return bundle;
+    }
+
+    public boolean isSkipInterceptors() {
+        return skipInterceptors;
+    }
+
+    public void setSkipInterceptors(boolean skipInterceptors) {
+        this.skipInterceptors = skipInterceptors;
     }
 
     public void setAnim(int enterAnim, int exitAnim) {
