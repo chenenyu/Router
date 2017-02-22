@@ -47,7 +47,7 @@ class RouterPlugin implements Plugin<Project> {
         }
 
         // Modify build config
-        String validModuleName = project.name.replace('.', '_')
+        String validModuleName = project.name.replace('.', '_').replace('-', '_')
         project.afterEvaluate {
             if (project.plugins.hasPlugin(AppPlugin)) {
                 ((AppExtension) project.android).applicationVariants.all { ApplicationVariantImpl variant ->
@@ -62,7 +62,7 @@ class RouterPlugin implements Plugin<Project> {
                     StringBuilder sb = new StringBuilder();
                     if (!libs.empty) {
                         libs.each { Project p ->
-                            sb.append(p.name.replace('.', '_')).append(",")
+                            sb.append(p.name.replace('.', '_').replace('-', '_')).append(",")
                         }
                     }
                     sb.append(validModuleName)
