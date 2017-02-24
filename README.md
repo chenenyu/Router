@@ -46,6 +46,11 @@ current `router` version: ![Download](https://api.bintray.com/packages/chenenyu/
 
 current `router-compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg)  
 
+|router-gradle-plugin version|router version|router-compiler version|
+|:---:|:---:|:---:|
+|0.1.0|0.4.0|0.2.0|
+|0.2.0|0.5.0|0.2.0|
+|0.3.0|0.6.0|0.3.0|
 
 ## Simple usage
 
