@@ -85,5 +85,6 @@ public class RouteOptions {
         bundle = null;
         enterAnim = 0;
         exitAnim = 0;
+        skipInterceptors = false;
     }
 }

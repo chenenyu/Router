@@ -56,21 +56,30 @@ public class RealRouter {
     /**
      * Init route table.
      */
-    void initMapping(Context context) {
+    synchronized void initMapping() {
         if (initialized) {
             RLog.e("Initialized mapping.");
             return;
         } else {
             initialized = true;
         }
-        String packageName = context.getPackageName();
-        String fullTableName = null;
+
+        String[] modules;
         try {
             Class<?> configClz = Class.forName("com.chenenyu.router.RouterBuildConfig");
             Field allModules = configClz.getField("ALL_MODULES");
             String modules_name = (String) allModules.get(configClz);
-            String[] modules = modules_name.split(",");
+            modules = modules_name.split(",");
+        } catch (ClassNotFoundException e) {
+            RLog.e("Have you applied plugin 'com.chenenyu.router' in your application module?", e);
+            return;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
 
+        try {
+            String fullTableName;
             for (String moduleName : modules) {
                 fullTableName = "com.chenenyu.router." + capitalize(moduleName) + "RouteTable";
                 Class<?> moduleRouteTable = Class.forName(fullTableName);
@@ -78,11 +87,11 @@ public class RealRouter {
                 RouteTable instance = (RouteTable) constructor.newInstance();
                 instance.handleActivityTable(mapping);
             }
-
-            RLog.i("RouteTable", mapping.toString());
         } catch (Exception e) {
-            RLog.e(e.getMessage());
+            e.printStackTrace();
         }
+
+        RLog.i("RouteTable", mapping.toString());
     }
 
     private String capitalize(CharSequence self) {

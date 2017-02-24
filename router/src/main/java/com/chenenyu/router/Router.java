@@ -18,7 +18,7 @@ public class Router {
     private static List<RouteInterceptor> mRouteInterceptors = new ArrayList<>();
 
     public static void initialize(Context context) {
-        RealRouter.get().initMapping(context);
+        RealRouter.get().initMapping();
     }
 
     public static void openLog() {
