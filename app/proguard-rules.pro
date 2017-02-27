@@ -25,4 +25,4 @@
 #-renamesourcefileattribute SourceFile
 
 # Router
--keep class com.chenenyu.router.**
+-keep class com.chenenyu.router.** {*;}
