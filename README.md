@@ -96,7 +96,7 @@ Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more inf
 
 ```Java
 # Router
--keep class com.chenenyu.router.**
+-keep class com.chenenyu.router.** {*;}
 ```
 
 ## Contact
