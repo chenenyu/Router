@@ -66,12 +66,12 @@ public class RealRouter {
 
         String[] modules;
         try {
-            Class<?> configClz = Class.forName("com.chenenyu.router.RouterBuildConfig");
-            Field allModules = configClz.getField("ALL_MODULES");
-            String modules_name = (String) allModules.get(configClz);
+            Class<?> buildInfo = Class.forName("com.chenenyu.router.RouterBuildInfo");
+            Field allModules = buildInfo.getField("ALL_MODULES");
+            String modules_name = (String) allModules.get(buildInfo);
             modules = modules_name.split(",");
         } catch (ClassNotFoundException e) {
-            RLog.e("Have you applied plugin 'com.chenenyu.router' in your application module?", e);
+            RLog.e("Initialization failed, have you forgotten to apply plugin: 'com.chenenyu.router' in application module");
             return;
         } catch (Exception e) {
             e.printStackTrace();
@@ -267,7 +267,7 @@ public class RealRouter {
             }
         }
 
-        error(uri, "Could not find an Activity that matches the given uri.");
+        error(uri, "Can not find an Activity that matches the given uri: " + uri);
         return null;
     }
 
