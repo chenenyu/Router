@@ -6,8 +6,10 @@ import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.internal.api.ApplicationVariantImpl
 import com.android.build.gradle.internal.api.LibraryVariantImpl
+import com.android.utils.FileUtils
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.ExtraPropertiesExtension
 
 /**
@@ -15,6 +17,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
  * Created by Cheney on 2017/1/10.
  */
 class RouterPlugin implements Plugin<Project> {
+    static final String APT_OPTION_NAME = "moduleName"
 
     @Override
     void apply(Project project) {
@@ -46,10 +49,27 @@ class RouterPlugin implements Plugin<Project> {
             project.dependencies.add("annotationProcessor", "com.chenenyu.router:compiler:${compilerVersion}")
         }
 
+
         String validModuleName = project.name.replace('.', '_').replace('-', '_')
         project.afterEvaluate {
+            project.rootProject.subprojects.each {
+                if (it.plugins.hasPlugin(AppPlugin) && !it.plugins.hasPlugin(RouterPlugin)) {
+                    project.logger.error("Have you forgotten to apply plugin 'com.chenenyu.router' " +
+                            "in module: '${it.name}'?")
+                }
+            }
+
             if (project.plugins.hasPlugin(AppPlugin)) {
+                // Read template in advance, it can't be read in GenerateBuildInfoTask for some unknown reason.
+                String template
+                InputStream is = RouterPlugin.class.getResourceAsStream("/RouterBuildInfo.template")
+                new Scanner(is).with {
+                    template = it.useDelimiter("\\A").next()
+                }
+                File routerFolder = FileUtils.join(project.buildDir, "generated", "source", "router")
+
                 ((AppExtension) project.android).applicationVariants.all { ApplicationVariantImpl variant ->
+
                     Set<Project> libs = project.rootProject.subprojects.findAll {
                         it.plugins.hasPlugin(LibraryPlugin) && it.plugins.hasPlugin(RouterPlugin)
                     }
@@ -61,15 +81,51 @@ class RouterPlugin implements Plugin<Project> {
                     }
                     sb.append(validModuleName)
 
-                    // What the f**k, the flowing lines wasted me some days.
-                    // Inspired by com.android.build.gradle.tasks.factory.JavaCompileConfigAction.
-                    List args = variant.variantData.javacTask.options.compilerArgs
-                    args.add("-AmoduleName=${validModuleName}")
-                    args.add("-AallModules=${sb}")
+                    Task generateTask = project.tasks.create("generate${variant.name.capitalize()}BuildInfo", GenerateBuildInfoTask) {
+                        it.applicationVariant = variant
+                        it.routerFolder = routerFolder
+                        it.buildInfoContent = template.replaceAll("%ALL_MODULES%", sb.toString())
+                    }
+
+                    if (variant.javaCompile != null) {
+                        variant.javaCompile.dependsOn generateTask
+                        // add generated file to javac source
+                        variant.javaCompile.source(routerFolder)
+
+                        // Inspired by com.android.build.gradle.tasks.factory.JavaCompileConfigAction
+                        // javac apt
+                        List args = variant.javaCompile.options.compilerArgs
+                        args.add("-A${APT_OPTION_NAME}=${validModuleName}")
+                    }
+                    if (variant.variantData.jackTransform != null) {
+                        Task jackTask = project.tasks.findByName("transformJackWithJackFor${variant.name.capitalize()}")
+                        if (jackTask != null) {
+                            jackTask.dependsOn generateTask
+                        } else {
+                            project.logger.error("Can't find task `transformJackWithJackFor${variant.name.capitalize()}`")
+                        }
+                        // add generated file to jack source
+                        variant.variantData.jackTransform.addSource(routerFolder)
+
+                        // Inspired by com.android.build.gradle.internal.transforms.JackTransform
+                        // jack apt
+                        Map<String, String> args = variant.variantData.variantConfiguration.
+                                javaCompileOptions.annotationProcessorOptions.arguments
+                        args.put(APT_OPTION_NAME, validModuleName)
+                        variant.variantData.jackTransform.options.setAnnotationProcessorOptions(args)
+                    }
                 }
             } else {
                 ((LibraryExtension) project.android).libraryVariants.all { LibraryVariantImpl variant ->
-                    variant.variantData.javacTask.options.compilerArgs.add("-AmoduleName=${validModuleName}")
+                    if (variant.javaCompile != null) {
+                        variant.javaCompile.options.compilerArgs.add("-A${APT_OPTION_NAME}=${validModuleName}")
+                    }
+                    if (variant.variantData.jackTransform != null) {
+                        Map<String, String> args = variant.variantData.variantConfiguration.
+                                javaCompileOptions.annotationProcessorOptions.arguments
+                        args.put(APT_OPTION_NAME, validModuleName)
+                        variant.variantData.jackTransform.options.setAnnotationProcessorOptions(args)
+                    }
                 }
             }
         }
