@@ -32,6 +32,10 @@ android {
     }
 }
 
+Properties version = new Properties()
+version.load(project.file('../VERSION.properties').newDataInputStream())
+def annoVersion = version.getProperty("ANNOTATION_VERSION")
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -39,8 +43,8 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     provided "com.android.support:appcompat-v7:${rootProject.ext.supportVersion}"
-//    compile project(':annotation')
-    compile 'com.chenenyu.router:annotation:0.1.0'
+//    debugCompile project(':annotation')
+    compile "com.chenenyu.router:annotation:${annoVersion}"
 }
 
 apply from: 'publish.gradle'
