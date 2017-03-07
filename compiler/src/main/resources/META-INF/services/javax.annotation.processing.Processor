@@ -1,1 +1,2 @@
 com.chenenyu.router.compiler.RouterProcessor
+com.chenenyu.router.compiler.InterceptorProcessor
