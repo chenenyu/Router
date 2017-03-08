@@ -60,7 +60,7 @@ public class InterceptorProcessor extends AbstractProcessor {
 
         String moduleName = processingEnv.getOptions().get(OPTION_MODULE_NAME);
         if (moduleName != null) {
-            generateCode(moduleName, typeElements);
+            generateInterceptors(moduleName, typeElements);
         } else {
             error(null, "No option `%s` passed to annotation processor.", OPTION_MODULE_NAME);
         }
@@ -76,7 +76,7 @@ public class InterceptorProcessor extends AbstractProcessor {
                 processingEnv.getElementUtils().getTypeElement(INTERCEPTOR_INTERFACE).asType());
     }
 
-    private void generateCode(String moduleName, Set<TypeElement> elements) {
+    private void generateInterceptors(String moduleName, Set<TypeElement> elements) {
         /*
          * params
          */
@@ -90,7 +90,7 @@ public class InterceptorProcessor extends AbstractProcessor {
          * method
          */
         MethodSpec.Builder handleInterceptors = MethodSpec.methodBuilder(INTERCEPTORS_METHOD_NAME)
-                .addModifiers(Modifier.PUBLIC)
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(mapParameterSpec);
         for (TypeElement element : elements) {
             Interceptor interceptor = element.getAnnotation(Interceptor.class);
