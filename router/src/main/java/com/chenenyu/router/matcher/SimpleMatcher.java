@@ -13,7 +13,7 @@ import com.chenenyu.router.RouteOptions;
  * <p>
  * Created by Cheney on 2016/12/23.
  */
-public class SimpleMatcher extends Matcher {
+public class SimpleMatcher extends AbsMatcher {
 
     public SimpleMatcher(int priority) {
         super(priority);

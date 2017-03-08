@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Matcher registry.
+ * AbsMatcher registry.
  * <p>
  * Created by Cheney on 2017/1/5.
  */

@@ -14,7 +14,7 @@ import com.chenenyu.router.RouteOptions;
  * <p>
  * Created by Cheney on 2017/1/5.
  */
-public class BrowserMatcher extends Matcher {
+public class BrowserMatcher extends AbsMatcher {
     public BrowserMatcher(int priority) {
         super(priority);
     }

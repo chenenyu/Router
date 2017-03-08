@@ -20,7 +20,7 @@ import java.util.Map;
  * <p>
  * Created by Cheney on 2017/01/08.
  */
-public class ImplicitMatcher extends Matcher {
+public class ImplicitMatcher extends AbsMatcher {
     public ImplicitMatcher(int priority) {
         super(priority);
     }

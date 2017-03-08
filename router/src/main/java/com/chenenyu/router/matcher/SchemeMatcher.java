@@ -34,7 +34,7 @@ import java.util.Map;
  * <p>
  * Created by Cheney on 2016/12/30.
  */
-public class SchemeMatcher extends Matcher {
+public class SchemeMatcher extends AbsMatcher {
     public SchemeMatcher(int priority) {
         super(priority);
     }
