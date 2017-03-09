@@ -1,12 +1,12 @@
 package com.chenenyu.router.compiler;
 
 import com.chenenyu.router.annotation.Route;
-import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.WildcardTypeName;
 
@@ -163,7 +163,7 @@ public class RouteProcessor extends AbstractProcessor {
                 ClassName.get(Map.class),
                 ParameterizedTypeName.get(ClassName.get(Class.class),
                         WildcardTypeName.subtypeOf(ClassName.get(activityType))),
-                ArrayTypeName.get(String[].class));
+                TypeName.get(String[].class));
         ParameterSpec mapParameterSpec = ParameterSpec.builder(mapTypeName, "map").build();
         MethodSpec.Builder handleInterceptorTable = MethodSpec.methodBuilder(INTERCEPTOR_TABLE_METHOD_NAME)
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
