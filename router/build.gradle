@@ -43,7 +43,7 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     provided "com.android.support:appcompat-v7:${rootProject.ext.supportVersion}"
-//    debugCompile project(':annotation')
+//    compile project(':annotation')
     compile "com.chenenyu.router:annotation:${annoVersion}"
 }
 

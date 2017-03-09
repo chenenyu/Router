@@ -2,8 +2,6 @@
 
 # Router
 
-> A *component* based router library, featuring simple and flexible.
-
 建议浏览[中文wiki](https://github.com/chenenyu/Router/wiki).
 
 ![screenshot](static/screenshot.gif)
@@ -25,7 +23,7 @@ buildscript {
     }
 }
 
-// Optional. Specify the dependencies version, default to the latest version.
+// Optional, defaults to the latest version. 可选配置，默认为最新版本.
 ext {
     ...
 	routerVersion = "x.y.z"
@@ -38,7 +36,7 @@ ext {
 ```  Groovy
 apply plugin: 'com.android.application/library'
 apply plugin: 'com.chenenyu.router'
-```  
+```
 
 current `router-gradle-plugin` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router-gradle-plugin/images/download.svg)
 
@@ -46,12 +44,13 @@ current `router` version: ![Download](https://api.bintray.com/packages/chenenyu/
 
 current `router-compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg)  
 
-|router-gradle-plugin version|router version|router-compiler version|
-|:---:|:---:|:---:|
-|0.1.0|0.4.0|0.2.0|
-|0.2.0|0.5.0|0.2.0|
-|0.3.0|0.7.0|0.3.0|
-|0.4.0|0.8.0|0.4.0|
+| gradle-plugin version | router version | compiler version |
+| :-------------------: | :------------: | :--------------: |
+|         0.1.0         |     0.4.0      |      0.2.0       |
+|         0.2.0         |     0.5.0      |      0.2.0       |
+|         0.3.0         |     0.7.0      |      0.3.0       |
+|         0.4.0         |     0.8.0      |      0.4.0       |
+|         0.5.0         |     0.9.0      |      0.5.0       |
 
 ## Simple usage
 
@@ -70,27 +69,6 @@ If you configured multiple route `@Route({"test","wtf"})`, both `test` and `wtf`
 
 ## Advanced usage
 
-The whole api looks like this:  
-
-```java
-Router.build(uri)
-	.extras(bundle)
-	.requestCode(int)
-	.anim(enter, exit)
-	.addFlags(int)
-	.callback(new RouteCallBack() {
-        @Override
-        public void succeed(Uri uri) {
-            Log.i(TAG, "succeed: " + uri.toString());
-        }
-
-        @Override
-        public void error(Uri uri, String message) {
-            Log.w(TAG, "error: " + uri + ", " + message);
-        }
-    }).go(this);
-```
-
 Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more informations.
 
 ## ProGuard
@@ -98,6 +76,7 @@ Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more inf
 ```Java
 # Router
 -keep class com.chenenyu.router.** {*;}
+-keep class * implements com.chenenyu.router.RouteInterceptor {*;}
 ```
 
 ## Contact
