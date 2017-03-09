@@ -13,15 +13,15 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.chenenyu.router.RouteCallback;
+import com.chenenyu.router.RouteResult;
 import com.chenenyu.router.RouteTable;
 import com.chenenyu.router.Router;
 
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private final String TAG = "MainActivity";
     private String uri;
-    private Button btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8;
+    private Button btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,18 +38,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn6 = (Button) findViewById(R.id.btn6);
         btn7 = (Button) findViewById(R.id.btn7);
         btn8 = (Button) findViewById(R.id.btn8);
+        btn9 = (Button) findViewById(R.id.btn9);
 
         editRoute.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
-
             @Override
             public void afterTextChanged(Editable s) {
                 uri = s.toString();
@@ -71,13 +69,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v == btn0) {
             Router.build(uri).callback(new RouteCallback() { // 添加结果回调
                 @Override
-                public void succeed(Uri uri) {
-                    Toast.makeText(MainActivity.this, "succeed: " + uri.toString(), Toast.LENGTH_SHORT).show();
-                }
+                public void callback(RouteResult state, Uri uri, String message) {
+                    if (state == RouteResult.SUCCEED) {
+                        Toast.makeText(MainActivity.this, "succeed: " + uri.toString(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "error: " + uri + ", " + message, Toast.LENGTH_SHORT).show();
 
-                @Override
-                public void error(Uri uri, String message) {
-                    Toast.makeText(MainActivity.this, "error: " + uri + ", " + message, Toast.LENGTH_SHORT).show();
+                    }
                 }
             }).go(this);
         } else if (v == btn1) {
@@ -99,6 +97,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Router.build("module1").go(this);
         } else if (v == btn8) {
             Router.build("module2").go(this);
+        } else if (v == btn9) {
+            Router.build("intercepted").callback(new RouteCallback() {
+                @Override
+                public void callback(RouteResult state, Uri uri, String message) {
+                    if (state == RouteResult.INTERCEPTED) {
+                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }).go(this);
         }
     }
 

@@ -13,9 +13,7 @@ public class App extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         // 开启log
-        if (BuildConfig.DEBUG) {
-            Router.openLog();
-        }
+        Router.openLog();
         Router.initialize(this);
     }
 }

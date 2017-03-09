@@ -26,18 +26,22 @@
         <activity
             android:name=".ForResultActivity"
             android:label="ForResultActivity"/>
-
         <activity
             android:name=".ImplicitActivity"
             android:label="ImplicitActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
+
                 <data
                     android:host="host"
                     android:scheme="router"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name=".InterceptedActivity"
+            android:label="InterceptedActivity"/>
     </application>
 
 </manifest>
