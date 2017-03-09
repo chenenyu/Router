@@ -14,11 +14,12 @@ import java.util.List;
  * <p>
  * Created by Cheney on 2016/12/20.
  */
+@SuppressWarnings("unused")
 public class Router {
-    private static List<RouteInterceptor> mRouteInterceptors = new ArrayList<>();
+    private static List<RouteInterceptor> mGlobalInterceptors = new ArrayList<>();
 
     public static void initialize(Context context) {
-        RealRouter.get().initMapping();
+        RealRouter.get().init();
     }
 
     public static void openLog() {
@@ -37,12 +38,32 @@ public class Router {
         RealRouter.get().addRouteTable(routeTable);
     }
 
+    /**
+     * Deprecated.<p>
+     * Use {@link #addGlobalInterceptor(RouteInterceptor)} instead.<p>
+     * To be removed in a future release.
+     */
+    @Deprecated
     public static void addRouteInterceptor(RouteInterceptor routeInterceptor) {
-        mRouteInterceptors.add(routeInterceptor);
+        mGlobalInterceptors.add(routeInterceptor);
     }
 
+    /**
+     * Deprecated.<p>
+     * Use {@link #getGlobalInterceptors()} instead.<p>
+     * To be removed in a future release.
+     */
+    @Deprecated
     public static List<RouteInterceptor> getRouteInterceptors() {
-        return mRouteInterceptors;
+        return mGlobalInterceptors;
+    }
+
+    public static void addGlobalInterceptor(RouteInterceptor routeInterceptor) {
+        mGlobalInterceptors.add(routeInterceptor);
+    }
+
+    public static List<RouteInterceptor> getGlobalInterceptors() {
+        return mGlobalInterceptors;
     }
 
     public static void registerMatcher(Matcher matcher) {

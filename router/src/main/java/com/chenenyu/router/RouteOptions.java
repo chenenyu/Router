@@ -74,17 +74,4 @@ public class RouteOptions {
     public int getExitAnim() {
         return exitAnim;
     }
-
-    /**
-     * Reset fields.
-     */
-    public void reset() {
-        flags = 0;
-        requestCode = -1;
-        callback = null;
-        bundle = null;
-        enterAnim = 0;
-        exitAnim = 0;
-        skipInterceptors = false;
-    }
 }

@@ -13,6 +13,7 @@ import com.chenenyu.router.matcher.MatcherRegistry;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +25,18 @@ import java.util.Set;
  * Created by Cheney on 2016/12/20.
  */
 public class RealRouter {
+    // Uri -> Activity
+    private Map<String, Class<? extends Activity>> mActivityTable = new HashMap<>();
+    // Activity -> mInterceptors' name
+    private Map<Class<? extends Activity>, String[]> mInterceptorTable = new HashMap<>();
+    // interceptor's name -> interceptor
+    private Map<String, Class<? extends RouteInterceptor>> mInterceptors = new HashMap<>();
+    // interceptor's name -> interceptor instance
+    private Map<String, RouteInterceptor> mInterceptorInstance = new HashMap<>();
+
     private static RealRouter instance;
-    private Map<String, Class<? extends Activity>> mapping = new HashMap<>();
     private boolean initialized = false;
-    private RouteOptions routeOptions = new RouteOptions();
+    private RouteOptions mRouteOptions = new RouteOptions();
     private Uri uri;
 
     private RealRouter() {
@@ -50,24 +59,24 @@ public class RealRouter {
      */
     private void reset() {
         uri = null;
-        routeOptions.reset();
+        mRouteOptions = new RouteOptions();
     }
 
     /**
-     * Init route table.
+     * Init.
      */
-    synchronized void initMapping() {
+    synchronized void init() {
         if (initialized) {
-            RLog.e("Initialized mapping.");
             return;
         } else {
             initialized = true;
         }
 
+        /* RouterBuildInfo */
         String[] modules;
         try {
-            Class<?> buildInfo = Class.forName("com.chenenyu.router.RouterBuildInfo");
-            Field allModules = buildInfo.getField("ALL_MODULES");
+            Class<?> buildInfo = Class.forName(Consts.PACKAGE_NAME + Consts.DOT + Consts.ROUTER_BUILD_INFO);
+            Field allModules = buildInfo.getField(Consts.BUILD_INFO_FIELD);
             String modules_name = (String) allModules.get(buildInfo);
             modules = modules_name.split(",");
         } catch (ClassNotFoundException e) {
@@ -78,20 +87,48 @@ public class RealRouter {
             return;
         }
 
+        /* RouteTable */
         try {
             String fullTableName;
             for (String moduleName : modules) {
-                fullTableName = "com.chenenyu.router." + capitalize(moduleName) + "RouteTable";
-                Class<?> moduleRouteTable = Class.forName(fullTableName);
-                Constructor constructor = moduleRouteTable.getConstructor();
+                fullTableName = Consts.PACKAGE_NAME + Consts.DOT + capitalize(moduleName) + Consts.ROUTE_TABLE;
+                Class<?> routeTableClz = Class.forName(fullTableName);
+                Constructor constructor = routeTableClz.getConstructor();
                 RouteTable instance = (RouteTable) constructor.newInstance();
-                instance.handleActivityTable(mapping);
+                instance.handleActivityTable(mActivityTable);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            RLog.i(e.getMessage());
         }
+        RLog.i("RouteTable", mActivityTable.toString());
 
-        RLog.i("RouteTable", mapping.toString());
+        /* InterceptorTable */
+        String interceptorTableName;
+        for (String moduleName : modules) {
+            try {
+                interceptorTableName = Consts.PACKAGE_NAME + Consts.DOT + capitalize(moduleName) + Consts.INTERCEPTOR_TABLE;
+                Class<?> interceptorTableClz = Class.forName(interceptorTableName);
+                Method handleInterceptorTable = interceptorTableClz.getMethod(Consts.HANDLE_INTERCEPTOR_TABLE, Map.class);
+                handleInterceptorTable.invoke(null, mInterceptorTable);
+            } catch (Exception e) {
+                RLog.i(String.format("There is no interceptor table in module: %s.", moduleName));
+            }
+        }
+        RLog.i("InterceptorTable", mInterceptorTable.toString());
+
+        /* Interceptors */
+        String interceptorName;
+        for (String moduleName : modules) {
+            try {
+                interceptorName = Consts.PACKAGE_NAME + Consts.DOT + capitalize(moduleName) + Consts.INTERCEPTORS;
+                Class<?> interceptorClz = Class.forName(interceptorName);
+                Method handleInterceptors = interceptorClz.getMethod(Consts.HANDLE_INTERCEPTORS, Map.class);
+                handleInterceptors.invoke(null, mInterceptors);
+            } catch (Exception e) {
+                RLog.i(String.format("There are no interceptors in module: %s.", moduleName));
+            }
+        }
+        RLog.i("Interceptors", mInterceptors.toString());
     }
 
     private String capitalize(CharSequence self) {
@@ -107,7 +144,7 @@ public class RealRouter {
      */
     void addRouteTable(RouteTable routeTable) {
         if (routeTable != null) {
-            routeTable.handleActivityTable(mapping);
+            routeTable.handleActivityTable(mActivityTable);
         }
     }
 
@@ -126,7 +163,7 @@ public class RealRouter {
      * @return this
      */
     public RealRouter callback(RouteCallback callback) {
-        routeOptions.setCallback(callback);
+        mRouteOptions.setCallback(callback);
         return this;
     }
 
@@ -138,7 +175,7 @@ public class RealRouter {
      */
     public RealRouter requestCode(int requestCode) {
         if (requestCode >= 0) {
-            routeOptions.setRequestCode(requestCode);
+            mRouteOptions.setRequestCode(requestCode);
         } else {
             RLog.w("Invalid requestCode");
         }
@@ -152,7 +189,7 @@ public class RealRouter {
      * @return this
      */
     public RealRouter extras(Bundle extras) {
-        routeOptions.setBundle(extras);
+        mRouteOptions.setBundle(extras);
         return this;
     }
 
@@ -163,8 +200,9 @@ public class RealRouter {
      * @return this
      * @see Intent#addFlags(int)
      */
+    @SuppressWarnings("unused")
     public RealRouter addFlags(int flags) {
-        routeOptions.addFlags(flags);
+        mRouteOptions.addFlags(flags);
         return this;
     }
 
@@ -179,96 +217,31 @@ public class RealRouter {
      * @see Activity#overridePendingTransition(int, int)
      */
     public RealRouter anim(@AnimRes int enterAnim, @AnimRes int exitAnim) {
-        routeOptions.setAnim(enterAnim, exitAnim);
+        mRouteOptions.setAnim(enterAnim, exitAnim);
         return this;
     }
 
     /**
-     * Green channel, i.e. skip all the interceptors.
+     * Green channel, i.e. skip all the mInterceptors.
      *
      * @return this
      */
+    @SuppressWarnings("unused")
     public RealRouter skipInterceptors() {
-        routeOptions.setSkipInterceptors(true);
+        mRouteOptions.setSkipInterceptors(true);
         return this;
     }
 
     /**
-     * {@link RouteCallback} succeed.
-     *
-     * @param uri Uri
+     * {@link RouteCallback}.
      */
-    private void succeed(Uri uri) {
-        if (routeOptions.getCallback() != null) {
-            routeOptions.getCallback().succeed(uri);
+    private void callback(RouteResult state, String msg) {
+        if (state != RouteResult.SUCCEED) {
+            RLog.e(msg);
         }
-    }
-
-    /**
-     * {@link RouteCallback} error.
-     *
-     * @param uri     Uri
-     * @param message Error message
-     */
-    private void error(Uri uri, String message) {
-        RLog.e(message);
-        if (routeOptions.getCallback() != null) {
-            routeOptions.getCallback().error(uri, message);
+        if (mRouteOptions.getCallback() != null) {
+            mRouteOptions.getCallback().callback(state, uri, msg);
         }
-    }
-
-    /**
-     * Generate an {@link Intent} according to the given uri.
-     *
-     * @param context Strongly recommend an activity instance.
-     * @return Intent
-     */
-    @Nullable
-    public Intent getIntent(Context context) {
-        if (uri == null) {
-            error(null, "uri == null.");
-            return null;
-        }
-
-        if (!routeOptions.isSkipInterceptors()) {
-            for (RouteInterceptor interceptor : Router.getRouteInterceptors()) {
-                if (interceptor.intercept(context, uri, routeOptions.getBundle())) {
-                    error(uri, "intercepted.");
-                    return null;
-                }
-            }
-        }
-
-        List<Matcher> matcherList = MatcherRegistry.getMatcher();
-        if (matcherList.isEmpty()) {
-            error(uri, "The MatcherRegistry contains no Matcher.");
-            return null;
-        }
-
-        Set<Map.Entry<String, Class<? extends Activity>>> entries = mapping.entrySet();
-
-        for (Matcher matcher : matcherList) {
-            if (mapping.isEmpty()) {
-                if (matcher.match(context, uri, null, routeOptions)) {
-                    RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                    Intent intent = matcher.onMatched(context, uri, null);
-                    assembleIntent(context, intent, routeOptions);
-                    return intent;
-                }
-            } else {
-                for (Map.Entry<String, Class<? extends Activity>> entry : entries) {
-                    if (matcher.match(context, uri, entry.getKey(), routeOptions)) {
-                        RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                        Intent intent = matcher.onMatched(context, uri, entry.getValue());
-                        assembleIntent(context, intent, routeOptions);
-                        return intent;
-                    }
-                }
-            }
-        }
-
-        error(uri, "Can not find an Activity that matches the given uri: " + uri);
-        return null;
     }
 
     private void assembleIntent(Context context, Intent intent, RouteOptions routeOptions) {
@@ -286,6 +259,91 @@ public class RealRouter {
         }
     }
 
+    private boolean intercept(Context context, Class<? extends Activity> target) {
+        if (mInterceptorTable.isEmpty()) {
+            return false;
+        }
+        String[] interceptors = mInterceptorTable.get(target);
+        if (interceptors != null && interceptors.length > 0) {
+            for (String name : interceptors) {
+                RouteInterceptor interceptor = mInterceptorInstance.get(name);
+                if (interceptor == null) {
+                    Class<? extends RouteInterceptor> clz = mInterceptors.get(name);
+                    try {
+                        Constructor<? extends RouteInterceptor> constructor = clz.getConstructor();
+                        interceptor = constructor.newInstance();
+                        mInterceptorInstance.put(name, interceptor);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (interceptor != null && interceptor.intercept(context, uri, mRouteOptions.getBundle())) {
+                    callback(RouteResult.INTERCEPTED, String.format("Intercepted by interceptor: %s.", name));
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Generate an {@link Intent} according to the given uri.
+     *
+     * @param context Strongly recommend an activity instance.
+     * @return Intent
+     */
+    @Nullable
+    @SuppressWarnings("WeakerAccess")
+    public Intent getIntent(Context context) {
+        if (uri == null) {
+            callback(RouteResult.FAILED, "uri == null.");
+            return null;
+        }
+
+        if (!mRouteOptions.isSkipInterceptors()) {
+            for (RouteInterceptor interceptor : Router.getGlobalInterceptors()) {
+                if (interceptor.intercept(context, uri, mRouteOptions.getBundle())) {
+                    callback(RouteResult.INTERCEPTED, "Intercepted by global interceptor.");
+                    return null;
+                }
+            }
+        }
+
+        List<Matcher> matchers = MatcherRegistry.getMatcher();
+        if (matchers.isEmpty()) {
+            callback(RouteResult.FAILED, "The MatcherRegistry contains no Matcher.");
+            return null;
+        }
+
+        Set<Map.Entry<String, Class<? extends Activity>>> entries = mActivityTable.entrySet();
+
+        for (Matcher matcher : matchers) {
+            if (mActivityTable.isEmpty()) {
+                if (matcher.match(context, uri, null, mRouteOptions)) {
+                    RLog.i("Caught by " + matcher.getClass().getCanonicalName());
+                    Intent intent = matcher.onMatched(context, uri, null);
+                    assembleIntent(context, intent, mRouteOptions);
+                    return intent;
+                }
+            } else {
+                for (Map.Entry<String, Class<? extends Activity>> entry : entries) {
+                    if (matcher.match(context, uri, entry.getKey(), mRouteOptions)) {
+                        RLog.i("Caught by " + matcher.getClass().getCanonicalName());
+                        if (intercept(context, entry.getValue())) {
+                            return null;
+                        }
+                        Intent intent = matcher.onMatched(context, uri, entry.getValue());
+                        assembleIntent(context, intent, mRouteOptions);
+                        return intent;
+                    }
+                }
+            }
+        }
+
+        callback(RouteResult.FAILED, "Can not find an Activity that matches the given uri: " + uri);
+        return null;
+    }
+
     /**
      * Execute transition.
      *
@@ -296,9 +354,9 @@ public class RealRouter {
         if (intent == null) {
             return;
         }
-        if (routeOptions.getRequestCode() >= 0) {
+        if (mRouteOptions.getRequestCode() >= 0) {
             if (context instanceof Activity) {
-                ((Activity) context).startActivityForResult(intent, routeOptions.getRequestCode());
+                ((Activity) context).startActivityForResult(intent, mRouteOptions.getRequestCode());
             } else {
                 RLog.w("Please pass an Activity context to call method 'startActivityForResult'");
                 context.startActivity(intent);
@@ -306,13 +364,13 @@ public class RealRouter {
         } else {
             context.startActivity(intent);
         }
-        if (routeOptions.getEnterAnim() != 0 && routeOptions.getExitAnim() != 0
+        if (mRouteOptions.getEnterAnim() != 0 && mRouteOptions.getExitAnim() != 0
                 && context instanceof Activity) {
             // Add transition animation.
             ((Activity) context).overridePendingTransition(
-                    routeOptions.getEnterAnim(), routeOptions.getExitAnim());
+                    mRouteOptions.getEnterAnim(), mRouteOptions.getExitAnim());
         }
-        succeed(uri);
+        callback(RouteResult.SUCCEED, null);
     }
 
 }
