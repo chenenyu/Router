@@ -13,9 +13,9 @@ import com.chenenyu.router.RouteOptions;
  * <p>
  * Created by Cheney on 2016/12/23.
  */
-public class SimpleMatcher extends AbsMatcher {
+public class DirectMatcher extends AbsMatcher {
 
-    public SimpleMatcher(int priority) {
+    public DirectMatcher(int priority) {
         super(priority);
     }
 

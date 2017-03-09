@@ -14,7 +14,7 @@ public class MatcherRegistry {
     private static final List<Matcher> registry = new ArrayList<>();
 
     static {
-        registry.add(new SimpleMatcher(0x1000));
+        registry.add(new DirectMatcher(0x1000));
         registry.add(new SchemeMatcher(0x0100));
         registry.add(new ImplicitMatcher(0x0010));
         registry.add(new BrowserMatcher(0x0000));
