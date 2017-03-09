@@ -7,7 +7,12 @@ import android.net.Uri;
  * Created by Cheney on 2016/12/20.
  */
 public interface RouteCallback {
-    void succeed(Uri uri);
-
-    void error(Uri uri, String message);
+    /**
+     * Callback
+     *
+     * @param state   {@link RouteResult}
+     * @param uri     Uri
+     * @param message notice msg
+     */
+    void callback(RouteResult state, Uri uri, String message);
 }
