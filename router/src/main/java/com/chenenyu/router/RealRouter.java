@@ -8,8 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.AnimRes;
 import android.support.annotation.Nullable;
 
-import com.chenenyu.router.matcher.BrowserMatcher;
-import com.chenenyu.router.matcher.ImplicitMatcher;
+import com.chenenyu.router.matcher.AbsImplicitMatcher;
 import com.chenenyu.router.matcher.Matcher;
 import com.chenenyu.router.matcher.MatcherRegistry;
 
@@ -340,8 +339,8 @@ public class RealRouter {
                 for (Map.Entry<String, Class<? extends Activity>> entry : entries) {
                     if (matcher.match(context, uri, entry.getKey(), mRouteOptions)) {
                         RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                        if (!(matcher instanceof ImplicitMatcher) &&
-                                !(matcher instanceof BrowserMatcher) &&
+                        // Ignore implicit intent.
+                        if (!(matcher instanceof AbsImplicitMatcher) &&
                                 intercept(context, entry.getValue())) {
                             return null;
                         }
