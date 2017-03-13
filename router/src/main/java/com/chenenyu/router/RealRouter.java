@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.AnimRes;
 import android.support.annotation.Nullable;
 
+import com.chenenyu.router.matcher.AbsImplicitMatcher;
 import com.chenenyu.router.matcher.Matcher;
 import com.chenenyu.router.matcher.MatcherRegistry;
 
@@ -75,12 +76,14 @@ public class RealRouter {
         /* RouterBuildInfo */
         String[] modules;
         try {
-            Class<?> buildInfo = Class.forName(Consts.PACKAGE_NAME + Consts.DOT + Consts.ROUTER_BUILD_INFO);
+            Class<?> buildInfo = Class.forName(Consts.PACKAGE_NAME + Consts.DOT +
+                    Consts.ROUTER_BUILD_INFO);
             Field allModules = buildInfo.getField(Consts.BUILD_INFO_FIELD);
             String modules_name = (String) allModules.get(buildInfo);
             modules = modules_name.split(",");
         } catch (ClassNotFoundException e) {
-            RLog.e("Initialization failed, have you forgotten to apply plugin: 'com.chenenyu.router' in application module");
+            RLog.e("Initialization failed, have you forgotten to apply plugin: " +
+                    "'com.chenenyu.router' in application module");
             return;
         } catch (Exception e) {
             e.printStackTrace();
@@ -91,7 +94,8 @@ public class RealRouter {
         try {
             String fullTableName;
             for (String moduleName : modules) {
-                fullTableName = Consts.PACKAGE_NAME + Consts.DOT + capitalize(moduleName) + Consts.ROUTE_TABLE;
+                fullTableName = Consts.PACKAGE_NAME + Consts.DOT + capitalize(moduleName) +
+                        Consts.ROUTE_TABLE;
                 Class<?> routeTableClz = Class.forName(fullTableName);
                 Constructor constructor = routeTableClz.getConstructor();
                 RouteTable instance = (RouteTable) constructor.newInstance();
@@ -106,9 +110,11 @@ public class RealRouter {
         String interceptorTableName;
         for (String moduleName : modules) {
             try {
-                interceptorTableName = Consts.PACKAGE_NAME + Consts.DOT + capitalize(moduleName) + Consts.INTERCEPTOR_TABLE;
+                interceptorTableName = Consts.PACKAGE_NAME + Consts.DOT + capitalize(moduleName) +
+                        Consts.INTERCEPTOR_TABLE;
                 Class<?> interceptorTableClz = Class.forName(interceptorTableName);
-                Method handleInterceptorTable = interceptorTableClz.getMethod(Consts.HANDLE_INTERCEPTOR_TABLE, Map.class);
+                Method handleInterceptorTable = interceptorTableClz.getMethod(
+                        Consts.HANDLE_INTERCEPTOR_TABLE, Map.class);
                 handleInterceptorTable.invoke(null, mInterceptorTable);
             } catch (Exception e) {
                 RLog.i(String.format("There is no interceptor table in module: %s.", moduleName));
@@ -120,9 +126,11 @@ public class RealRouter {
         String interceptorName;
         for (String moduleName : modules) {
             try {
-                interceptorName = Consts.PACKAGE_NAME + Consts.DOT + capitalize(moduleName) + Consts.INTERCEPTORS;
+                interceptorName = Consts.PACKAGE_NAME + Consts.DOT + capitalize(moduleName) +
+                        Consts.INTERCEPTORS;
                 Class<?> interceptorClz = Class.forName(interceptorName);
-                Method handleInterceptors = interceptorClz.getMethod(Consts.HANDLE_INTERCEPTORS, Map.class);
+                Method handleInterceptors = interceptorClz.getMethod(Consts.HANDLE_INTERCEPTORS,
+                        Map.class);
                 handleInterceptors.invoke(null, mInterceptors);
             } catch (Exception e) {
                 RLog.i(String.format("There are no interceptors in module: %s.", moduleName));
@@ -277,8 +285,10 @@ public class RealRouter {
                         e.printStackTrace();
                     }
                 }
-                if (interceptor != null && interceptor.intercept(context, uri, mRouteOptions.getBundle())) {
-                    callback(RouteResult.INTERCEPTED, String.format("Intercepted by interceptor: %s.", name));
+                if (interceptor != null && interceptor.intercept(context, uri,
+                        mRouteOptions.getBundle())) {
+                    callback(RouteResult.INTERCEPTED,
+                            String.format("Intercepted by interceptor: %s.", name));
                     return true;
                 }
             }
@@ -329,7 +339,9 @@ public class RealRouter {
                 for (Map.Entry<String, Class<? extends Activity>> entry : entries) {
                     if (matcher.match(context, uri, entry.getKey(), mRouteOptions)) {
                         RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                        if (intercept(context, entry.getValue())) {
+                        // Ignore implicit intent.
+                        if (!(matcher instanceof AbsImplicitMatcher) &&
+                                intercept(context, entry.getValue())) {
                             return null;
                         }
                         Intent intent = matcher.onMatched(context, uri, entry.getValue());

@@ -1,8 +1,6 @@
 package com.chenenyu.router.matcher;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -34,7 +32,7 @@ import java.util.Map;
  * <p>
  * Created by Cheney on 2016/12/30.
  */
-public class SchemeMatcher extends AbsMatcher {
+public class SchemeMatcher extends AbsExplicitMatcher {
     public SchemeMatcher(int priority) {
         super(priority);
     }
@@ -82,14 +80,6 @@ public class SchemeMatcher extends AbsMatcher {
             }
         }
         return false;
-    }
-
-    @Override
-    public Intent onMatched(Context context, Uri uri, @Nullable Class<? extends Activity> target) {
-        if (target == null) {
-            return null;
-        }
-        return new Intent(context, target);
     }
 
     /**

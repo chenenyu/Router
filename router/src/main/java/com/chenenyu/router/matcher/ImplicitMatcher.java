@@ -1,6 +1,5 @@
 package com.chenenyu.router.matcher;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,11 +15,11 @@ import java.util.Map;
 /**
  * Support for <strong>implicit intent</strong> exclude scheme "http(s)",
  * cause we may want to resolve them in custom matcher, such as {@link SchemeMatcher},
- * otherwise the {@link BrowserMatcher} will bring up the rear.
+ * or {@link BrowserMatcher}.
  * <p>
  * Created by Cheney on 2017/01/08.
  */
-public class ImplicitMatcher extends AbsMatcher {
+public class ImplicitMatcher extends AbsImplicitMatcher {
     public ImplicitMatcher(int priority) {
         super(priority);
     }
@@ -51,10 +50,4 @@ public class ImplicitMatcher extends AbsMatcher {
         }
         return false;
     }
-
-    @Override
-    public Intent onMatched(Context context, Uri uri, @Nullable Class<? extends Activity> target) {
-        return new Intent(Intent.ACTION_VIEW, uri);
-    }
-
 }

@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import java.util.Map;
 
 /**
- * Abstract matcher. You can extends it to customize your own rule.
+ * Abstract matcher.
  * <p>
  * Created by Cheney on 2016/12/23.
  */
