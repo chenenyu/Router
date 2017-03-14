@@ -13,8 +13,6 @@ import com.chenenyu.router.matcher.Matcher;
 import com.chenenyu.router.matcher.MatcherRegistry;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +24,6 @@ import java.util.Set;
  * Created by Cheney on 2016/12/20.
  */
 public class RealRouter {
-    // Uri -> Activity
-    private Map<String, Class<? extends Activity>> mActivityTable = new HashMap<>();
-    // Activity -> mInterceptors' name
-    private Map<Class<? extends Activity>, String[]> mInterceptorTable = new HashMap<>();
-    // interceptor's name -> interceptor
-    private Map<String, Class<? extends RouteInterceptor>> mInterceptors = new HashMap<>();
     // interceptor's name -> interceptor instance
     private Map<String, RouteInterceptor> mInterceptorInstance = new HashMap<>();
 
@@ -72,76 +64,7 @@ public class RealRouter {
         } else {
             initialized = true;
         }
-
-        /* RouterBuildInfo */
-        String[] modules;
-        try {
-            Class<?> buildInfo = Class.forName(Consts.PACKAGE_NAME + Consts.DOT +
-                    Consts.ROUTER_BUILD_INFO);
-            Field allModules = buildInfo.getField(Consts.BUILD_INFO_FIELD);
-            String modules_name = (String) allModules.get(buildInfo);
-            modules = modules_name.split(",");
-        } catch (ClassNotFoundException e) {
-            RLog.e("Initialization failed, have you forgotten to apply plugin: " +
-                    "'com.chenenyu.router' in application module");
-            return;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
-
-        /* RouteTable */
-        try {
-            String fullTableName;
-            for (String moduleName : modules) {
-                fullTableName = Consts.PACKAGE_NAME + Consts.DOT + capitalize(moduleName) +
-                        Consts.ROUTE_TABLE;
-                Class<?> routeTableClz = Class.forName(fullTableName);
-                Constructor constructor = routeTableClz.getConstructor();
-                RouteTable instance = (RouteTable) constructor.newInstance();
-                instance.handleActivityTable(mActivityTable);
-            }
-        } catch (Exception e) {
-            RLog.i(e.getMessage());
-        }
-        RLog.i("RouteTable", mActivityTable.toString());
-
-        /* InterceptorTable */
-        String interceptorTableName;
-        for (String moduleName : modules) {
-            try {
-                interceptorTableName = Consts.PACKAGE_NAME + Consts.DOT + capitalize(moduleName) +
-                        Consts.INTERCEPTOR_TABLE;
-                Class<?> interceptorTableClz = Class.forName(interceptorTableName);
-                Method handleInterceptorTable = interceptorTableClz.getMethod(
-                        Consts.HANDLE_INTERCEPTOR_TABLE, Map.class);
-                handleInterceptorTable.invoke(null, mInterceptorTable);
-            } catch (Exception e) {
-                RLog.i(String.format("There is no interceptor table in module: %s.", moduleName));
-            }
-        }
-        RLog.i("InterceptorTable", mInterceptorTable.toString());
-
-        /* Interceptors */
-        String interceptorName;
-        for (String moduleName : modules) {
-            try {
-                interceptorName = Consts.PACKAGE_NAME + Consts.DOT + capitalize(moduleName) +
-                        Consts.INTERCEPTORS;
-                Class<?> interceptorClz = Class.forName(interceptorName);
-                Method handleInterceptors = interceptorClz.getMethod(Consts.HANDLE_INTERCEPTORS,
-                        Map.class);
-                handleInterceptors.invoke(null, mInterceptors);
-            } catch (Exception e) {
-                RLog.i(String.format("There are no interceptors in module: %s.", moduleName));
-            }
-        }
-        RLog.i("Interceptors", mInterceptors.toString());
-    }
-
-    private String capitalize(CharSequence self) {
-        return self.length() == 0 ? "" :
-                "" + Character.toUpperCase(self.charAt(0)) + self.subSequence(1, self.length());
+        AptHub.init();
     }
 
     /**
@@ -152,7 +75,7 @@ public class RealRouter {
      */
     void addRouteTable(RouteTable routeTable) {
         if (routeTable != null) {
-            routeTable.handleActivityTable(mActivityTable);
+            routeTable.handleActivityTable(AptHub.activityTable);
         }
     }
 
@@ -230,7 +153,7 @@ public class RealRouter {
     }
 
     /**
-     * Green channel, i.e. skip all the mInterceptors.
+     * Green channel, i.e. skip all the interceptors.
      *
      * @return this
      */
@@ -268,15 +191,15 @@ public class RealRouter {
     }
 
     private boolean intercept(Context context, Class<? extends Activity> target) {
-        if (mInterceptorTable.isEmpty()) {
+        if (AptHub.interceptorTable.isEmpty()) {
             return false;
         }
-        String[] interceptors = mInterceptorTable.get(target);
+        String[] interceptors = AptHub.interceptorTable.get(target);
         if (interceptors != null && interceptors.length > 0) {
             for (String name : interceptors) {
                 RouteInterceptor interceptor = mInterceptorInstance.get(name);
                 if (interceptor == null) {
-                    Class<? extends RouteInterceptor> clz = mInterceptors.get(name);
+                    Class<? extends RouteInterceptor> clz = AptHub.interceptors.get(name);
                     try {
                         Constructor<? extends RouteInterceptor> constructor = clz.getConstructor();
                         interceptor = constructor.newInstance();
@@ -325,10 +248,10 @@ public class RealRouter {
             return null;
         }
 
-        Set<Map.Entry<String, Class<? extends Activity>>> entries = mActivityTable.entrySet();
+        Set<Map.Entry<String, Class<? extends Activity>>> entries = AptHub.activityTable.entrySet();
 
         for (Matcher matcher : matchers) {
-            if (mActivityTable.isEmpty()) {
+            if (AptHub.activityTable.isEmpty()) {
                 if (matcher.match(context, uri, null, mRouteOptions)) {
                     RLog.i("Caught by " + matcher.getClass().getCanonicalName());
                     Intent intent = matcher.onMatched(context, uri, null);

@@ -16,14 +16,21 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public class Router {
-    private static List<RouteInterceptor> mGlobalInterceptors = new ArrayList<>();
+    private static List<RouteInterceptor> sGlobalInterceptors = new ArrayList<>();
+
+    private static boolean sDebuggable = false;
 
     public static void initialize(Context context) {
         RealRouter.get().init();
     }
 
-    public static void openLog() {
-        RLog.openLog();
+    public static boolean isDebuggable() {
+        return sDebuggable;
+    }
+
+    public static void setDebuggable(boolean debuggable) {
+        RLog.showLog(debuggable);
+        sDebuggable = debuggable;
     }
 
     public static RealRouter build(String path) {
@@ -38,32 +45,12 @@ public class Router {
         RealRouter.get().addRouteTable(routeTable);
     }
 
-    /**
-     * Deprecated.<p>
-     * Use {@link #addGlobalInterceptor(RouteInterceptor)} instead.<p>
-     * To be removed in a future release.
-     */
-    @Deprecated
-    public static void addRouteInterceptor(RouteInterceptor routeInterceptor) {
-        mGlobalInterceptors.add(routeInterceptor);
-    }
-
-    /**
-     * Deprecated.<p>
-     * Use {@link #getGlobalInterceptors()} instead.<p>
-     * To be removed in a future release.
-     */
-    @Deprecated
-    public static List<RouteInterceptor> getRouteInterceptors() {
-        return mGlobalInterceptors;
-    }
-
     public static void addGlobalInterceptor(RouteInterceptor routeInterceptor) {
-        mGlobalInterceptors.add(routeInterceptor);
+        sGlobalInterceptors.add(routeInterceptor);
     }
 
     public static List<RouteInterceptor> getGlobalInterceptors() {
-        return mGlobalInterceptors;
+        return sGlobalInterceptors;
     }
 
     public static void registerMatcher(Matcher matcher) {
