@@ -24,27 +24,26 @@ import java.util.Set;
  * Created by Cheney on 2016/12/20.
  */
 public class RealRouter {
+    private static RealRouter sInstance;
+
     // interceptor's name -> interceptor instance
     private Map<String, RouteInterceptor> mInterceptorInstance = new HashMap<>();
-
-    private static RealRouter instance;
-    private boolean initialized = false;
-    private RouteOptions mRouteOptions = new RouteOptions();
+    private RouteOptions mRouteOptions;
     private Uri uri;
 
     private RealRouter() {
     }
 
     static RealRouter get() {
-        if (instance == null) {
+        if (sInstance == null) {
             synchronized (RealRouter.class) {
-                if (instance == null) {
-                    instance = new RealRouter();
+                if (sInstance == null) {
+                    sInstance = new RealRouter();
                 }
             }
         }
-        instance.reset();
-        return instance;
+        sInstance.reset();
+        return sInstance;
     }
 
     /**
@@ -53,18 +52,6 @@ public class RealRouter {
     private void reset() {
         uri = null;
         mRouteOptions = new RouteOptions();
-    }
-
-    /**
-     * Init.
-     */
-    synchronized void init() {
-        if (initialized) {
-            return;
-        } else {
-            initialized = true;
-        }
-        AptHub.init();
     }
 
     /**
@@ -80,9 +67,6 @@ public class RealRouter {
     }
 
     RealRouter build(Uri uri) {
-        if (!initialized) {
-            throw new RuntimeException("Please initialize router first.");
-        }
         this.uri = uri;
         return this;
     }
@@ -168,7 +152,7 @@ public class RealRouter {
      */
     private void callback(RouteResult state, String msg) {
         if (state != RouteResult.SUCCEED) {
-            RLog.e(msg);
+            RLog.w(msg);
         }
         if (mRouteOptions.getCallback() != null) {
             mRouteOptions.getCallback().callback(state, uri, msg);
@@ -222,7 +206,7 @@ public class RealRouter {
     /**
      * Generate an {@link Intent} according to the given uri.
      *
-     * @param context Strongly recommend an activity instance.
+     * @param context Strongly recommend an activity sInstance.
      * @return Intent
      */
     @Nullable
@@ -282,7 +266,7 @@ public class RealRouter {
     /**
      * Execute transition.
      *
-     * @param context Strongly recommend an activity instance.
+     * @param context Strongly recommend an activity sInstance.
      */
     public void go(Context context) {
         Intent intent = getIntent(context);

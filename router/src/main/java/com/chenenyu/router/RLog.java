@@ -40,14 +40,10 @@ class RLog {
     }
 
     public static void e(String msg) {
-        if (sLoggable) {
-            Log.e(TAG, msg);
-        }
+        Log.e(TAG, msg);
     }
 
     public static void e(String msg, Throwable tr) {
-        if (sLoggable) {
-            Log.e(TAG, msg, tr);
-        }
+        Log.e(TAG, msg, tr);
     }
 }

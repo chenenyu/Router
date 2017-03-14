@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Hub for 'apt' class.
+ * Hub for 'apt' classes.
  * <p>
  * Created by Cheney on 2017/3/13.
  */

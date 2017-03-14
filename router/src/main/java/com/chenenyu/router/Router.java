@@ -21,7 +21,7 @@ public class Router {
     private static boolean sDebuggable = false;
 
     public static void initialize(Context context) {
-        RealRouter.get().init();
+        AptHub.init();
     }
 
     public static boolean isDebuggable() {
