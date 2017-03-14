@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.chenenyu.router.RouteInterceptor;
 import com.chenenyu.router.annotation.Interceptor;
@@ -18,6 +19,7 @@ import com.chenenyu.router.annotation.Interceptor;
 public class SampleInterceptor implements RouteInterceptor {
     @Override
     public boolean intercept(Context context, @NonNull Uri uri, @Nullable Bundle extras) {
+        Toast.makeText(context, "Intercepted by SampleInterceptor.", Toast.LENGTH_SHORT).show();
         return true;
     }
 }
