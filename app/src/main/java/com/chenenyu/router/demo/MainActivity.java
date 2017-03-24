@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Toast.makeText(MainActivity.this, "succeed: " + uri.toString(), Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(MainActivity.this, "error: " + uri + ", " + message, Toast.LENGTH_SHORT).show();
-
                     }
                 }
             }).go(this);
@@ -98,14 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (v == btn8) {
             Router.build("module2").go(this);
         } else if (v == btn9) {
-            Router.build("intercepted").callback(new RouteCallback() {
-                @Override
-                public void callback(RouteResult state, Uri uri, String message) {
-                    if (state == RouteResult.INTERCEPTED) {
-                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }).go(this);
+            Router.build("intercepted").go(this);
         }
     }
 

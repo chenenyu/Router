@@ -9,45 +9,41 @@ import android.util.Log;
  */
 class RLog {
     private static final String TAG = "Router";
-    private static boolean loggable = false;
+    private static boolean sLoggable = false;
 
-    protected static void openLog() {
-        loggable = true;
+    static void showLog(boolean loggable) {
+        sLoggable = loggable;
     }
 
     public static void i(String msg) {
-        if (loggable) {
+        if (sLoggable) {
             Log.i(TAG, msg);
         }
     }
 
     public static void i(String tag, String msg) {
-        if (loggable) {
+        if (sLoggable) {
             Log.i(tag, msg);
         }
     }
 
     public static void w(String msg) {
-        if (loggable) {
+        if (sLoggable) {
             Log.w(TAG, msg);
         }
     }
 
     public static void w(String msg, Throwable tr) {
-        if (loggable) {
+        if (sLoggable) {
             Log.w(TAG, msg, tr);
         }
     }
 
     public static void e(String msg) {
-        if (loggable) {
-            Log.e(TAG, msg);
-        }
+        Log.e(TAG, msg);
     }
 
     public static void e(String msg, Throwable tr) {
-        if (loggable) {
-            Log.e(TAG, msg, tr);
-        }
+        Log.e(TAG, msg, tr);
     }
 }

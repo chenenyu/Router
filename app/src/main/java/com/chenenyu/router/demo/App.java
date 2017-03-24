@@ -12,8 +12,8 @@ public class App extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        // 开启log
-        Router.openLog();
+        // debug模式,显示log
+        Router.setDebuggable(true);
         Router.initialize(this);
     }
 }
