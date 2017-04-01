@@ -18,12 +18,12 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.x ↑'
+    	...
         classpath 'com.chenenyu.router:gradle-plugin:latest.integration'
     }
 }
 
-// Optional, defaults to the latest version. 可选配置，默认为最新版本.
+// Optional. 可选配置,指定版本号.
 ext {
     ...
 	routerVersion = "x.y.z"
@@ -51,6 +51,7 @@ current `router-compiler` version: ![compiler](https://api.bintray.com/packages/
 |         0.3.0         |     0.7.0      |      0.3.0       |
 |         0.4.0         |     0.8.0      |      0.4.0       |
 |         0.5.0         |     0.9.1      |      0.5.0       |
+|         0.6.0         |     1.0.0      |      0.5.0       |
 
 ## Simple usage
 

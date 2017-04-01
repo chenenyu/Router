@@ -1,4 +1,4 @@
-package com.chenenyu.router.demo;
+package com.chenenyu.router.app;
 
 import android.content.Intent;
 import android.os.Bundle;

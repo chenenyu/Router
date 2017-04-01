@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.chenenyu.router.RouteOptions;
+import com.chenenyu.router.RouteRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class SchemeMatcher extends AbsExplicitMatcher {
     }
 
     @Override
-    public boolean match(Context context, Uri uri, @Nullable String route, RouteOptions routeOptions) {
+    public boolean match(Context context, Uri uri, @Nullable String route, RouteRequest routeRequest) {
         if (isEmpty(route)) {
             return false;
         }
@@ -66,10 +66,10 @@ public class SchemeMatcher extends AbsExplicitMatcher {
                     parseParams(params, uri.getQuery());
 
                     if (!params.isEmpty()) {
-                        Bundle bundle = routeOptions.getBundle();
+                        Bundle bundle = routeRequest.getExtras();
                         if (bundle == null) {
                             bundle = new Bundle();
-                            routeOptions.setBundle(bundle);
+                            routeRequest.setExtras(bundle);
                         }
                         for (Map.Entry<String, String> entry : params.entrySet()) {
                             bundle.putString(entry.getKey(), entry.getValue());

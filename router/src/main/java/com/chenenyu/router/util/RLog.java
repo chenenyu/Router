@@ -1,4 +1,4 @@
-package com.chenenyu.router;
+package com.chenenyu.router.util;
 
 import android.util.Log;
 
@@ -7,11 +7,11 @@ import android.util.Log;
  * <p>
  * Created by Cheney on 2016/12/27.
  */
-class RLog {
+public class RLog {
     private static final String TAG = "Router";
     private static boolean sLoggable = false;
 
-    static void showLog(boolean loggable) {
+    public static void showLog(boolean loggable) {
         sLoggable = loggable;
     }
 
@@ -30,12 +30,6 @@ class RLog {
     public static void w(String msg) {
         if (sLoggable) {
             Log.w(TAG, msg);
-        }
-    }
-
-    public static void w(String msg, Throwable tr) {
-        if (sLoggable) {
-            Log.w(TAG, msg, tr);
         }
     }
 

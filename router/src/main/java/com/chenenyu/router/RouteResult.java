@@ -7,5 +7,6 @@ package com.chenenyu.router;
 public enum RouteResult {
     SUCCEED,
     INTERCEPTED,
+    UNCONNECTED,
     FAILED
 }
