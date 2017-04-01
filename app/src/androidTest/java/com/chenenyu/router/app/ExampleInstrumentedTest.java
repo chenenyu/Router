@@ -1,4 +1,4 @@
-package com.chenenyu.router.demo;
+package com.chenenyu.router.app;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
