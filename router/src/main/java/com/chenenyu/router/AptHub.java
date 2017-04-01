@@ -52,18 +52,18 @@ class AptHub {
         }
 
         /* RouteTable */
-        try {
-            String fullTableName;
-            for (String moduleName : modules) {
+        String fullTableName;
+        for (String moduleName : modules) {
+            try {
                 fullTableName = PACKAGE_NAME + DOT + capitalize(moduleName) +
                         ROUTE_TABLE;
                 Class<?> routeTableClz = Class.forName(fullTableName);
                 Constructor constructor = routeTableClz.getConstructor();
                 RouteTable instance = (RouteTable) constructor.newInstance();
                 instance.handleActivityTable(activityTable);
+            } catch (Exception e) {
+                RLog.i(e.getMessage());
             }
-        } catch (Exception e) {
-            RLog.i(e.getMessage());
         }
         RLog.i("RouteTable", activityTable.toString());
 
