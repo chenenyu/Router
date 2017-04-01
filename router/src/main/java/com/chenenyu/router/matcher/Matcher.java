@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import com.chenenyu.router.RouteOptions;
+import com.chenenyu.router.RouteRequest;
 
 /**
  * Match rule.
@@ -20,13 +20,13 @@ public interface Matcher extends Comparable<Matcher> {
      * @param context      Context.
      * @param uri          the given uri.
      * @param route        path in route table.
-     * @param routeOptions {@link RouteOptions}.
+     * @param routeRequest {@link RouteRequest}.
      * @return True if matched, false otherwise.
      */
-    boolean match(Context context, Uri uri, @Nullable String route, RouteOptions routeOptions);
+    boolean match(Context context, Uri uri, @Nullable String route, RouteRequest routeRequest);
 
     /**
-     * Called when {@link #match(Context, Uri, String, RouteOptions)} returns true.
+     * Called when {@link #match(Context, Uri, String, RouteRequest)} returns true.
      *
      * @param context Context.
      * @param uri     The given uri.

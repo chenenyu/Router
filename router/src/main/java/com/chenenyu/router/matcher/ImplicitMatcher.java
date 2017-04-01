@@ -7,7 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.chenenyu.router.RouteOptions;
+import com.chenenyu.router.RouteRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class ImplicitMatcher extends AbsImplicitMatcher {
     }
 
     @Override
-    public boolean match(Context context, Uri uri, @Nullable String route, RouteOptions routeOptions) {
+    public boolean match(Context context, Uri uri, @Nullable String route, RouteRequest routeRequest) {
         if (uri.toString().toLowerCase().startsWith("http://")
                 || uri.toString().toLowerCase().startsWith("https://")) {
             return false;
@@ -36,10 +36,10 @@ public class ImplicitMatcher extends AbsImplicitMatcher {
                 Map<String, String> map = new HashMap<>();
                 parseParams(map, uri.getQuery());
                 if (!map.isEmpty()) {
-                    Bundle bundle = routeOptions.getBundle();
+                    Bundle bundle = routeRequest.getExtras();
                     if (bundle == null) {
                         bundle = new Bundle();
-                        routeOptions.setBundle(bundle);
+                        routeRequest.setExtras(bundle);
                     }
                     for (Map.Entry<String, String> entry : map.entrySet()) {
                         bundle.putString(entry.getKey(), entry.getValue());

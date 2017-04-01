@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import com.chenenyu.router.RouteOptions;
+import com.chenenyu.router.RouteRequest;
 
 /**
  * This matcher will generate an intent with an {@link android.content.Intent#ACTION_VIEW} action
@@ -18,7 +18,7 @@ public class BrowserMatcher extends AbsImplicitMatcher {
     }
 
     @Override
-    public boolean match(Context context, Uri uri, @Nullable String route, RouteOptions routeOptions) {
+    public boolean match(Context context, Uri uri, @Nullable String route, RouteRequest routeRequest) {
         return !isEmpty(route) && (uri.toString().toLowerCase().startsWith("http://")
                 || uri.toString().toLowerCase().startsWith("https://"));
     }
