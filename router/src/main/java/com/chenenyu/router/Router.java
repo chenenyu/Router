@@ -51,8 +51,8 @@ public class Router {
     }
 
     public static void setDebuggable(boolean debuggable) {
-        RLog.showLog(debuggable);
         sDebuggable = debuggable;
+        RLog.showLog(debuggable);
     }
 
     public static IRouter build(String path) {

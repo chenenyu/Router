@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 
 /**
  * Route request object.
@@ -15,17 +16,19 @@ public class RouteRequest implements Parcelable {
     public static final int INVALID_REQUEST_CODE = -1;
 
     /* Needs parcel */
-    Uri uri;
-    Bundle extras;
-    int flags;
-    boolean skipInterceptors;
+    private Uri uri;
+    private Bundle extras;
+    private int flags;
+    private boolean skipInterceptors;
 
     /* No need to parcel */
     @Nullable
-    RouteCallback callback;
-    int requestCode = INVALID_REQUEST_CODE;
+    private RouteCallback callback;
+    private int requestCode = INVALID_REQUEST_CODE;
     private int enterAnim;
     private int exitAnim;
+    private ActivityOptionsCompat activityOptions;
+
 
     public RouteRequest() {
     }
@@ -84,7 +87,11 @@ public class RouteRequest implements Parcelable {
     }
 
     public void setRequestCode(int requestCode) {
-        this.requestCode = requestCode;
+        if (requestCode < 0) {
+            this.requestCode = INVALID_REQUEST_CODE;
+        } else {
+            this.requestCode = requestCode;
+        }
     }
 
     public int getEnterAnim() {
@@ -101,6 +108,14 @@ public class RouteRequest implements Parcelable {
 
     public void setExitAnim(int exitAnim) {
         this.exitAnim = exitAnim;
+    }
+
+    public ActivityOptionsCompat getActivityOptions() {
+        return activityOptions;
+    }
+
+    public void setActivityOptions(ActivityOptionsCompat activityOptions) {
+        this.activityOptions = activityOptions;
     }
 
     @Override

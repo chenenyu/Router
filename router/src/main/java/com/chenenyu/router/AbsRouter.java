@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.AnimRes;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 
 import com.chenenyu.router.util.RLog;
 
@@ -54,9 +56,21 @@ public abstract class AbsRouter implements IRouter {
     }
 
     @Override
+    public IRouter activityOptions(ActivityOptionsCompat activityOptions) {
+        mRouteRequest.setActivityOptions(activityOptions);
+        return this;
+    }
+
+    @Override
     public IRouter skipInterceptors() {
         mRouteRequest.setSkipInterceptors(true);
         return this;
+    }
+
+    @Override
+    public void go(Context context, RouteCallback callback) {
+        mRouteRequest.setCallback(callback);
+        go(context);
     }
 
     @Override
@@ -68,21 +82,23 @@ public abstract class AbsRouter implements IRouter {
         if (!(context instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
-        if (mRouteRequest.getRequestCode() >= 0) {
-            if (context instanceof Activity) {
-                ((Activity) context).startActivityForResult(intent, mRouteRequest.getRequestCode());
-            } else {
-                RLog.w("Please pass an Activity context to call method 'startActivityForResult'");
-                context.startActivity(intent);
+
+        Bundle options = mRouteRequest.getActivityOptions() == null ?
+                null : mRouteRequest.getActivityOptions().toBundle();
+
+        if (context instanceof Activity) {
+            ActivityCompat.startActivityForResult((Activity) context, intent,
+                    mRouteRequest.getRequestCode(), options);
+
+            if (mRouteRequest.getEnterAnim() != 0 && mRouteRequest.getExitAnim() != 0) {
+                // Add transition animation.
+                ((Activity) context).overridePendingTransition(
+                        mRouteRequest.getEnterAnim(), mRouteRequest.getExitAnim());
             }
         } else {
-            context.startActivity(intent);
-        }
-        if (mRouteRequest.getEnterAnim() != 0 && mRouteRequest.getExitAnim() != 0
-                && context instanceof Activity) {
-            // Add transition animation.
-            ((Activity) context).overridePendingTransition(
-                    mRouteRequest.getEnterAnim(), mRouteRequest.getExitAnim());
+            RLog.w("Please pass an Activity context to call method 'startActivityForResult'");
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            ActivityCompat.startActivity(context, intent, options);
         }
     }
 
