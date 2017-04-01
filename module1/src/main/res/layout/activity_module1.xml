@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="这是module1中的activity"/>
+        android:text="这是module1中的跨进程activity"/>
 
     <Button
         android:id="@+id/btn_go"
