@@ -35,8 +35,8 @@ class RouterPlugin implements Plugin<Project> {
                 annotationProcessor compiler
             }
         } else {
-            String routerVersion = "1.0.0"
-            String compilerVersion = "0.5.0"
+            String routerVersion = "latest.integration"
+            String compilerVersion = "latest.integration"
             // org.gradle.api.internal.plugins.DefaultExtraPropertiesExtension
             ExtraPropertiesExtension ext = project.rootProject.ext
             if (ext.has("routerVersion")) {
@@ -51,6 +51,7 @@ class RouterPlugin implements Plugin<Project> {
 
 
         String validModuleName = project.name.replace('.', '_').replace('-', '_')
+
         project.afterEvaluate {
             project.rootProject.subprojects.each {
                 if (it.plugins.hasPlugin(AppPlugin) && !it.plugins.hasPlugin(RouterPlugin)) {
@@ -94,37 +95,13 @@ class RouterPlugin implements Plugin<Project> {
 
                         // Inspired by com.android.build.gradle.tasks.factory.JavaCompileConfigAction
                         // javac apt
-                        List args = variant.javaCompile.options.compilerArgs
-                        args.add("-A${APT_OPTION_NAME}=${validModuleName}")
-                    }
-                    if (variant.variantData.jackTransform != null) {
-                        Task jackTask = project.tasks.findByName("transformJackWithJackFor${variant.name.capitalize()}")
-                        if (jackTask != null) {
-                            jackTask.dependsOn generateTask
-                        } else {
-                            project.logger.error("Can't find task `transformJackWithJackFor${variant.name.capitalize()}`")
-                        }
-                        // add generated file to jack source
-                        variant.variantData.jackTransform.addSource(routerFolder)
-
-                        // Inspired by com.android.build.gradle.internal.transforms.JackTransform
-                        // jack apt
-                        Map<String, String> args = variant.variantData.variantConfiguration.
-                                javaCompileOptions.annotationProcessorOptions.arguments
-                        args.put(APT_OPTION_NAME, validModuleName)
-                        variant.variantData.jackTransform.options.setAnnotationProcessorOptions(args)
+                        variant.javaCompile.options.compilerArgs.add("-A${APT_OPTION_NAME}=${validModuleName}")
                     }
                 }
             } else {
                 ((LibraryExtension) project.android).libraryVariants.all { LibraryVariantImpl variant ->
                     if (variant.javaCompile != null) {
                         variant.javaCompile.options.compilerArgs.add("-A${APT_OPTION_NAME}=${validModuleName}")
-                    }
-                    if (variant.variantData.jackTransform != null) {
-                        Map<String, String> args = variant.variantData.variantConfiguration.
-                                javaCompileOptions.annotationProcessorOptions.arguments
-                        args.put(APT_OPTION_NAME, validModuleName)
-                        variant.variantData.jackTransform.options.setAnnotationProcessorOptions(args)
                     }
                 }
             }
