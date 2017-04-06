@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
+ * Route response object for ipc.
  * <p>
  * Created by Cheney on 2017/3/31.
  */

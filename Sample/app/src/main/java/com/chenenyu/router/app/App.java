@@ -13,7 +13,7 @@ public class App extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         // debug模式,显示log
-        Router.setDebuggable(true);
-        Router.initialize(this);
+//        Router.setDebuggable(true);
+        Router.initialize(this, true);
     }
 }

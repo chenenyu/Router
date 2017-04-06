@@ -17,10 +17,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Router for main process.
  * <p>
  * Created by Cheney on 2017/3/30.
  */
-public class MainRouter extends AbsRouter {
+class MainRouter extends AbsRouter {
     private static MainRouter sInstance;
     private Map<String, RouteInterceptor> mInterceptorInstance = new HashMap<>();
     private RouteResponse mRouteResponse;
@@ -39,17 +40,12 @@ public class MainRouter extends AbsRouter {
     /**
      * {@link RouteCallback}.
      */
-    private void callback(RouteResult result, String msg) {
+    protected void callback(RouteResult result, String msg) {
         if (mRouteResponse != null) { // cross process
             mRouteResponse.setResult(result);
             mRouteResponse.setMsg(msg);
         } else { // main process
-            if (result != RouteResult.SUCCEED) {
-                RLog.w(msg);
-            }
-            if (mRouteRequest.getCallback() != null) {
-                mRouteRequest.getCallback().callback(result, mRouteRequest.getUri(), msg);
-            }
+            super.callback(result, msg);
         }
     }
 
