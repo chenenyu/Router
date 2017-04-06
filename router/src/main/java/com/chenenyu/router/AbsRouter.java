@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.AnimRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 
 import com.chenenyu.router.util.RLog;
 
@@ -15,8 +16,8 @@ import com.chenenyu.router.util.RLog;
  * <p>
  * Created by Cheney on 2017/3/31.
  */
-public abstract class AbsRouter implements IRouter {
-    protected RouteRequest mRouteRequest;
+abstract class AbsRouter implements IRouter {
+    RouteRequest mRouteRequest;
 
     @Override
     public IRouter build(Uri uri) {
@@ -79,9 +80,6 @@ public abstract class AbsRouter implements IRouter {
         if (intent == null) {
             return;
         }
-        if (!(context instanceof Activity)) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        }
 
         Bundle options = mRouteRequest.getActivityOptions() == null ?
                 null : mRouteRequest.getActivityOptions().toBundle();
@@ -96,9 +94,19 @@ public abstract class AbsRouter implements IRouter {
                         mRouteRequest.getEnterAnim(), mRouteRequest.getExitAnim());
             }
         } else {
-            RLog.w("Please pass an Activity context to call method 'startActivityForResult'");
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            ActivityCompat.startActivity(context, intent, options);
+            ContextCompat.startActivity(context, intent, options);
+        }
+
+        callback(RouteResult.SUCCEED, null);
+    }
+
+    protected void callback(RouteResult result, String msg) {
+        if (result != RouteResult.SUCCEED) {
+            RLog.w(msg);
+        }
+        if (mRouteRequest.getCallback() != null) {
+            mRouteRequest.getCallback().callback(result, mRouteRequest.getUri(), msg);
         }
     }
 

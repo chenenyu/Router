@@ -14,7 +14,7 @@ import com.chenenyu.router.util.RLog;
  * <p>
  * Created by Cheney on 2017/3/30.
  */
-public class LocalRouter extends AbsRouter {
+class LocalRouter extends AbsRouter {
     private static final String TAG = LocalRouter.class.getSimpleName();
     private static LocalRouter sInstance = null;
     private IRouterInterface mRouterInterface;
@@ -47,15 +47,6 @@ public class LocalRouter extends AbsRouter {
         return mRouterInterface != null;
     }
 
-    private void callback(RouteResult result, String msg) {
-        if (result != RouteResult.SUCCEED) {
-            RLog.w(msg);
-        }
-        if (mRouteRequest.getCallback() != null) {
-            mRouteRequest.getCallback().callback(result, mRouteRequest.getUri(), msg);
-        }
-    }
-
     @Override
     public Intent getIntent(Context context) {
         if (!checkConnection()) {
@@ -74,9 +65,4 @@ public class LocalRouter extends AbsRouter {
         }
     }
 
-    @Override
-    public void go(Context context) {
-        super.go(context);
-        callback(RouteResult.SUCCEED, null);
-    }
 }
