@@ -82,9 +82,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (v == btn2) {
             Router.build("dynamic").go(this);
         } else if (v == btn3) {
-            Bundle bundle = new Bundle();
-            bundle.putString("extra", "Bundle from MainActivity.");
-            Router.build("result").requestCode(0).extras(bundle).go(this);
+//            Bundle bundle = new Bundle();
+//            bundle.putString("extra", "Bundle from MainActivity.");
+//            Router.build("result").requestCode(0).with(bundle).go(this);
+            Router.build("result").requestCode(0).with("extra", "Bundle from MainActivity.").go(this);
         } else if (v == btn4) {
             Router.build("test")
                     .anim(android.R.anim.fade_in, android.R.anim.fade_out).go(this);
