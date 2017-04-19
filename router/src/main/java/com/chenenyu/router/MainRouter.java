@@ -24,7 +24,6 @@ import java.util.Set;
 class MainRouter extends AbsRouter {
     private static MainRouter sInstance;
     private Map<String, RouteInterceptor> mInterceptorInstance = new HashMap<>();
-    private RouteResponse mRouteResponse;
 
     private MainRouter() {
     }
@@ -33,20 +32,7 @@ class MainRouter extends AbsRouter {
         if (sInstance == null) {
             sInstance = new MainRouter();
         }
-        sInstance.mRouteResponse = null; // reset
         return sInstance;
-    }
-
-    /**
-     * {@link RouteCallback}.
-     */
-    protected void callback(RouteResult result, String msg) {
-        if (mRouteResponse != null) { // cross process
-            mRouteResponse.setResult(result);
-            mRouteResponse.setMsg(msg);
-        } else { // main process
-            super.callback(result, msg);
-        }
     }
 
     /**
@@ -62,7 +48,7 @@ class MainRouter extends AbsRouter {
     }
 
     /**
-     * For other process's route request.
+     * Generate route response for the request.
      *
      * @param routeRequest {@link RouteRequest}
      * @return {@link RouteResponse}

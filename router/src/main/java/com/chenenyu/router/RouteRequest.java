@@ -13,9 +13,10 @@ import android.support.v4.app.ActivityOptionsCompat;
  * Created by Cheney on 2017/3/31.
  */
 public class RouteRequest implements Parcelable {
-    public static final int INVALID_REQUEST_CODE = -1;
+    private static final int INVALID_REQUEST_CODE = -1;
 
     /* Needs parcel */
+    private boolean ipc; // ipc flag
     private Uri uri;
     private Bundle extras;
     private int flags;
@@ -31,6 +32,14 @@ public class RouteRequest implements Parcelable {
 
 
     public RouteRequest() {
+    }
+
+    public boolean isIpc() {
+        return ipc;
+    }
+
+    public void setIpc(boolean ipc) {
+        this.ipc = ipc;
     }
 
     public RouteRequest(Uri uri) {
@@ -125,6 +134,7 @@ public class RouteRequest implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(this.ipc ? (byte) 1 : (byte) 0);
         dest.writeParcelable(this.uri, flags);
         dest.writeBundle(this.extras);
         dest.writeInt(this.flags);
@@ -132,6 +142,7 @@ public class RouteRequest implements Parcelable {
     }
 
     protected RouteRequest(Parcel in) {
+        this.ipc = in.readByte() != 0;
         this.uri = in.readParcelable(Uri.class.getClassLoader());
         this.extras = in.readBundle(Bundle.class.getClassLoader());
         this.flags = in.readInt();

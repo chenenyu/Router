@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
 
@@ -19,7 +20,7 @@ class LocalRouter extends AbsRouter {
     private static LocalRouter sInstance = null;
     private IRouterInterface mRouterInterface;
 
-    ServiceConnection mServiceConnection = new ServiceConnection() {
+    final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             RLog.i(TAG, "Connected to service in " + name);
@@ -48,17 +49,24 @@ class LocalRouter extends AbsRouter {
     }
 
     @Override
+    public IRouter build(Uri uri) {
+        super.build(uri);
+        mRouteRequest.setIpc(true); // ipc flag
+        return this;
+    }
+
+    @Override
     public Intent getIntent(Context context) {
         if (!checkConnection()) {
             callback(RouteResult.UNCONNECTED, "Unconnected with main process.");
             return null;
         }
         try {
-            RouteResponse response = mRouterInterface.route(mRouteRequest);
-            if (response.getResult() != RouteResult.SUCCEED) {
-                callback(response.getResult(), response.getMsg());
+            mRouteResponse = mRouterInterface.route(mRouteRequest);
+            if (mRouteResponse.getResult() != RouteResult.SUCCEED) {
+                callback(mRouteResponse.getResult(), mRouteResponse.getMsg());
             }
-            return response.getData();
+            return mRouteResponse.getData();
         } catch (RemoteException e) {
             e.printStackTrace();
             return null;
