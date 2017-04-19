@@ -18,10 +18,12 @@ import com.chenenyu.router.util.RLog;
  */
 abstract class AbsRouter implements IRouter {
     RouteRequest mRouteRequest;
+    RouteResponse mRouteResponse;
 
     @Override
     public IRouter build(Uri uri) {
         mRouteRequest = new RouteRequest(uri);
+        mRouteResponse = null; // reset
         return this;
     }
 
@@ -101,12 +103,19 @@ abstract class AbsRouter implements IRouter {
         callback(RouteResult.SUCCEED, null);
     }
 
-    protected void callback(RouteResult result, String msg) {
-        if (result != RouteResult.SUCCEED) {
-            RLog.w(msg);
-        }
-        if (mRouteRequest.getCallback() != null) {
-            mRouteRequest.getCallback().callback(result, mRouteRequest.getUri(), msg);
+    void callback(RouteResult result, String msg) {
+        if (mRouteRequest.isIpc()) {  // cross process
+            if (mRouteResponse != null) {
+                mRouteResponse.setResult(result);
+                mRouteResponse.setMsg(msg);
+            }
+        } else {
+            if (result != RouteResult.SUCCEED) {
+                RLog.w(msg);
+            }
+            if (mRouteRequest.getCallback() != null) {
+                mRouteRequest.getCallback().callback(result, mRouteRequest.getUri(), msg);
+            }
         }
     }
 

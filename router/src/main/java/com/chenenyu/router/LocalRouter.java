@@ -62,11 +62,11 @@ class LocalRouter extends AbsRouter {
             return null;
         }
         try {
-            RouteResponse response = mRouterInterface.route(mRouteRequest);
-            if (response.getResult() != RouteResult.SUCCEED) {
-                callback(response.getResult(), response.getMsg());
+            mRouteResponse = mRouterInterface.route(mRouteRequest);
+            if (mRouteResponse.getResult() != RouteResult.SUCCEED) {
+                callback(mRouteResponse.getResult(), mRouteResponse.getMsg());
             }
-            return response.getData();
+            return mRouteResponse.getData();
         } catch (RemoteException e) {
             e.printStackTrace();
             return null;
