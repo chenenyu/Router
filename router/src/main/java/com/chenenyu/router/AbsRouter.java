@@ -18,10 +18,12 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Size;
 import android.util.SizeF;
+import android.util.SparseArray;
 
 import com.chenenyu.router.util.RLog;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * <p>
@@ -59,7 +61,7 @@ abstract class AbsRouter implements IRouter {
 
     @Override
     public IRouter with(Bundle bundle) {
-        if (bundle != null && bundle.isEmpty()) {
+        if (bundle != null && !bundle.isEmpty()) {
             Bundle allBundle = mRouteRequest.getExtras();
             if (allBundle == null) {
                 allBundle = new Bundle();
@@ -73,7 +75,7 @@ abstract class AbsRouter implements IRouter {
     @RequiresApi(21)
     @Override
     public IRouter with(PersistableBundle bundle) {
-        if (bundle != null && bundle.isEmpty()) {
+        if (bundle != null && !bundle.isEmpty()) {
             Bundle allBundle = mRouteRequest.getExtras();
             if (allBundle == null) {
                 allBundle = new Bundle();
@@ -84,6 +86,7 @@ abstract class AbsRouter implements IRouter {
         return this;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public IRouter with(String key, Object value) {
         Bundle bundle = mRouteRequest.getExtras();
@@ -132,13 +135,11 @@ abstract class AbsRouter implements IRouter {
             bundle.putStringArray(key, (String[]) value);
         } else if (value instanceof CharSequence[]) {
             bundle.putCharSequenceArray(key, (CharSequence[]) value);
-        } else if (value instanceof Parcelable[]) {
-            bundle.putParcelableArray(key, (Parcelable[]) value);
         } else if (value instanceof IBinder) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 bundle.putBinder(key, (IBinder) value);
             } else {
-                RLog.e("putBind() requires api 18.");
+                RLog.e("putBinder() requires api 18.");
             }
         } else if (value instanceof Size) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -152,10 +153,29 @@ abstract class AbsRouter implements IRouter {
             } else {
                 RLog.e("'putSizeF' requires api 21.");
             }
+        } else if (value instanceof ArrayList) {
+            if (!((ArrayList) value).isEmpty()) {
+                Object obj = ((ArrayList) value).get(0);
+                if (obj instanceof Integer) {
+                    bundle.putIntegerArrayList(key, (ArrayList<Integer>) value);
+                } else if (obj instanceof String) {
+                    bundle.putStringArrayList(key, (ArrayList<String>) value);
+                } else if (obj instanceof CharSequence) {
+                    bundle.putCharSequenceArrayList(key, (ArrayList<CharSequence>) value);
+                } else if (obj instanceof Parcelable) {
+                    bundle.putParcelableArrayList(key, (ArrayList<? extends Parcelable>) value);
+                }
+            }
+        } else if (value instanceof SparseArray) {
+            bundle.putSparseParcelableArray(key, (SparseArray<? extends Parcelable>) value);
         } else if (value instanceof Parcelable) {
             bundle.putParcelable(key, (Parcelable) value);
+        } else if (value instanceof Parcelable[]) {
+            bundle.putParcelableArray(key, (Parcelable[]) value);
         } else if (value instanceof Serializable) {
             bundle.putSerializable(key, (Serializable) value);
+        } else {
+            RLog.w("Unknown object type.");
         }
         mRouteRequest.setExtras(bundle);
         return this;
