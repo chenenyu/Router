@@ -16,8 +16,6 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.util.Size;
-import android.util.SizeF;
 import android.util.SparseArray;
 
 import com.chenenyu.router.util.RLog;
@@ -62,12 +60,12 @@ abstract class AbsRouter implements IRouter {
     @Override
     public IRouter with(Bundle bundle) {
         if (bundle != null && !bundle.isEmpty()) {
-            Bundle allBundle = mRouteRequest.getExtras();
-            if (allBundle == null) {
-                allBundle = new Bundle();
+            Bundle extras = mRouteRequest.getExtras();
+            if (extras == null) {
+                extras = new Bundle();
             }
-            allBundle.putAll(bundle);
-            mRouteRequest.setExtras(allBundle);
+            extras.putAll(bundle);
+            mRouteRequest.setExtras(extras);
         }
         return this;
     }
@@ -76,12 +74,12 @@ abstract class AbsRouter implements IRouter {
     @Override
     public IRouter with(PersistableBundle bundle) {
         if (bundle != null && !bundle.isEmpty()) {
-            Bundle allBundle = mRouteRequest.getExtras();
-            if (allBundle == null) {
-                allBundle = new Bundle();
+            Bundle extras = mRouteRequest.getExtras();
+            if (extras == null) {
+                extras = new Bundle();
             }
-            allBundle.putAll(bundle);
-            mRouteRequest.setExtras(allBundle);
+            extras.putAll(bundle);
+            mRouteRequest.setExtras(extras);
         }
         return this;
     }
@@ -89,6 +87,10 @@ abstract class AbsRouter implements IRouter {
     @SuppressWarnings("unchecked")
     @Override
     public IRouter with(String key, Object value) {
+        if (value == null) {
+            RLog.w("Ignored: The extra value is null.");
+            return this;
+        }
         Bundle bundle = mRouteRequest.getExtras();
         if (bundle == null) {
             bundle = new Bundle();
@@ -140,18 +142,6 @@ abstract class AbsRouter implements IRouter {
                 bundle.putBinder(key, (IBinder) value);
             } else {
                 RLog.e("putBinder() requires api 18.");
-            }
-        } else if (value instanceof Size) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                bundle.putSize(key, (Size) value);
-            } else {
-                RLog.e("'putSize' requires api 21.");
-            }
-        } else if (value instanceof SizeF) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                bundle.putSizeF(key, (SizeF) value);
-            } else {
-                RLog.e("'putSizeF' requires api 21.");
             }
         } else if (value instanceof ArrayList) {
             if (!((ArrayList) value).isEmpty()) {

@@ -23,11 +23,11 @@ buildscript {
     }
 }
 
-// Optional. 可选配置,指定版本号.
+// Optional. 指定版本号.
 ext {
     ...
-	routerVersion = "x.y.z"
-	compilerVersion = "x.y.z"
+    routerVersion = "x.y.z" // 在这里指定具体的router版本
+    compilerVersion = "x.y.z" // 一般不需要配置此项
 }
 ```
 
@@ -35,6 +35,7 @@ ext {
 
 ```  Groovy
 apply plugin: 'com.android.application/library'
+...
 apply plugin: 'com.chenenyu.router'
 ```
 
@@ -52,7 +53,7 @@ current `router-compiler` version: ![compiler](https://api.bintray.com/packages/
 |         0.4.0         |     0.8.0      |      0.4.0       |
 |         0.5.0         |     0.9.1      |      0.5.0       |
 |         0.6.0         |     1.0.0      |      0.5.0       |
-|         0.7.0         |     1.0.3      |      0.5.0       |
+|         0.7.0         |     1.0.4      |      0.5.0       |
 
 ## Simple usage
 
