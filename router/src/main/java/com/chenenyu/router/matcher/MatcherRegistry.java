@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class MatcherRegistry {
 
-    private static final List<Matcher> registry = new ArrayList<>();
+    private static final List<AbsMatcher> registry = new ArrayList<>();
 
     static {
         registry.add(new DirectMatcher(0x1000));
@@ -21,12 +21,12 @@ public class MatcherRegistry {
         Collections.sort(registry);
     }
 
-    public static void register(Matcher matcher) {
+    public static void register(AbsMatcher matcher) {
         registry.add(matcher);
         Collections.sort(registry);
     }
 
-    public static List<Matcher> getMatcher() {
+    public static List<AbsMatcher> getMatcher() {
         return registry;
     }
 
