@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * Standard scheme matcher. It matches scheme, authority(host, port) and path(if offered),
- * then transfers the query part(if offered) to bundle.
+ * then transfers the query part(if offered) to bundle/arguments.
  * <p>
  * If you configured a route like this:
  * <code>
@@ -27,6 +27,8 @@ import java.util.Map;
  * bundle.putString("id", "9527");
  * <br>
  * bundle.putString("status", "0");
+ * <br>
+ * intent.putExtras(bundle);  or fragment.setArguments(bundle);
  * <p>
  * </code>
  * <p>

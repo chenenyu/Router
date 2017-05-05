@@ -69,6 +69,8 @@ public interface IRouter {
 
     Intent getIntent(Context context);
 
+    Object getFragment(Context context);
+
     void go(Context context, RouteCallback callback);
 
     void go(Context context);
@@ -77,9 +79,7 @@ public interface IRouter {
 
     void go(Fragment fragment);
 
-    @RequiresApi(11)
     void go(android.app.Fragment fragment, RouteCallback callback);
 
-    @RequiresApi(11)
     void go(android.app.Fragment fragment);
 }

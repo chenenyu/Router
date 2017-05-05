@@ -1,14 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="com.chenenyu.router"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <application>
-        <service
-            android:name=".RouterService"
-            android:enabled="true"
-            android:exported="false">
-        </service>
-    </application>
-
-</manifest>
+<manifest package="com.chenenyu.router" />

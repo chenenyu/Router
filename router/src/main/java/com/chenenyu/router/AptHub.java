@@ -1,7 +1,5 @@
 package com.chenenyu.router;
 
-import android.app.Activity;
-
 import com.chenenyu.router.util.RLog;
 
 import java.lang.reflect.Constructor;
@@ -26,10 +24,10 @@ class AptHub {
     private static final String INTERCEPTOR_TABLE = "InterceptorTable";
     private static final String HANDLE_INTERCEPTOR_TABLE = "handleInterceptorTable";
 
-    // Uri -> Activity
-    static Map<String, Class<? extends Activity>> activityTable = new HashMap<>();
+    // Uri -> Activity/Fragment
+    static Map<String, Class<?>> routeTable = new HashMap<>();
     // Activity -> interceptors' name
-    static Map<Class<? extends Activity>, String[]> interceptorTable = new HashMap<>();
+    static Map<Class<?>, String[]> interceptorTable = new HashMap<>();
     // interceptor's name -> interceptor
     static Map<String, Class<? extends RouteInterceptor>> interceptors = new HashMap<>();
 
@@ -60,12 +58,12 @@ class AptHub {
                 Class<?> routeTableClz = Class.forName(fullTableName);
                 Constructor constructor = routeTableClz.getConstructor();
                 RouteTable instance = (RouteTable) constructor.newInstance();
-                instance.handleActivityTable(activityTable);
+                instance.handle(routeTable);
             } catch (Exception e) {
                 RLog.i(e.getMessage());
             }
         }
-        RLog.i("RouteTable", activityTable.toString());
+        RLog.i("RouteTable", routeTable.toString());
 
         /* InterceptorTable */
         String interceptorTableName;
