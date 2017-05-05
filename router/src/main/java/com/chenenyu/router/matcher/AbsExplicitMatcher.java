@@ -24,15 +24,15 @@ public abstract class AbsExplicitMatcher extends AbsMatcher {
             return null;
         }
         Object result = null;
-        if (target.isAssignableFrom(Activity.class)) {
+        if (Activity.class.isAssignableFrom(target)) {
             result = new Intent(context, target);
-        } else if (target.isAssignableFrom(Fragment.class)) { // v4.fragment
+        } else if (Fragment.class.isAssignableFrom(target)) { // v4.fragment
             try {
                 result = target.newInstance();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if (target.isAssignableFrom(android.app.Fragment.class)) {
+        } else if (android.app.Fragment.class.isAssignableFrom(target)) {
             try {
                 result = target.newInstance();
             } catch (Exception e) {
