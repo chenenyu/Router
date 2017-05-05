@@ -10,7 +10,6 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        multiDexEnabled true
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -46,6 +45,5 @@ dependencies {
     compile "com.android.support:appcompat-v7:${rootProject.ext.supportVersion}"
     compile project(':module1')
     compile project(':module2')
-    compile 'com.android.support:multidex:1.0.1'
     testCompile 'junit:junit:4.12'
 }
