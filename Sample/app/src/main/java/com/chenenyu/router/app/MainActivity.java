@@ -1,6 +1,5 @@
 package com.chenenyu.router.app;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -58,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // 动态添加路由
         Router.addRouteTable(new RouteTable() {
             @Override
-            public void handleActivityTable(Map<String, Class<? extends Activity>> map) {
+            public void handle(Map<String, Class<?>> map) {
                 map.put("dynamic", DynamicActivity.class);
             }
         });

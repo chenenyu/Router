@@ -18,7 +18,7 @@ targetCompatibility = "1.7"
 
 dependencies {
     compile gradleApi()
-    compile 'com.android.tools.build:gradle:2.3.1'
+    compile 'com.android.tools.build:gradle:2.3.0'
 }
 
 //apply from: 'publish.gradle'

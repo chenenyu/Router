@@ -45,8 +45,15 @@ class RouterPlugin implements Plugin<Project> {
             if (ext.has("compilerVersion")) {
                 compilerVersion = ext.get("compilerVersion")
             }
+
+            // compat for plugin: android-apt
+            String apt = "annotationProcessor"
+            if (project.plugins.hasPlugin("android-apt")) {
+                apt = "apt"
+            }
+
             project.dependencies.add("compile", "com.chenenyu.router:router:${routerVersion}")
-            project.dependencies.add("annotationProcessor", "com.chenenyu.router:compiler:${compilerVersion}")
+            project.dependencies.add(apt, "com.chenenyu.router:compiler:${compilerVersion}")
         }
 
 

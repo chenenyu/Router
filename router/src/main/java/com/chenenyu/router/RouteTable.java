@@ -1,7 +1,5 @@
 package com.chenenyu.router;
 
-import android.app.Activity;
-
 import java.util.Map;
 
 /**
@@ -11,9 +9,9 @@ import java.util.Map;
  */
 public interface RouteTable {
     /**
-     * Mapping between uri and {@link android.app.Activity}.
+     * Mapping between uri and target, such as {@link android.app.Activity} or {@link android.support.v4.app.Fragment}.
      *
-     * @param map Activity map.
+     * @param map route table.
      */
-    void handleActivityTable(Map<String, Class<? extends Activity>> map);
+    void handle(Map<String, Class<?>> map);
 }

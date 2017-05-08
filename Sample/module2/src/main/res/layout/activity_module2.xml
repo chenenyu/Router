@@ -6,16 +6,4 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.chenenyu.router.module.Module2Activity">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="这是module2中跨进程的activity"/>
-
-    <Button
-        android:id="@+id/btn_go"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="打开module1"/>
 </FrameLayout>

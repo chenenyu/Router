@@ -18,8 +18,12 @@ public abstract class AbsImplicitMatcher extends AbsMatcher {
     }
 
     @Override
-    public Intent onMatched(Context context, Uri uri, @Nullable Class<? extends Activity> target) {
-        return new Intent(Intent.ACTION_VIEW, uri);
+    public Object generate(Context context, Uri uri, @Nullable Class<?> target) {
+        if (target != null && Activity.class.isAssignableFrom(target)) {
+            return new Intent(Intent.ACTION_VIEW, uri);
+        } else {
+            return null;
+        }
     }
 
 }
