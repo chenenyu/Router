@@ -8,8 +8,7 @@
         android:supportsRtl="true">
         <activity
             android:name="com.chenenyu.router.module.Module1Activity"
-            android:label="Module1Activity"
-            android:process=":module1">
+            android:label="Module1Activity">
         </activity>
     </application>
 
