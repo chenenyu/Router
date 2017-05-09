@@ -51,21 +51,21 @@ public class Router {
     }
 
     public static IRouter build(Uri uri) {
-            return MainRouter.getInstance().build(uri);
+        return MainRouter.getInstance().build(uri);
     }
 
     /**
      * Custom router table.
      */
     public static void addRouteTable(RouteTable routeTable) {
-            MainRouter.getInstance().addRouteTable(routeTable);
+        MainRouter.getInstance().addRouteTable(routeTable);
     }
 
     /**
      * Global interceptor.
      */
     public static void addGlobalInterceptor(RouteInterceptor routeInterceptor) {
-            sGlobalInterceptors.add(routeInterceptor);
+        sGlobalInterceptors.add(routeInterceptor);
     }
 
     public static List<RouteInterceptor> getGlobalInterceptors() {
@@ -79,7 +79,7 @@ public class Router {
      * @see com.chenenyu.router.matcher.AbsImplicitMatcher
      */
     public static void registerMatcher(AbsMatcher matcher) {
-            MatcherRegistry.register(matcher);
+        MatcherRegistry.register(matcher);
     }
 
     public static void clearMatcher() {
