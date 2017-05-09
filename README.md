@@ -19,7 +19,7 @@ buildscript {
     }
     dependencies {
     	...
-        classpath 'com.chenenyu.router:gradle-plugin:latest.integration'
+        classpath 'com.chenenyu.router:gradle-plugin:0.8.1'
     }
 }
 
@@ -54,7 +54,7 @@ current `router-compiler` version: ![compiler](https://api.bintray.com/packages/
 |         0.5.0         |     0.9.1      |      0.5.0       |
 |         0.6.0         |     1.0.0      |      0.5.0       |
 |         0.7.0         |     1.0.4      |      0.5.0       |
-|         0.8.0         |     1.1.0      |      0.6.0       |
+|         0.8.1         |     1.1.0      |      0.6.0       |
 
 ## Simple usage
 
