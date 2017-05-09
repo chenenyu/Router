@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.chenenyu.router.annotation.Route;
 
-@Route({"test", "http://example.com/user"})
+@Route({"test", "http://example.com/user", "router://test"})
 public class TestActivity extends AppCompatActivity {
 
     @Override

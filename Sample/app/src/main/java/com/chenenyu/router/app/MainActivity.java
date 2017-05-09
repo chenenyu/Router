@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
+
             @Override
             public void afterTextChanged(Editable s) {
                 uri = s.toString();
@@ -86,10 +87,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            Router.build("result").requestCode(0).with(bundle).go(this);
             Router.build("result").requestCode(0).with("extra", "Bundle from MainActivity.").go(this);
         } else if (v == btn4) {
-            Router.build("test")
-                    .anim(android.R.anim.fade_in, android.R.anim.fade_out).go(this);
+            startActivity(new Intent(this, WebActivity.class));
         } else if (v == btn5) {
-            Router.build(Uri.parse("router://host?id=9527&status=success")).go(this);
+            Router.build(Uri.parse("router://implicit?id=9527&status=success")).go(this);
         } else if (v == btn6) {
             Router.build(btn6.getText().toString()).go(this);
         } else if (v == btn7) {
