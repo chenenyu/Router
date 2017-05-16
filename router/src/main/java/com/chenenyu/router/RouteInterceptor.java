@@ -1,10 +1,6 @@
 package com.chenenyu.router;
 
 import android.content.Context;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 /**
  * Interceptor before route.
@@ -13,10 +9,9 @@ import android.support.annotation.Nullable;
  */
 public interface RouteInterceptor {
     /**
-     * @param context Context
-     * @param uri     Uri
-     * @param extras  Bundle
+     * @param context      Context
+     * @param routeRequest RouteRequest
      * @return True if you want to intercept this route, false otherwise.
      */
-    boolean intercept(Context context, @NonNull Uri uri, @Nullable Bundle extras);
+    boolean intercept(Context context, RouteRequest routeRequest);
 }

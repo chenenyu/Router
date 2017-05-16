@@ -9,9 +9,10 @@ import java.util.Map;
  */
 public interface RouteTable {
     /**
-     * Mapping between uri and target, such as {@link android.app.Activity} or {@link android.support.v4.app.Fragment}.
+     * Mapping between uri and target, the target class may be an {@link android.app.Activity},
+     * {@link android.app.Fragment} or {@link android.support.v4.app.Fragment}.
      *
-     * @param map route table.
+     * @param map uri -> target.
      */
     void handle(Map<String, Class<?>> map);
 }
