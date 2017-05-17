@@ -12,7 +12,6 @@ import android.support.v4.content.ContextCompat;
 
 import com.chenenyu.router.matcher.AbsImplicitMatcher;
 import com.chenenyu.router.matcher.AbsMatcher;
-import com.chenenyu.router.matcher.MatcherRegistry;
 import com.chenenyu.router.util.RLog;
 
 import java.lang.reflect.Constructor;
@@ -69,7 +68,7 @@ class MainRouter extends AbsRouter {
 
         if (!mRouteRequest.isSkipInterceptors()) {
             for (RouteInterceptor interceptor : Router.getGlobalInterceptors()) {
-                if (interceptor.intercept(context, mRouteRequest.getUri(), mRouteRequest.getExtras())) {
+                if (interceptor.intercept(context, mRouteRequest)) {
                     callback(RouteResult.INTERCEPTED, "Intercepted by global interceptor.");
                     return null;
                 }
@@ -135,7 +134,7 @@ class MainRouter extends AbsRouter {
 
         if (!mRouteRequest.isSkipInterceptors()) {
             for (RouteInterceptor interceptor : Router.getGlobalInterceptors()) {
-                if (interceptor.intercept(context, mRouteRequest.getUri(), mRouteRequest.getExtras())) {
+                if (interceptor.intercept(context, mRouteRequest)) {
                     callback(RouteResult.INTERCEPTED, "Intercepted by global interceptor.");
                     return null;
                 }
@@ -216,8 +215,7 @@ class MainRouter extends AbsRouter {
                         e.printStackTrace();
                     }
                 }
-                if (interceptor != null && interceptor.intercept(context, mRouteRequest.getUri(),
-                        mRouteRequest.getExtras())) {
+                if (interceptor != null && interceptor.intercept(context, mRouteRequest)) {
                     callback(RouteResult.INTERCEPTED,
                             String.format("Intercepted by interceptor: %s.", name));
                     return true;

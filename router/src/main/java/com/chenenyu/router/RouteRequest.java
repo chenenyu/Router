@@ -15,13 +15,11 @@ import android.support.v4.app.ActivityOptionsCompat;
 public class RouteRequest implements Parcelable {
     private static final int INVALID_REQUEST_CODE = -1;
 
-    /* Needs parcel */
     private Uri uri;
     private Bundle extras;
     private int flags;
     private boolean skipInterceptors;
 
-    /* No need to parcel */
     @Nullable
     private RouteCallback callback;
     private int requestCode = INVALID_REQUEST_CODE;

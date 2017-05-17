@@ -41,7 +41,7 @@ class AptHub {
             modules = modules_name.split(",");
         } catch (ClassNotFoundException e) {
             RLog.e("Initialization failed, have you forgotten to apply plugin: " +
-                    "'com.chenenyu.router' in application module");
+                    "'com.chenenyu.router' in application module?");
             return;
         } catch (Exception e) {
             e.printStackTrace();

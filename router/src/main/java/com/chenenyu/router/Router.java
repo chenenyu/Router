@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.chenenyu.router.matcher.AbsMatcher;
-import com.chenenyu.router.matcher.MatcherRegistry;
 import com.chenenyu.router.util.RLog;
 
 import java.util.ArrayList;

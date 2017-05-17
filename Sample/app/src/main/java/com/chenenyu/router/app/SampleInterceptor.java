@@ -1,13 +1,10 @@
 package com.chenenyu.router.app;
 
 import android.content.Context;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import com.chenenyu.router.RouteInterceptor;
+import com.chenenyu.router.RouteRequest;
 import com.chenenyu.router.annotation.Interceptor;
 
 /**
@@ -18,7 +15,7 @@ import com.chenenyu.router.annotation.Interceptor;
 @Interceptor("SampleInterceptor")
 public class SampleInterceptor implements RouteInterceptor {
     @Override
-    public boolean intercept(Context context, @NonNull Uri uri, @Nullable Bundle extras) {
+    public boolean intercept(Context context, RouteRequest routeRequest) {
         Toast.makeText(context, "Intercepted by SampleInterceptor.", Toast.LENGTH_SHORT).show();
         return true;
     }

@@ -35,7 +35,7 @@ class RouterPlugin implements Plugin<Project> {
                 annotationProcessor compiler
             }
         } else {
-            String routerVersion = "1.1.0"
+            String routerVersion = "1.1.1"
             String compilerVersion = "0.6.0"
             // org.gradle.api.internal.plugins.DefaultExtraPropertiesExtension
             ExtraPropertiesExtension ext = project.rootProject.ext
