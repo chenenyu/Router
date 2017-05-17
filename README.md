@@ -2,7 +2,7 @@
 
 # Router
 
-建议浏览[中文wiki](https://github.com/chenenyu/Router/wiki).
+建议浏览[中文wiki](https://github.com/chenenyu/Router/wiki), 也可体验[demo.apk](https://github.com/chenenyu/Router/raw/master/static/demo.apk) .
 
 ![screenshot](static/screenshot.gif)
 
@@ -19,11 +19,11 @@ buildscript {
     }
     dependencies {
     	...
-        classpath 'com.chenenyu.router:gradle-plugin:0.8.1'
+        classpath 'com.chenenyu.router:gradle-plugin:0.8.2'
     }
 }
 
-// Optional. 指定版本号.
+// 可选. 指定版本号.
 ext {
     ...
     routerVersion = "x.y.z" // 指定特定的router版本
@@ -31,10 +31,10 @@ ext {
 }
 ```
 
-* Apply router plugin in your `app/build.gradle` or `lib/build.gradle`:  
+* Apply router plugin in your `module/build.gradle`:  
 
 ```  Groovy
-apply plugin: 'com.android.application/library'
+apply plugin: 'com.android.application'
 ...
 apply plugin: 'com.chenenyu.router'
 ```
@@ -45,16 +45,9 @@ current `router` version: ![Download](https://api.bintray.com/packages/chenenyu/
 
 current `router-compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg)  
 
-| gradle-plugin version | router version | compiler version |
-| :-------------------: | :------------: | :--------------: |
-|         0.1.0         |     0.4.0      |      0.2.0       |
-|         0.2.0         |     0.5.0      |      0.2.0       |
-|         0.3.0         |     0.7.0      |      0.3.0       |
-|         0.4.0         |     0.8.0      |      0.4.0       |
-|         0.5.0         |     0.9.1      |      0.5.0       |
-|         0.6.0         |     1.0.0      |      0.5.0       |
-|         0.7.0         |     1.0.4      |      0.5.0       |
-|         0.8.1         |     1.1.0      |      0.6.0       |
+## Features
+
+See [here](https://github.com/chenenyu/Router/wiki/%E7%89%B9%E6%80%A7) .
 
 ## Simple usage
 
@@ -89,10 +82,9 @@ QQ group: 271849001
 
 ## Other Libraries
 
-[SuperAdater](https://github.com/byteam/SuperAdapter): Adapter knife(万能的Adapter).
+[SuperAdater](https://github.com/byteam/SuperAdapter) : Adapter knife(万能的Adapter).
 
-[img-optimizer-gradle-plugin](https://github.com/chenenyu/img-optimizer-gradle-plugin)
-: 一款用于优化png图片的gradle插件.
+[img-optimizer-gradle-plugin](https://github.com/chenenyu/img-optimizer-gradle-plugin) : 一款用于优化png图片的gradle插件.
 
 ## License
 
