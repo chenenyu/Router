@@ -1,5 +1,6 @@
-include ':router', ':compiler', ':annotation', ':buildSrc', ':app', ':module1', ':module2'
+include ':router', ':compiler', ':annotation', ':buildSrc', ':app', ':module1', ':module2', ':kotlin-app'
 
 project(':app').projectDir = new File("Sample/app")
 project(':module1').projectDir = new File("Sample/module1")
 project(':module2').projectDir = new File("Sample/module2")
+project(':kotlin-app').projectDir = new File("Sample/kotlin-app")
