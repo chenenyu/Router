@@ -11,7 +11,6 @@ import org.gradle.api.tasks.TaskAction
  * Created by Cheney on 2017/3/1.
  */
 class GenerateBuildInfoTask extends DefaultTask {
-    @Input
     ApplicationVariantImpl applicationVariant
     @Input
     File routerFolder

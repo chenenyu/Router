@@ -26,13 +26,24 @@ class RouterPlugin implements Plugin<Project> {
                     'Router gradle plugin can only be applied to android projects.')
         }
 
+        def isKotlinProject = project.plugins.hasPlugin('kotlin-android')
+        if (isKotlinProject) {
+            if (!project.plugins.hasPlugin('kotlin-kapt')) {
+                project.plugins.apply('kotlin-kapt')
+            }
+        }
+
         // Add dependencies
         Project router = project.rootProject.findProject("router")
-        Project compiler = project.rootProject.findProject("compiler")
-        if (router && compiler) {
+        Project routerCompiler = project.rootProject.findProject("compiler")
+        if (router && routerCompiler) {
             project.dependencies {
                 compile router
-                annotationProcessor compiler
+                if (isKotlinProject) {
+                    kapt routerCompiler
+                } else {
+                    annotationProcessor routerCompiler
+                }
             }
         } else {
             String routerVersion = "1.1.1"
@@ -46,10 +57,12 @@ class RouterPlugin implements Plugin<Project> {
                 compilerVersion = ext.get("compilerVersion")
             }
 
-            // compat for plugin: android-apt
+            // compat for plugin: android-apt kotlin-kapt
             String apt = "annotationProcessor"
             if (project.plugins.hasPlugin("android-apt")) {
                 apt = "apt"
+            } else if (isKotlinProject) {
+                apt = 'kapt'
             }
 
             project.dependencies.add("compile", "com.chenenyu.router:router:${routerVersion}")
@@ -68,7 +81,7 @@ class RouterPlugin implements Plugin<Project> {
             }
 
             if (project.plugins.hasPlugin(AppPlugin)) {
-                // Read template in advance, it can't be read in GenerateBuildInfoTask for some unknown reason.
+                // Read template in advance, it can't be read in GenerateBuildInfoTask.
                 String template
                 InputStream is = RouterPlugin.class.getResourceAsStream("/RouterBuildInfo.template")
                 new Scanner(is).with {
