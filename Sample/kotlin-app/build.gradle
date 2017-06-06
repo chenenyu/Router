@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
 apply plugin: 'com.chenenyu.router'
 
 
@@ -18,6 +17,11 @@ android {
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [ "moduleName" : project.name ]
+            }
+        }
     }
 
     buildTypes {
@@ -28,12 +32,11 @@ android {
     }
 }
 
-kapt {
-    generateStubs = true
-    arguments {
-        arg("moduleName", "kotlin_app")
-    }
-}
+//kapt {
+//    arguments {
+//        arg("moduleName", project.name)
+//    }
+//}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
