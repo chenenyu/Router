@@ -61,6 +61,7 @@ public class InterceptorProcessor extends AbstractProcessor {
 
         String moduleName = processingEnv.getOptions().get(OPTION_MODULE_NAME);
         if (moduleName != null) {
+            moduleName = moduleName.replace(".", "_").replace("-", "_");
             generateInterceptors(moduleName, typeElements);
         } else {
             error(null, "No option `%s` passed to annotation processor.", OPTION_MODULE_NAME);

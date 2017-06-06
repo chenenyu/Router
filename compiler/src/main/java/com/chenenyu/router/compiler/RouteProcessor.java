@@ -82,6 +82,7 @@ public class RouteProcessor extends AbstractProcessor {
         }
         String moduleName = processingEnv.getOptions().get(OPTION_MODULE_NAME);
         if (moduleName != null) {
+            moduleName = moduleName.replace(".", "_").replace("-", "_");
             generateRouteTable(moduleName, typeElements);
             generateInterceptorTable(moduleName, typeElements);
         } else {
