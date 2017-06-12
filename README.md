@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/chenenyu/Router.svg?branch=master)](https://travis-ci.org/chenenyu/Router) ![license](https://img.shields.io/badge/license-Apache%202-yellow.svg) ![API](https://img.shields.io/badge/API-9%2B-orange.svg) ![PullRequest](https://img.shields.io/badge/PRs-welcome-brightgreen.svg) 
+[![Build Status](https://travis-ci.org/chenenyu/Router.svg?branch=master)](https://travis-ci.org/chenenyu/Router) ![license](https://img.shields.io/badge/license-Apache%202-yellow.svg) ![PullRequest](https://img.shields.io/badge/PRs-welcome-brightgreen.svg) 
 
 # Router
 
@@ -7,8 +7,6 @@
 ![screenshot](static/screenshot.gif)
 
 ## Getting started
-
-You should use a version of the Android gradle plugin 2.2 or above to supoort annotation processor. 
 
 *  Add dependencies by adding the following lines to your top level `project/build.gradle`:  
 
@@ -19,7 +17,7 @@ buildscript {
     }
     dependencies {
     	...
-        classpath 'com.chenenyu.router:gradle-plugin:0.8.2'
+        classpath 'com.chenenyu.router:gradle-plugin:0.8.3'
     }
 }
 
@@ -82,7 +80,7 @@ QQ group: 271849001
 
 ## Other Libraries
 
-[SuperAdater](https://github.com/byteam/SuperAdapter) : Adapter knife(万能的Adapter).
+[SuperAdater](https://github.com/byteam/SuperAdapter) : 实用的Adapter.
 
 [img-optimizer-gradle-plugin](https://github.com/chenenyu/img-optimizer-gradle-plugin) : 一款用于优化png图片的gradle插件.
 
