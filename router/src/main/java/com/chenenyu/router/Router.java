@@ -15,10 +15,20 @@ import java.util.List;
  * Created by Cheney on 2016/12/20.
  */
 public class Router {
+    /**
+     * You can get the raw uri in target page by call <code>intent.getStringExtra(Router.RAW_URI)</code>.
+     */
+    public static final String RAW_URI = "raw_uri";
+
     private static List<RouteInterceptor> sGlobalInterceptors = new ArrayList<>();
 
     private static boolean sDebuggable = false;
 
+    /**
+     * Initialize router.
+     *
+     * @param context placeholder for a future usage.
+     */
     public static void initialize(Context context) {
         initialize(context, false);
     }

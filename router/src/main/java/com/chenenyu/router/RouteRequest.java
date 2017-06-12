@@ -28,9 +28,6 @@ public class RouteRequest implements Parcelable {
     private ActivityOptionsCompat activityOptions;
 
 
-    public RouteRequest() {
-    }
-
     public RouteRequest(Uri uri) {
         this.uri = uri;
     }
