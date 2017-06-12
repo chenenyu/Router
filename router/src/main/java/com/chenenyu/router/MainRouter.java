@@ -39,12 +39,12 @@ class MainRouter extends AbsRouter {
     }
 
     /**
-     * Add custom route table.
+     * Handle route table.
      *
      * @param routeTable RouteTable
      * @see com.chenenyu.router.Router#addRouteTable(RouteTable)
      */
-    void addRouteTable(RouteTable routeTable) {
+    void handleRouteTable(RouteTable routeTable) {
         if (routeTable != null) {
             routeTable.handle(AptHub.routeTable);
         }

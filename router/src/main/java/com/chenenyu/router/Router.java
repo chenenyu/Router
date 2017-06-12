@@ -26,8 +26,8 @@ public class Router {
     /**
      * Initialize router.
      *
-     * @param context    Context
-     * @param debuggable boolean
+     * @param context    placeholder for a future usage.
+     * @param debuggable {@link #setDebuggable(boolean)}.
      */
     public static void initialize(Context context, boolean debuggable) {
         if (debuggable) {
@@ -54,10 +54,20 @@ public class Router {
     }
 
     /**
+     * Use {@link #handleRouteTable(RouteTable)} instead.
+     * <p>
+     * This method will be <strong>removed</strong> in a future release.
+     */
+    @Deprecated
+    public static void addRouteTable(RouteTable routeTable) {
+        MainRouter.getInstance().handleRouteTable(routeTable);
+    }
+
+    /**
      * Custom router table.
      */
-    public static void addRouteTable(RouteTable routeTable) {
-        MainRouter.getInstance().addRouteTable(routeTable);
+    public static void handleRouteTable(RouteTable routeTable) {
+        MainRouter.getInstance().handleRouteTable(routeTable);
     }
 
     /**
