@@ -11,14 +11,18 @@ buildscript {
 
 repositories {
     jcenter()
+    maven { url 'https://maven.google.com' }
 }
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
 
+//ext.kotlin_version = '1.1.2-4'
+
 dependencies {
     compile gradleApi()
     compile 'com.android.tools.build:gradle:2.3.0'
+//    compile "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 }
 
 //apply from: 'publish.gradle'
