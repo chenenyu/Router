@@ -1,6 +1,7 @@
-package com.chenenyu.router.compiler;
+package com.chenenyu.router.compiler.processor;
 
 import com.chenenyu.router.annotation.Interceptor;
+import com.chenenyu.router.compiler.util.Logger;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedOptions;
@@ -23,15 +25,14 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.tools.Diagnostic;
 
-import static com.chenenyu.router.compiler.Consts.CLASS_JAVA_DOC;
-import static com.chenenyu.router.compiler.Consts.INTERCEPTORS;
-import static com.chenenyu.router.compiler.Consts.INTERCEPTORS_METHOD_NAME;
-import static com.chenenyu.router.compiler.Consts.INTERCEPTOR_ANNOTATION_TYPE;
-import static com.chenenyu.router.compiler.Consts.INTERCEPTOR_INTERFACE;
-import static com.chenenyu.router.compiler.Consts.OPTION_MODULE_NAME;
-import static com.chenenyu.router.compiler.Consts.PACKAGE_NAME;
+import static com.chenenyu.router.compiler.util.Consts.CLASS_JAVA_DOC;
+import static com.chenenyu.router.compiler.util.Consts.INTERCEPTORS;
+import static com.chenenyu.router.compiler.util.Consts.INTERCEPTORS_METHOD_NAME;
+import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_ANNOTATION_TYPE;
+import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_INTERFACE;
+import static com.chenenyu.router.compiler.util.Consts.OPTION_MODULE_NAME;
+import static com.chenenyu.router.compiler.util.Consts.PACKAGE_NAME;
 
 /**
  * {@link Interceptor} annotation processor.
@@ -42,6 +43,15 @@ import static com.chenenyu.router.compiler.Consts.PACKAGE_NAME;
 @SupportedOptions(OPTION_MODULE_NAME)
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class InterceptorProcessor extends AbstractProcessor {
+    private Logger mLogger;
+
+    @Override
+    public synchronized void init(ProcessingEnvironment processingEnvironment) {
+        super.init(processingEnvironment);
+        mLogger = new Logger(processingEnvironment.getMessager());
+        mLogger.info(">>> InterceptorProcessor init <<<");
+    }
+
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(Interceptor.class);
@@ -54,8 +64,8 @@ public class InterceptorProcessor extends AbstractProcessor {
             if (validateElement(element)) {
                 typeElements.add((TypeElement) element);
             } else {
-                error(element, "The annotated element is not a implementation class of %s",
-                        INTERCEPTOR_INTERFACE);
+                mLogger.error(element, String.format("The annotated element is not a implementation class of %s",
+                        INTERCEPTOR_INTERFACE));
             }
         }
 
@@ -64,13 +74,9 @@ public class InterceptorProcessor extends AbstractProcessor {
             moduleName = moduleName.replace(".", "_").replace("-", "_");
             generateInterceptors(moduleName, typeElements);
         } else {
-            error(null, "No option `%s` passed to annotation processor.", OPTION_MODULE_NAME);
+            mLogger.error(String.format("No option `%s` passed to annotation processor.", OPTION_MODULE_NAME));
         }
         return true;
-    }
-
-    private void error(Element element, String message, Object... args) {
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, String.format(message, args), element);
     }
 
     private boolean validateElement(Element element) {

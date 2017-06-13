@@ -1,4 +1,4 @@
-package com.chenenyu.router.compiler;
+package com.chenenyu.router.compiler.util;
 
 /**
  * <p>
@@ -17,6 +17,7 @@ public class Consts {
 
     public static final String ROUTE_ANNOTATION_TYPE = "com.chenenyu.router.annotation.Route";
     public static final String INTERCEPTOR_ANNOTATION_TYPE = "com.chenenyu.router.annotation.Interceptor";
+    public static final String PARAM_ANNOTATION_TYPE = "com.chenenyu.router.annotation.Param";
 
     public static final String ROUTE_TABLE_METHOD_NAME = "handle";
     public static final String INTERCEPTOR_INTERFACE = PACKAGE_NAME + DOT + "RouteInterceptor";
