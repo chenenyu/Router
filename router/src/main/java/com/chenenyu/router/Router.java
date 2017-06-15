@@ -74,10 +74,19 @@ public class Router {
     }
 
     /**
-     * Custom router table.
+     * Custom route table.
      */
     public static void handleRouteTable(RouteTable routeTable) {
         MainRouter.getInstance().handleRouteTable(routeTable);
+    }
+
+    /**
+     * Auto inject params from bundle.
+     *
+     * @param obj Instance of Activity or Fragment.
+     */
+    public static void injectParams(Object obj) {
+        MainRouter.getInstance().injectParams(obj);
     }
 
     /**
