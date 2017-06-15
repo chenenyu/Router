@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.chenenyu.router.RouteCallback;
 import com.chenenyu.router.RouteResult;
 import com.chenenyu.router.Router;
+import com.chenenyu.router.annotation.InjectParam;
 import com.chenenyu.router.annotation.Route;
 import com.chenenyu.router.module1.R;
 
@@ -21,6 +22,11 @@ import com.chenenyu.router.module1.R;
  */
 @Route("fragment1")
 public class Module1Fragment extends Fragment {
+
+    @InjectParam
+    int id;
+    @InjectParam
+    private String status;
 
     public Module1Fragment() {
         // Required empty public constructor

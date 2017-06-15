@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         // 动态添加路由
-        Router.addRouteTable(new RouteTable() {
+        Router.handleRouteTable(new RouteTable() {
             @Override
             public void handle(Map<String, Class<?>> map) {
                 map.put("dynamic", DynamicActivity.class);
