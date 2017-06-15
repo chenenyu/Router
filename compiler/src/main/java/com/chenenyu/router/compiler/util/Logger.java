@@ -7,7 +7,7 @@ import javax.tools.Diagnostic;
 /**
  * {@link Messager} wrapper.
  * <p>
- * Created by Cheney on 2017/6/13.
+ * Created by Enyu Chen on 2017/6/13.
  */
 public class Logger {
     private Messager messager;
@@ -22,6 +22,14 @@ public class Logger {
 
     public void info(Element element, CharSequence info) {
         messager.printMessage(Diagnostic.Kind.NOTE, info, element);
+    }
+
+    public void warn(CharSequence info) {
+        messager.printMessage(Diagnostic.Kind.WARNING, info);
+    }
+
+    public void warn(Element element, CharSequence info) {
+        messager.printMessage(Diagnostic.Kind.WARNING, info, element);
     }
 
     public void error(CharSequence info) {
