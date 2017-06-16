@@ -43,13 +43,14 @@ import static com.chenenyu.router.compiler.util.Consts.PACKAGE_NAME;
 @SupportedOptions(OPTION_MODULE_NAME)
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class InterceptorProcessor extends AbstractProcessor {
+    private String mModuleName;
     private Logger mLogger;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
         super.init(processingEnvironment);
+        mModuleName = processingEnvironment.getOptions().get(OPTION_MODULE_NAME);
         mLogger = new Logger(processingEnvironment.getMessager());
-        mLogger.info(">>> InterceptorProcessor init <<<");
     }
 
     @Override
@@ -58,6 +59,7 @@ public class InterceptorProcessor extends AbstractProcessor {
         if (elements == null || elements.isEmpty()) {
             return true;
         }
+        mLogger.info(String.format(">>> %s: InterceptorProcessor begin... <<<", mModuleName));
         // 合法的TypeElement集合
         Set<TypeElement> typeElements = new HashSet<>();
         for (Element element : elements) {
@@ -69,13 +71,13 @@ public class InterceptorProcessor extends AbstractProcessor {
             }
         }
 
-        String moduleName = processingEnv.getOptions().get(OPTION_MODULE_NAME);
-        if (moduleName != null) {
-            moduleName = moduleName.replace(".", "_").replace("-", "_");
-            generateInterceptors(moduleName, typeElements);
+        if (mModuleName != null) {
+            String validModuleName = mModuleName.replace(".", "_").replace("-", "_");
+            generateInterceptors(validModuleName, typeElements);
         } else {
-            mLogger.error(String.format("No option `%s` passed to annotation processor.", OPTION_MODULE_NAME));
+            mLogger.error(String.format("No option `%s` passed to Interceptor annotation processor.", OPTION_MODULE_NAME));
         }
+        mLogger.info(String.format(">>> %s: InterceptorProcessor end. <<<", mModuleName));
         return true;
     }
 
@@ -101,6 +103,7 @@ public class InterceptorProcessor extends AbstractProcessor {
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(mapParameterSpec);
         for (TypeElement element : elements) {
+            mLogger.info(String.format("Found interceptor: %s", element.getQualifiedName()));
             Interceptor interceptor = element.getAnnotation(Interceptor.class);
             String name = interceptor.value();
             handleInterceptors.addStatement("map.put($S, $T.class)", name, ClassName.get(element));

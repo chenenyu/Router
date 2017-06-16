@@ -49,13 +49,14 @@ import static com.chenenyu.router.compiler.util.Consts.ROUTE_TABLE_METHOD_NAME;
 @SupportedOptions(OPTION_MODULE_NAME)
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class RouteProcessor extends AbstractProcessor {
+    private String mModuleName;
     private Logger mLogger;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
         super.init(processingEnvironment);
+        mModuleName = processingEnvironment.getOptions().get(OPTION_MODULE_NAME);
         mLogger = new Logger(processingEnvironment.getMessager());
-        mLogger.info(">>> RouteProcessor init <<<");
     }
 
     /**
@@ -67,6 +68,7 @@ public class RouteProcessor extends AbstractProcessor {
         if (elements == null || elements.isEmpty()) {
             return true;
         }
+        mLogger.info(String.format(">>> %s: RouteProcessor begin... <<<", mModuleName));
         // 合法的TypeElement集合
         Set<TypeElement> typeElements = new HashSet<>();
         for (Element element : elements) {
@@ -74,14 +76,14 @@ public class RouteProcessor extends AbstractProcessor {
                 typeElements.add((TypeElement) element);
             }
         }
-        String moduleName = processingEnv.getOptions().get(OPTION_MODULE_NAME);
-        if (moduleName != null) {
-            moduleName = moduleName.replace(".", "_").replace("-", "_");
-            generateRouteTable(moduleName, typeElements);
-            generateInterceptorTable(moduleName, typeElements);
+        if (mModuleName != null) {
+            String validModuleName = mModuleName.replace(".", "_").replace("-", "_");
+            generateRouteTable(validModuleName, typeElements);
+            generateInterceptorTable(validModuleName, typeElements);
         } else {
-            mLogger.error(String.format("No option `%s` passed to annotation processor.", OPTION_MODULE_NAME));
+            mLogger.error(String.format("No option `%s` passed to Route annotation processor.", OPTION_MODULE_NAME));
         }
+        mLogger.info(String.format(">>> %s: RouteProcessor end. <<<", mModuleName));
         return true;
     }
 
@@ -125,6 +127,7 @@ public class RouteProcessor extends AbstractProcessor {
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(mapParameterSpec);
         for (TypeElement element : elements) {
+            mLogger.info(String.format("Found routed target: %s", element.getQualifiedName()));
             Route route = element.getAnnotation(Route.class);
             String[] paths = route.value();
             for (String path : paths) {

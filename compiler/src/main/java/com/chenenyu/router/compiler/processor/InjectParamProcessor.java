@@ -55,14 +55,15 @@ import static com.chenenyu.router.compiler.util.Consts.TARGET;
 @SupportedOptions(OPTION_MODULE_NAME)
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class InjectParamProcessor extends AbstractProcessor {
+    private String mModuleName;
     private Logger mLogger;
     private Map<TypeElement, List<Element>> mClzAndParams = new HashMap<>();
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
         super.init(processingEnvironment);
+        mModuleName = processingEnvironment.getOptions().get(OPTION_MODULE_NAME);
         mLogger = new Logger(processingEnvironment.getMessager());
-        mLogger.info(">>> InjectParamProcessor init <<<");
     }
 
     @Override
@@ -71,6 +72,7 @@ public class InjectParamProcessor extends AbstractProcessor {
         if (elements == null || elements.isEmpty()) {
             return true;
         }
+        mLogger.info(String.format(">>> %s: InjectParamProcessor begin... <<<", mModuleName));
         parseParams(elements);
         try {
             generate();
@@ -80,7 +82,7 @@ public class InjectParamProcessor extends AbstractProcessor {
             mLogger.error("Exception occurred when generating class file.");
             e.printStackTrace();
         }
-
+        mLogger.info(String.format(">>> %s: InjectParamProcessor end. <<<", mModuleName));
         return true;
     }
 
@@ -133,7 +135,7 @@ public class InjectParamProcessor extends AbstractProcessor {
 
             mLogger.info(String.format("Start to process injected params in %s ...", simpleName));
 
-            TypeSpec.Builder helper = TypeSpec.classBuilder(fileName)
+            TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(fileName)
                     .addJavadoc(CLASS_JAVA_DOC)
                     .addSuperinterface(ClassName.get(PACKAGE_NAME, "ParamInjector"))
                     .addModifiers(Modifier.PUBLIC);
@@ -145,7 +147,7 @@ public class InjectParamProcessor extends AbstractProcessor {
                 StringBuilder statement = new StringBuilder();
                 if (param.getModifiers().contains(Modifier.PRIVATE)) {
                     mLogger.warn(param, String.format(
-                            "Found private field %s, please remove 'private' modifier for a better performance.", fieldName));
+                            "Found private field: %s, please remove 'private' modifier for a better performance.", fieldName));
                     String reflectName = "field_" + fieldName;
                     injectMethodBuilder.beginControlFlow("try")
                             .addStatement("$T $L = $T.class.getDeclaredField($S)",
@@ -168,10 +170,10 @@ public class InjectParamProcessor extends AbstractProcessor {
                 }
             }
 
-            helper.addMethod(injectMethodBuilder.build());
+            typeBuilder.addMethod(injectMethodBuilder.build());
 
-            JavaFile.builder(packageName, helper.build()).build().writeTo(processingEnv.getFiler());
-            mLogger.info(String.format(">>> Params in class %s have been processed: %s. <<<", simpleName, fileName));
+            JavaFile.builder(packageName, typeBuilder.build()).build().writeTo(processingEnv.getFiler());
+            mLogger.info(String.format("Params in class %s have been processed: %s.", simpleName, fileName));
         }
     }
 
