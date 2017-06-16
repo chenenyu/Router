@@ -14,6 +14,10 @@ public class TestActivity extends AppCompatActivity {
     String id;
     @InjectParam(key = "status")
     private String sts;
+    @InjectParam
+    private short test1;
+    @InjectParam
+    byte[] test2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

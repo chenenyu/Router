@@ -22,11 +22,11 @@ import com.chenenyu.router.module1.R;
  */
 @Route("fragment1")
 public class Module1Fragment extends Fragment {
-
+    // Test param inject, not been used.
     @InjectParam
-    int id;
-    @InjectParam
-    private String status;
+    int test1;
+    @InjectParam(key = "test22")
+    char[] test2;
 
     public Module1Fragment() {
         // Required empty public constructor
