@@ -70,7 +70,7 @@ public class Router {
      */
     @Deprecated
     public static void addRouteTable(RouteTable routeTable) {
-        MainRouter.getInstance().handleRouteTable(routeTable);
+        handleRouteTable(routeTable);
     }
 
     /**

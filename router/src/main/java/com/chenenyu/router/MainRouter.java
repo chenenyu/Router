@@ -55,6 +55,7 @@ class MainRouter extends AbsRouter {
      *
      * @param obj Activity or Fragment.
      */
+    @SuppressWarnings("unchecked")
     void injectParams(Object obj) {
         if (obj instanceof Activity || obj instanceof Fragment || obj instanceof android.app.Fragment) {
             String key = obj.getClass().getCanonicalName();
