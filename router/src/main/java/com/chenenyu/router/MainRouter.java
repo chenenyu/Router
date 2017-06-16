@@ -39,14 +39,46 @@ class MainRouter extends AbsRouter {
     }
 
     /**
-     * Add custom route table.
+     * Handle route table.
      *
      * @param routeTable RouteTable
-     * @see com.chenenyu.router.Router#addRouteTable(RouteTable)
+     * @see com.chenenyu.router.Router#handleRouteTable(RouteTable)
      */
-    void addRouteTable(RouteTable routeTable) {
+    void handleRouteTable(RouteTable routeTable) {
         if (routeTable != null) {
             routeTable.handle(AptHub.routeTable);
+        }
+    }
+
+    /**
+     * Auto inject params from bundle.
+     *
+     * @param obj Activity or Fragment.
+     */
+    @SuppressWarnings("unchecked")
+    void injectParams(Object obj) {
+        if (obj instanceof Activity || obj instanceof Fragment || obj instanceof android.app.Fragment) {
+            String key = obj.getClass().getCanonicalName();
+            Class<ParamInjector> clz;
+            if (!AptHub.injectors.containsKey(key)) {
+                try {
+                    clz = (Class<ParamInjector>) Class.forName(key + AptHub.PARAM_CLASS_SUFFIX);
+                    AptHub.injectors.put(key, clz);
+                } catch (ClassNotFoundException e) {
+                    RLog.e("Inject params failed.", e);
+                    return;
+                }
+            } else {
+                clz = AptHub.injectors.get(key);
+            }
+            try {
+                ParamInjector injector = clz.newInstance();
+                injector.inject(obj);
+            } catch (Exception e) {
+                RLog.e("Inject params failed.", e);
+            }
+        } else {
+            RLog.e("The obj you passed must be an instance of Activity or Fragment.");
         }
     }
 

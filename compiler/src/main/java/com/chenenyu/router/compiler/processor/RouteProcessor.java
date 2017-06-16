@@ -1,6 +1,7 @@
-package com.chenenyu.router.compiler;
+package com.chenenyu.router.compiler.processor;
 
 import com.chenenyu.router.annotation.Route;
+import com.chenenyu.router.compiler.util.Logger;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -16,8 +17,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -27,21 +26,19 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.util.Elements;
-import javax.tools.Diagnostic;
 
-import static com.chenenyu.router.compiler.Consts.ACTIVITY_FULL_NAME;
-import static com.chenenyu.router.compiler.Consts.CLASS_JAVA_DOC;
-import static com.chenenyu.router.compiler.Consts.FRAGMENT_FULL_NAME;
-import static com.chenenyu.router.compiler.Consts.FRAGMENT_V4_FULL_NAME;
-import static com.chenenyu.router.compiler.Consts.INTERCEPTOR_TABLE;
-import static com.chenenyu.router.compiler.Consts.INTERCEPTOR_TABLE_METHOD_NAME;
-import static com.chenenyu.router.compiler.Consts.OPTION_MODULE_NAME;
-import static com.chenenyu.router.compiler.Consts.PACKAGE_NAME;
-import static com.chenenyu.router.compiler.Consts.ROUTE_ANNOTATION_TYPE;
-import static com.chenenyu.router.compiler.Consts.ROUTE_TABLE;
-import static com.chenenyu.router.compiler.Consts.ROUTE_TABLE_FULL_NAME;
-import static com.chenenyu.router.compiler.Consts.ROUTE_TABLE_METHOD_NAME;
+import static com.chenenyu.router.compiler.util.Consts.ACTIVITY_FULL_NAME;
+import static com.chenenyu.router.compiler.util.Consts.CLASS_JAVA_DOC;
+import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_FULL_NAME;
+import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_V4_FULL_NAME;
+import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_TABLE;
+import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_TABLE_METHOD_NAME;
+import static com.chenenyu.router.compiler.util.Consts.OPTION_MODULE_NAME;
+import static com.chenenyu.router.compiler.util.Consts.PACKAGE_NAME;
+import static com.chenenyu.router.compiler.util.Consts.ROUTE_ANNOTATION_TYPE;
+import static com.chenenyu.router.compiler.util.Consts.ROUTE_TABLE;
+import static com.chenenyu.router.compiler.util.Consts.ROUTE_TABLE_FULL_NAME;
+import static com.chenenyu.router.compiler.util.Consts.ROUTE_TABLE_METHOD_NAME;
 
 /**
  * {@link Route} annotation processor.
@@ -52,16 +49,14 @@ import static com.chenenyu.router.compiler.Consts.ROUTE_TABLE_METHOD_NAME;
 @SupportedOptions(OPTION_MODULE_NAME)
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class RouteProcessor extends AbstractProcessor {
-    private Elements elementUtils = null;
-    private Filer filer = null;
-    private Messager messager = null;
+    private String mModuleName;
+    private Logger mLogger;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
         super.init(processingEnvironment);
-        elementUtils = processingEnvironment.getElementUtils();
-        filer = processingEnvironment.getFiler();
-        messager = processingEnvironment.getMessager();
+        mModuleName = processingEnvironment.getOptions().get(OPTION_MODULE_NAME);
+        mLogger = new Logger(processingEnvironment.getMessager());
     }
 
     /**
@@ -73,6 +68,7 @@ public class RouteProcessor extends AbstractProcessor {
         if (elements == null || elements.isEmpty()) {
             return true;
         }
+        mLogger.info(String.format(">>> %s: RouteProcessor begin... <<<", mModuleName));
         // 合法的TypeElement集合
         Set<TypeElement> typeElements = new HashSet<>();
         for (Element element : elements) {
@@ -80,14 +76,14 @@ public class RouteProcessor extends AbstractProcessor {
                 typeElements.add((TypeElement) element);
             }
         }
-        String moduleName = processingEnv.getOptions().get(OPTION_MODULE_NAME);
-        if (moduleName != null) {
-            moduleName = moduleName.replace(".", "_").replace("-", "_");
-            generateRouteTable(moduleName, typeElements);
-            generateInterceptorTable(moduleName, typeElements);
+        if (mModuleName != null) {
+            String validModuleName = mModuleName.replace(".", "_").replace("-", "_");
+            generateRouteTable(validModuleName, typeElements);
+            generateInterceptorTable(validModuleName, typeElements);
         } else {
-            error(null, "No option `%s` passed to annotation processor.", OPTION_MODULE_NAME);
+            mLogger.error(String.format("No option `%s` passed to Route annotation processor.", OPTION_MODULE_NAME));
         }
+        mLogger.info(String.format(">>> %s: RouteProcessor end. <<<", mModuleName));
         return true;
     }
 
@@ -97,15 +93,15 @@ public class RouteProcessor extends AbstractProcessor {
     private boolean validateElement(Element typeElement) {
         if (!isSubtype(typeElement, ACTIVITY_FULL_NAME) && !isSubtype(typeElement, FRAGMENT_V4_FULL_NAME)
                 && !isSubtype(typeElement, FRAGMENT_FULL_NAME)) {
-            error(typeElement, "%s is not a subclass of Activity or Fragment.",
-                    typeElement.getSimpleName().toString());
+            mLogger.error(typeElement, String.format("%s is not a subclass of Activity or Fragment.",
+                    typeElement.getSimpleName().toString()));
             return false;
         }
         Set<Modifier> modifiers = typeElement.getModifiers();
         // abstract class.
         if (modifiers.contains(Modifier.ABSTRACT)) {
-            error(typeElement, "The class %s is abstract. You can't annotate abstract classes with @%s.",
-                    ((TypeElement) typeElement).getQualifiedName(), Route.class.getSimpleName());
+            mLogger.error(typeElement, String.format("The class %s is abstract. You can't annotate abstract classes with @%s.",
+                    ((TypeElement) typeElement).getQualifiedName(), Route.class.getSimpleName()));
             return false;
         }
         return true;
@@ -114,10 +110,6 @@ public class RouteProcessor extends AbstractProcessor {
     private boolean isSubtype(Element typeElement, String type) {
         return processingEnv.getTypeUtils().isSubtype(typeElement.asType(),
                 processingEnv.getElementUtils().getTypeElement(type).asType());
-    }
-
-    private void error(Element element, String message, Object... args) {
-        messager.printMessage(Diagnostic.Kind.ERROR, String.format(message, args), element);
     }
 
     /**
@@ -135,6 +127,7 @@ public class RouteProcessor extends AbstractProcessor {
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(mapParameterSpec);
         for (TypeElement element : elements) {
+            mLogger.info(String.format("Found routed target: %s", element.getQualifiedName()));
             Route route = element.getAnnotation(Route.class);
             String[] paths = route.value();
             for (String path : paths) {
@@ -142,7 +135,7 @@ public class RouteProcessor extends AbstractProcessor {
             }
         }
 
-        TypeElement interfaceType = elementUtils.getTypeElement(ROUTE_TABLE_FULL_NAME);
+        TypeElement interfaceType = processingEnv.getElementUtils().getTypeElement(ROUTE_TABLE_FULL_NAME);
         TypeSpec type = TypeSpec.classBuilder(capitalize(moduleName) + ROUTE_TABLE)
                 .addSuperinterface(ClassName.get(interfaceType))
                 .addModifiers(Modifier.PUBLIC)
@@ -150,7 +143,7 @@ public class RouteProcessor extends AbstractProcessor {
                 .addJavadoc(CLASS_JAVA_DOC)
                 .build();
         try {
-            JavaFile.builder(PACKAGE_NAME, type).build().writeTo(filer);
+            JavaFile.builder(PACKAGE_NAME, type).build().writeTo(processingEnv.getFiler());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -197,7 +190,7 @@ public class RouteProcessor extends AbstractProcessor {
                 .addJavadoc(CLASS_JAVA_DOC)
                 .build();
         try {
-            JavaFile.builder(PACKAGE_NAME, type).build().writeTo(filer);
+            JavaFile.builder(PACKAGE_NAME, type).build().writeTo(processingEnv.getFiler());
         } catch (IOException e) {
             e.printStackTrace();
         }

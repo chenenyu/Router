@@ -15,10 +15,20 @@ import java.util.List;
  * Created by Cheney on 2016/12/20.
  */
 public class Router {
+    /**
+     * You can get the raw uri in target page by call <code>intent.getStringExtra(Router.RAW_URI)</code>.
+     */
+    public static final String RAW_URI = "raw_uri";
+
     private static List<RouteInterceptor> sGlobalInterceptors = new ArrayList<>();
 
     private static boolean sDebuggable = false;
 
+    /**
+     * Initialize router.
+     *
+     * @param context placeholder for a future usage.
+     */
     public static void initialize(Context context) {
         initialize(context, false);
     }
@@ -26,8 +36,8 @@ public class Router {
     /**
      * Initialize router.
      *
-     * @param context    Context
-     * @param debuggable boolean
+     * @param context    placeholder for a future usage.
+     * @param debuggable {@link #setDebuggable(boolean)}.
      */
     public static void initialize(Context context, boolean debuggable) {
         if (debuggable) {
@@ -54,10 +64,29 @@ public class Router {
     }
 
     /**
-     * Custom router table.
+     * Use {@link #handleRouteTable(RouteTable)} instead.
+     * <p>
+     * This method will be <strong>removed</strong> in a future release.
      */
+    @Deprecated
     public static void addRouteTable(RouteTable routeTable) {
-        MainRouter.getInstance().addRouteTable(routeTable);
+        handleRouteTable(routeTable);
+    }
+
+    /**
+     * Custom route table.
+     */
+    public static void handleRouteTable(RouteTable routeTable) {
+        MainRouter.getInstance().handleRouteTable(routeTable);
+    }
+
+    /**
+     * Auto inject params from bundle.
+     *
+     * @param obj Instance of Activity or Fragment.
+     */
+    public static void injectParams(Object obj) {
+        MainRouter.getInstance().injectParams(obj);
     }
 
     /**
