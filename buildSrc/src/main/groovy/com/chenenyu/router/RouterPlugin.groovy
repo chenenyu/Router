@@ -26,7 +26,7 @@ class RouterPlugin implements Plugin<Project> {
                     'Router gradle plugin can only be applied to android projects.')
         }
 
-        project.logger.error("----- Router begin: ${project.name}-----")
+        // project.logger.error("----- Router begin: ${project.name}-----")
 
         def isKotlinProject = project.plugins.hasPlugin('kotlin-android')
         if (isKotlinProject) {
@@ -48,8 +48,8 @@ class RouterPlugin implements Plugin<Project> {
                 }
             }
         } else {
-            String routerVersion = "1.1.1"
-            String compilerVersion = "0.6.1"
+            String routerVersion = "1.2.0"
+            String compilerVersion = "1.2.0"
             // org.gradle.api.internal.plugins.DefaultExtraPropertiesExtension
             ExtraPropertiesExtension ext = project.rootProject.ext
             if (ext.has("routerVersion")) {
