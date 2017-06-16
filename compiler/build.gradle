@@ -10,7 +10,7 @@ def annoVersion = version.getProperty("ANNOTATION_VERSION")
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.squareup:javapoet:1.8.0'
+    compile 'com.squareup:javapoet:1.9.0'
 //    compile project(':annotation')
     compile "com.chenenyu.router:annotation:${annoVersion}"
 }
