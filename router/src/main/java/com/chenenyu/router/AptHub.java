@@ -21,7 +21,7 @@ class AptHub {
     private static final String ROUTE_TABLE = "RouteTable";
     private static final String INTERCEPTORS = "Interceptors";
     private static final String HANDLE_INTERCEPTORS = "handle";
-    private static final String INTERCEPTOR_TABLE = "InterceptorTable";
+    private static final String INTERCEPTOR_TABLE = "TargetInterceptors";
     private static final String HANDLE_INTERCEPTOR_TABLE = "handle";
     static final String PARAM_CLASS_SUFFIX = "$$Router$$ParamInjector";
 
@@ -68,7 +68,7 @@ class AptHub {
         }
         RLog.i("RouteTable", routeTable.toString());
 
-        /* InterceptorTable */
+        /* TargetInterceptors */
         String interceptorTableName;
         for (String moduleName : modules) {
             try {
@@ -83,7 +83,7 @@ class AptHub {
             }
         }
         if (!interceptorTable.isEmpty()) {
-            RLog.i("InterceptorTable", interceptorTable.toString());
+            RLog.i("TargetInterceptors", interceptorTable.toString());
         }
 
         /* Interceptors */
