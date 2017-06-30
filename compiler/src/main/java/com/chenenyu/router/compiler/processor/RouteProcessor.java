@@ -31,14 +31,13 @@ import static com.chenenyu.router.compiler.util.Consts.ACTIVITY_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Consts.CLASS_JAVA_DOC;
 import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_V4_FULL_NAME;
-import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_TABLE;
-import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_TABLE_METHOD_NAME;
+import static com.chenenyu.router.compiler.util.Consts.HANDLE;
 import static com.chenenyu.router.compiler.util.Consts.OPTION_MODULE_NAME;
 import static com.chenenyu.router.compiler.util.Consts.PACKAGE_NAME;
 import static com.chenenyu.router.compiler.util.Consts.ROUTE_ANNOTATION_TYPE;
 import static com.chenenyu.router.compiler.util.Consts.ROUTE_TABLE;
 import static com.chenenyu.router.compiler.util.Consts.ROUTE_TABLE_FULL_NAME;
-import static com.chenenyu.router.compiler.util.Consts.ROUTE_TABLE_METHOD_NAME;
+import static com.chenenyu.router.compiler.util.Consts.TABLE_INTERCEPTORS;
 
 /**
  * {@link Route} annotation processor.
@@ -79,7 +78,7 @@ public class RouteProcessor extends AbstractProcessor {
         if (mModuleName != null) {
             String validModuleName = mModuleName.replace(".", "_").replace("-", "_");
             generateRouteTable(validModuleName, typeElements);
-            generateInterceptorTable(validModuleName, typeElements);
+            generateTargetInterceptors(validModuleName, typeElements);
         } else {
             mLogger.error(String.format("No option `%s` passed to Route annotation processor.", OPTION_MODULE_NAME));
         }
@@ -122,7 +121,7 @@ public class RouteProcessor extends AbstractProcessor {
                         WildcardTypeName.subtypeOf(Object.class)));
         ParameterSpec mapParameterSpec = ParameterSpec.builder(mapTypeName, "map").build();
 
-        MethodSpec.Builder methodHandle = MethodSpec.methodBuilder(ROUTE_TABLE_METHOD_NAME)
+        MethodSpec.Builder methodHandle = MethodSpec.methodBuilder(HANDLE)
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(mapParameterSpec);
@@ -150,9 +149,9 @@ public class RouteProcessor extends AbstractProcessor {
     }
 
     /**
-     * InterceptorTable.
+     * TargetInterceptors.
      */
-    private void generateInterceptorTable(String moduleName, Set<TypeElement> elements) {
+    private void generateTargetInterceptors(String moduleName, Set<TypeElement> elements) {
         // Map<Class<?>, String[]> map
         ParameterizedTypeName mapTypeName = ParameterizedTypeName.get(
                 ClassName.get(Map.class),
@@ -160,8 +159,9 @@ public class RouteProcessor extends AbstractProcessor {
                         WildcardTypeName.subtypeOf(Object.class)),
                 TypeName.get(String[].class));
         ParameterSpec mapParameterSpec = ParameterSpec.builder(mapTypeName, "map").build();
-        MethodSpec.Builder methodHandle = MethodSpec.methodBuilder(INTERCEPTOR_TABLE_METHOD_NAME)
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+        MethodSpec.Builder methodHandle = MethodSpec.methodBuilder(HANDLE)
+                .addAnnotation(Override.class)
+                .addModifiers(Modifier.PUBLIC)
                 .addParameter(mapParameterSpec);
         boolean hasInterceptor = false; // flag
         for (TypeElement element : elements) {
@@ -184,7 +184,8 @@ public class RouteProcessor extends AbstractProcessor {
         if (!hasInterceptor) { // if there are no interceptors, ignore.
             return;
         }
-        TypeSpec type = TypeSpec.classBuilder(capitalize(moduleName) + INTERCEPTOR_TABLE)
+        TypeSpec type = TypeSpec.classBuilder(capitalize(moduleName) + TABLE_INTERCEPTORS)
+                .addSuperinterface(ClassName.get(PACKAGE_NAME, TABLE_INTERCEPTORS))
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(methodHandle.build())
                 .addJavadoc(CLASS_JAVA_DOC)

@@ -153,7 +153,7 @@ public class InjectParamProcessor extends AbstractProcessor {
                             .addStatement("$T $L = $T.class.getDeclaredField($S)",
                                     ClassName.get(Field.class), reflectName, ClassName.get(parent), fieldName)
                             .addStatement("$L.setAccessible(true)", reflectName);
-                    statement.append("$L.set($L, ");
+                    statement.append("$L.set($L, $L.");
                     concatStatement(isActivity, param.asType(), statement);
                     statement.append(")");
                     injectMethodBuilder.addStatement(statement.toString(), reflectName, TARGET, TARGET,
@@ -162,10 +162,10 @@ public class InjectParamProcessor extends AbstractProcessor {
                             .addStatement("e.printStackTrace()")
                             .endControlFlow();
                 } else {
-                    // target.field =
-                    statement.append(TARGET).append(DOT).append(fieldName).append(" = ");
+                    // target.field = (FieldType) target.
+                    statement.append(TARGET).append(DOT).append(fieldName).append(" = ").append("($T) $L.");
                     concatStatement(isActivity, param.asType(), statement);
-                    injectMethodBuilder.addStatement(statement.toString(), TARGET,
+                    injectMethodBuilder.addStatement(statement.toString(), ClassName.get(param.asType()), TARGET,
                             isEmpty(injectParam.key()) ? fieldName : injectParam.key());
                 }
             }
@@ -179,8 +179,8 @@ public class InjectParamProcessor extends AbstractProcessor {
 
     private void concatStatement(boolean isActivity, TypeMirror type, StringBuilder statement) {
         if (isActivity) {
-            // target.getIntent().getXXXExtra(key);
-            statement.append("$L.getIntent().get").append(getBundleAccessor(type)).append("Extra");
+            // getIntent().getXXXExtra(key);
+            statement.append("getIntent().get").append(getBundleAccessor(type)).append("Extra");
             if (type.getKind().isPrimitive()) {
                 if (type.getKind() == TypeKind.BOOLEAN) {
                     statement.append("($S, false)");
@@ -197,8 +197,8 @@ public class InjectParamProcessor extends AbstractProcessor {
                 statement.append("($S)");
             }
         } else {
-            // target.getArguments().getXXX(key);
-            statement.append("$L.getArguments().get").append(getBundleAccessor(type)).append("($S)");
+            // getArguments().getXXX(key);
+            statement.append("getArguments().get").append(getBundleAccessor(type)).append("($S)");
         }
     }
 

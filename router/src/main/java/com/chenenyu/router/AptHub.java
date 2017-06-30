@@ -4,7 +4,6 @@ import com.chenenyu.router.util.RLog;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,17 +19,15 @@ class AptHub {
     private static final String BUILD_INFO_FIELD = "ALL_MODULES";
     private static final String ROUTE_TABLE = "RouteTable";
     private static final String INTERCEPTORS = "Interceptors";
-    private static final String HANDLE_INTERCEPTORS = "handle";
-    private static final String INTERCEPTOR_TABLE = "InterceptorTable";
-    private static final String HANDLE_INTERCEPTOR_TABLE = "handle";
+    private static final String TARGET_INTERCEPTORS = "TargetInterceptors";
     static final String PARAM_CLASS_SUFFIX = "$$Router$$ParamInjector";
 
     // Uri -> Activity/Fragment
     static Map<String, Class<?>> routeTable = new HashMap<>();
-    // Activity -> interceptors' name
-    static Map<Class<?>, String[]> interceptorTable = new HashMap<>();
+    // Activity/Fragment -> interceptorTable' name
+    static Map<Class<?>, String[]> targetInterceptors = new HashMap<>();
     // interceptor's name -> interceptor
-    static Map<String, Class<? extends RouteInterceptor>> interceptors = new HashMap<>();
+    static Map<String, Class<? extends RouteInterceptor>> interceptorTable = new HashMap<>();
     // injector's name -> injector
     static Map<String, Class<ParamInjector>> injectors = new HashMap<>();
 
@@ -52,56 +49,58 @@ class AptHub {
         }
 
         /* RouteTable */
-        String fullTableName;
+        String routeTableName;
         for (String moduleName : modules) {
             try {
-                fullTableName = PACKAGE_NAME + DOT + capitalize(moduleName) + ROUTE_TABLE;
-                Class<?> routeTableClz = Class.forName(fullTableName);
+                routeTableName = PACKAGE_NAME + DOT + capitalize(moduleName) + ROUTE_TABLE;
+                Class<?> routeTableClz = Class.forName(routeTableName);
                 Constructor constructor = routeTableClz.getConstructor();
                 RouteTable instance = (RouteTable) constructor.newInstance();
                 instance.handle(routeTable);
             } catch (ClassNotFoundException e) {
-                RLog.i(String.format("There is no route table in module: %s.", moduleName));
+                RLog.i(String.format("There is no RouteTable in module: %s.", moduleName));
             } catch (Exception e) {
                 RLog.w(e.getMessage());
             }
         }
         RLog.i("RouteTable", routeTable.toString());
 
-        /* InterceptorTable */
-        String interceptorTableName;
+        /* TargetInterceptors */
+        String targetInterceptorsName;
         for (String moduleName : modules) {
             try {
-                interceptorTableName = PACKAGE_NAME + DOT + capitalize(moduleName) + INTERCEPTOR_TABLE;
-                Class<?> clz = Class.forName(interceptorTableName);
-                Method handle = clz.getMethod(HANDLE_INTERCEPTOR_TABLE, Map.class);
-                handle.invoke(null, interceptorTable);
+                targetInterceptorsName = PACKAGE_NAME + DOT + capitalize(moduleName) + TARGET_INTERCEPTORS;
+                Class<?> clz = Class.forName(targetInterceptorsName);
+                Constructor constructor = clz.getConstructor();
+                TargetInterceptors instance = (TargetInterceptors) constructor.newInstance();
+                instance.handle(targetInterceptors);
             } catch (ClassNotFoundException e) {
-                RLog.i(String.format("There is no interceptor table in module: %s.", moduleName));
+                RLog.i(String.format("There is no TargetInterceptors in module: %s.", moduleName));
+            } catch (Exception e) {
+                RLog.w(e.getMessage());
+            }
+        }
+        if (!targetInterceptors.isEmpty()) {
+            RLog.i("TargetInterceptors", targetInterceptors.toString());
+        }
+
+        /* InterceptorTable */
+        String interceptorName;
+        for (String moduleName : modules) {
+            try {
+                interceptorName = PACKAGE_NAME + DOT + capitalize(moduleName) + INTERCEPTORS;
+                Class<?> clz = Class.forName(interceptorName);
+                Constructor constructor = clz.getConstructor();
+                InterceptorTable instance = (InterceptorTable) constructor.newInstance();
+                instance.handle(interceptorTable);
+            } catch (ClassNotFoundException e) {
+                RLog.i(String.format("There is no InterceptorTable in module: %s.", moduleName));
             } catch (Exception e) {
                 RLog.w(e.getMessage());
             }
         }
         if (!interceptorTable.isEmpty()) {
             RLog.i("InterceptorTable", interceptorTable.toString());
-        }
-
-        /* Interceptors */
-        String interceptorName;
-        for (String moduleName : modules) {
-            try {
-                interceptorName = PACKAGE_NAME + DOT + capitalize(moduleName) + INTERCEPTORS;
-                Class<?> interceptorClz = Class.forName(interceptorName);
-                Method handle = interceptorClz.getMethod(HANDLE_INTERCEPTORS, Map.class);
-                handle.invoke(null, interceptors);
-            } catch (ClassNotFoundException e) {
-                RLog.i(String.format("There are no interceptors in module: %s.", moduleName));
-            } catch (Exception e) {
-                RLog.w(e.getMessage());
-            }
-        }
-        if (!interceptors.isEmpty()) {
-            RLog.i("Interceptors", interceptors.toString());
         }
     }
 

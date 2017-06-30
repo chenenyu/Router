@@ -2,7 +2,7 @@
 
 # Router
 
-建议浏览[中文wiki](https://github.com/chenenyu/Router/wiki), 也可体验[demo.apk](https://github.com/chenenyu/Router/raw/master/static/demo.apk) .
+建议浏览[中文wiki](https://github.com/chenenyu/Router/wiki).
 
 ![screenshot](static/screenshot.gif)
 
@@ -17,7 +17,7 @@ buildscript {
     }
     dependencies {
     	...
-        classpath 'com.chenenyu.router:gradle-plugin:1.2.0'
+        classpath 'com.chenenyu.router:gradle-plugin:1.2.1'
     }
 }
 
