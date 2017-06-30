@@ -60,7 +60,7 @@ public class Router {
     }
 
     public static IRouter build(Uri uri) {
-        return MainRouter.getInstance().build(uri);
+        return RealRouter.getInstance().build(uri);
     }
 
     /**
@@ -77,7 +77,21 @@ public class Router {
      * Custom route table.
      */
     public static void handleRouteTable(RouteTable routeTable) {
-        MainRouter.getInstance().handleRouteTable(routeTable);
+        RealRouter.getInstance().handleRouteTable(routeTable);
+    }
+
+    /**
+     * Custom interceptor table.
+     */
+    public static void handleInterceptorTable(InterceptorTable interceptorTable) {
+        RealRouter.getInstance().handleInterceptorTable(interceptorTable);
+    }
+
+    /**
+     * Custom targets' interceptors.
+     */
+    public static void handleTargetInterceptors(TargetInterceptors targetInterceptors) {
+        RealRouter.getInstance().handleTargetInterceptors(targetInterceptors);
     }
 
     /**
@@ -86,7 +100,7 @@ public class Router {
      * @param obj Instance of Activity or Fragment.
      */
     public static void injectParams(Object obj) {
-        MainRouter.getInstance().injectParams(obj);
+        RealRouter.getInstance().injectParams(obj);
     }
 
     /**
