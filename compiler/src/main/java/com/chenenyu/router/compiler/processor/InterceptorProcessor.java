@@ -27,10 +27,10 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 
 import static com.chenenyu.router.compiler.util.Consts.CLASS_JAVA_DOC;
-import static com.chenenyu.router.compiler.util.Consts.INTERCEPTORS;
-import static com.chenenyu.router.compiler.util.Consts.INTERCEPTORS_METHOD_NAME;
+import static com.chenenyu.router.compiler.util.Consts.HANDLE;
 import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_ANNOTATION_TYPE;
 import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_INTERFACE;
+import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_TABLE;
 import static com.chenenyu.router.compiler.util.Consts.OPTION_MODULE_NAME;
 import static com.chenenyu.router.compiler.util.Consts.PACKAGE_NAME;
 
@@ -99,8 +99,9 @@ public class InterceptorProcessor extends AbstractProcessor {
         /*
          * method
          */
-        MethodSpec.Builder handleInterceptors = MethodSpec.methodBuilder(INTERCEPTORS_METHOD_NAME)
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+        MethodSpec.Builder handleInterceptors = MethodSpec.methodBuilder(HANDLE)
+                .addAnnotation(Override.class)
+                .addModifiers(Modifier.PUBLIC)
                 .addParameter(mapParameterSpec);
         for (TypeElement element : elements) {
             mLogger.info(String.format("Found interceptor: %s", element.getQualifiedName()));
@@ -112,7 +113,8 @@ public class InterceptorProcessor extends AbstractProcessor {
         /*
          * class
          */
-        TypeSpec type = TypeSpec.classBuilder(capitalize(moduleName) + INTERCEPTORS)
+        TypeSpec type = TypeSpec.classBuilder(capitalize(moduleName) + INTERCEPTOR_TABLE)
+                .addSuperinterface(ClassName.get(PACKAGE_NAME, INTERCEPTOR_TABLE))
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(handleInterceptors.build())
                 .addJavadoc(CLASS_JAVA_DOC)

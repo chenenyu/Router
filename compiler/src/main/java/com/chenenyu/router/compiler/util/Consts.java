@@ -20,14 +20,12 @@ public class Consts {
     public static final String INTERCEPTOR_ANNOTATION_TYPE = "com.chenenyu.router.annotation.Interceptor";
     public static final String PARAM_ANNOTATION_TYPE = "com.chenenyu.router.annotation.InjectParam";
 
-    public static final String ROUTE_TABLE_METHOD_NAME = "handle";
+    public static final String HANDLE = "handle";
     public static final String INTERCEPTOR_INTERFACE = PACKAGE_NAME + DOT + "RouteInterceptor";
 
-    public static final String INTERCEPTORS = "Interceptors";
-    public static final String INTERCEPTORS_METHOD_NAME = "handle";
-
     public static final String INTERCEPTOR_TABLE = "InterceptorTable";
-    public static final String INTERCEPTOR_TABLE_METHOD_NAME = "handle";
+
+    public static final String TABLE_INTERCEPTORS = "TargetInterceptors";
 
     public static final String METHOD_INJECT = "inject";
     public static final String METHOD_INJECT_PARAM = "obj";
