@@ -24,16 +24,16 @@ import java.util.Set;
  * <p>
  * Created by Cheney on 2017/3/30.
  */
-class MainRouter extends AbsRouter {
-    private static MainRouter sInstance;
+class RealRouter extends AbsRouter {
+    private static RealRouter sInstance;
     private Map<String, RouteInterceptor> mInterceptorInstance = new HashMap<>();
 
-    private MainRouter() {
+    private RealRouter() {
     }
 
-    static synchronized MainRouter getInstance() {
+    static synchronized RealRouter getInstance() {
         if (sInstance == null) {
-            sInstance = new MainRouter();
+            sInstance = new RealRouter();
         }
         return sInstance;
     }
@@ -42,11 +42,32 @@ class MainRouter extends AbsRouter {
      * Handle route table.
      *
      * @param routeTable RouteTable
-     * @see com.chenenyu.router.Router#handleRouteTable(RouteTable)
      */
     void handleRouteTable(RouteTable routeTable) {
         if (routeTable != null) {
             routeTable.handle(AptHub.routeTable);
+        }
+    }
+
+    /**
+     * Handle interceptor table.
+     *
+     * @param interceptorTable InterceptorTable
+     */
+    void handleInterceptorTable(InterceptorTable interceptorTable) {
+        if (interceptorTable != null) {
+            interceptorTable.handle(AptHub.interceptorTable);
+        }
+    }
+
+    /**
+     * Handle targets' interceptors.
+     *
+     * @param targetInterceptors TargetInterceptors
+     */
+    void handleTargetInterceptors(TargetInterceptors targetInterceptors) {
+        if (targetInterceptors != null) {
+            targetInterceptors.handle(AptHub.targetInterceptors);
         }
     }
 
@@ -230,15 +251,15 @@ class MainRouter extends AbsRouter {
     }
 
     private boolean intercept(Context context, Class<?> target) {
-        if (AptHub.interceptorTable.isEmpty()) {
+        if (AptHub.targetInterceptors.isEmpty()) {
             return false;
         }
-        String[] interceptors = AptHub.interceptorTable.get(target);
+        String[] interceptors = AptHub.targetInterceptors.get(target);
         if (interceptors != null && interceptors.length > 0) {
             for (String name : interceptors) {
                 RouteInterceptor interceptor = mInterceptorInstance.get(name);
                 if (interceptor == null) {
-                    Class<? extends RouteInterceptor> clz = AptHub.interceptors.get(name);
+                    Class<? extends RouteInterceptor> clz = AptHub.interceptorTable.get(name);
                     try {
                         Constructor<? extends RouteInterceptor> constructor = clz.getConstructor();
                         interceptor = constructor.newInstance();
