@@ -18,7 +18,7 @@ class AptHub {
     private static final String ROUTER_BUILD_INFO = "RouterBuildInfo";
     private static final String BUILD_INFO_FIELD = "ALL_MODULES";
     private static final String ROUTE_TABLE = "RouteTable";
-    private static final String INTERCEPTORS = "Interceptors";
+    private static final String INTERCEPTOR_TABLE = "InterceptorTable";
     private static final String TARGET_INTERCEPTORS = "TargetInterceptors";
     static final String PARAM_CLASS_SUFFIX = "$$Router$$ParamInjector";
 
@@ -88,7 +88,7 @@ class AptHub {
         String interceptorName;
         for (String moduleName : modules) {
             try {
-                interceptorName = PACKAGE_NAME + DOT + capitalize(moduleName) + INTERCEPTORS;
+                interceptorName = PACKAGE_NAME + DOT + capitalize(moduleName) + INTERCEPTOR_TABLE;
                 Class<?> clz = Class.forName(interceptorName);
                 Constructor constructor = clz.getConstructor();
                 InterceptorTable instance = (InterceptorTable) constructor.newInstance();
