@@ -62,6 +62,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 map.put("dynamic", DynamicActivity.class);
             }
         });
+
+//        Router.handleInterceptorTable(new InterceptorTable() {
+//            @Override
+//            public void handle(Map<String, Class<? extends RouteInterceptor>> map) {
+//                Log.d("InterceptorTable", map.toString());
+//            }
+//        });
+
+//        Router.handleTargetInterceptors(new TargetInterceptors() {
+//            @Override
+//            public void handle(Map<Class<?>, String[]> map) {
+//                Log.d("TargetInterceptors", map.toString());
+//            }
+//        });
     }
 
     @Override
