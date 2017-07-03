@@ -17,11 +17,11 @@ buildscript {
     }
     dependencies {
     	...
-        classpath 'com.chenenyu.router:gradle-plugin:1.2.1'
+        classpath 'com.chenenyu.router:gradle-plugin:1.2.2'
     }
 }
 
-// 可选. 指定版本号.
+// 可选配置.
 ext {
     ...
     routerVersion = "x.y.z" // 指定特定的router版本
