@@ -68,21 +68,11 @@ Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more inf
 
 ## ProGuard
 
-```Java
-# Router
--keep class com.chenenyu.router.** {*;}
--keep class * implements com.chenenyu.router.RouteInterceptor {*;}
-```
+See [wiki](https://github.com/chenenyu/Router/wiki).
 
 ## Contact
 
 QQ group: 271849001
-
-## Other Libraries
-
-[SuperAdater](https://github.com/byteam/SuperAdapter) : 实用的Adapter.
-
-[img-optimizer-gradle-plugin](https://github.com/chenenyu/img-optimizer-gradle-plugin) : 一款用于优化png图片的gradle插件.
 
 ## License
 
