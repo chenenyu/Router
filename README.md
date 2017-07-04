@@ -43,10 +43,6 @@ current `router` version: ![Download](https://api.bintray.com/packages/chenenyu/
 
 current `router-compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg)  
 
-## Features
-
-See [here](https://github.com/chenenyu/Router/wiki/%E7%89%B9%E6%80%A7) .
-
 ## Simple usage
 
 `Router` uses annotation to specify the mapping relationship.
