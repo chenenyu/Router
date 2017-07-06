@@ -30,21 +30,17 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.PrimitiveType;
-import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
 import static com.chenenyu.router.compiler.util.Consts.ACTIVITY_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Consts.CLASS_JAVA_DOC;
-import static com.chenenyu.router.compiler.util.Consts.DOT;
 import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_V4_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Consts.INNER_CLASS_NAME;
 import static com.chenenyu.router.compiler.util.Consts.METHOD_INJECT;
-import static com.chenenyu.router.compiler.util.Consts.METHOD_INJECT_PARAM;
 import static com.chenenyu.router.compiler.util.Consts.OPTION_MODULE_NAME;
 import static com.chenenyu.router.compiler.util.Consts.PACKAGE_NAME;
 import static com.chenenyu.router.compiler.util.Consts.PARAM_ANNOTATION_TYPE;
-import static com.chenenyu.router.compiler.util.Consts.TARGET;
 
 /**
  * {@link InjectParam} annotation processor.
@@ -101,7 +97,11 @@ public class InjectParamProcessor extends AbstractProcessor {
     }
 
     private void generate() throws IllegalAccessException, IOException {
-        ParameterSpec objectParamSpec = ParameterSpec.builder(TypeName.OBJECT, METHOD_INJECT_PARAM).build();
+        final String TARGET = "target";
+        final String EXTRAS = "extras";
+        final String OBJ = "obj";
+
+        ParameterSpec objectParamSpec = ParameterSpec.builder(TypeName.OBJECT, OBJ).build();
 
         for (Map.Entry<TypeElement, List<Element>> entry : mClzAndParams.entrySet()) {
             TypeElement parent = entry.getKey();
@@ -123,83 +123,105 @@ public class InjectParamProcessor extends AbstractProcessor {
                         String.format("The target class %s must be Activity or Fragment.", simpleName));
             }
 
+            mLogger.info(String.format("Start to process injected params in %s ...", simpleName));
+
             // @Override
             // public void inject(Object obj) {}
             MethodSpec.Builder injectMethodBuilder = MethodSpec.methodBuilder(METHOD_INJECT)
                     .addAnnotation(Override.class)
                     .addModifiers(Modifier.PUBLIC)
                     .addParameter(objectParamSpec);
+
             // XXXActivity target = (XXXActivity) obj;
             injectMethodBuilder.addStatement("$T $L = ($T) $L",
-                    ClassName.get(parent), TARGET, ClassName.get(parent), METHOD_INJECT_PARAM);
-
-            mLogger.info(String.format("Start to process injected params in %s ...", simpleName));
-
-            TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(fileName)
-                    .addJavadoc(CLASS_JAVA_DOC)
-                    .addSuperinterface(ClassName.get(PACKAGE_NAME, "ParamInjector"))
-                    .addModifiers(Modifier.PUBLIC);
+                    ClassName.get(parent), TARGET, ClassName.get(parent), OBJ);
+            if (isActivity) { // Bundle extras = target.getIntent().getExtras();
+                injectMethodBuilder.addStatement("$T $L = $L.getIntent().getExtras()",
+                        ClassName.get("android.os", "Bundle"), EXTRAS, TARGET);
+            } else { // Bundle extras = target.getArguments();
+                injectMethodBuilder.addStatement("$T $L = $L.getArguments()",
+                        ClassName.get("android.os", "Bundle"), EXTRAS, TARGET);
+            }
 
             for (Element param : params) {
                 InjectParam injectParam = param.getAnnotation(InjectParam.class);
                 String fieldName = param.getSimpleName().toString();
+                String key = isEmpty(injectParam.key()) ? fieldName : injectParam.key();
 
                 StringBuilder statement = new StringBuilder();
                 if (param.getModifiers().contains(Modifier.PRIVATE)) {
                     mLogger.warn(param, String.format(
                             "Found private field: %s, please remove 'private' modifier for a better performance.", fieldName));
+
                     String reflectName = "field_" + fieldName;
+
                     injectMethodBuilder.beginControlFlow("try")
                             .addStatement("$T $L = $T.class.getDeclaredField($S)",
                                     ClassName.get(Field.class), reflectName, ClassName.get(parent), fieldName)
                             .addStatement("$L.setAccessible(true)", reflectName);
-                    statement.append("$L.set($L, $L.");
-                    concatStatement(isActivity, param.asType(), statement);
-                    statement.append(")");
-                    injectMethodBuilder.addStatement(statement.toString(), reflectName, TARGET, TARGET,
-                            isEmpty(injectParam.key()) ? fieldName : injectParam.key())
+
+                    Object[] args;
+                    // field_xxx.set(target, extras.getXXX("key"
+                    statement.append("$L.set($L, $L.get")
+                            .append(getAccessorType(param.asType()))
+                            .append("(")
+                            .append("$S");
+                    // , (FieldType) field_xxx.get(target)
+                    if (supportDefaultValue(param.asType())) {
+                        statement.append(", ($T) $L.get($L)");
+                        args = new Object[]{reflectName, TARGET, EXTRAS, key,
+                                ClassName.get(param.asType()), reflectName, TARGET};
+                    } else {
+                        args = new Object[]{reflectName, TARGET, EXTRAS, key};
+                    }
+                    // ))
+                    statement.append("))");
+
+                    injectMethodBuilder.addStatement(statement.toString(), args)
                             .nextControlFlow("catch ($T e)", Exception.class)
                             .addStatement("e.printStackTrace()")
                             .endControlFlow();
                 } else {
-                    // target.field = (FieldType) target.
-                    statement.append(TARGET).append(DOT).append(fieldName).append(" = ").append("($T) $L.");
-                    concatStatement(isActivity, param.asType(), statement);
-                    injectMethodBuilder.addStatement(statement.toString(), ClassName.get(param.asType()), TARGET,
-                            isEmpty(injectParam.key()) ? fieldName : injectParam.key());
+                    Object[] args;
+                    // target.field = (FieldType) extras.getXXX("key"
+
+                    statement.append("$L.$L = ($T) $L.get")
+                            .append(getAccessorType(param.asType())).append("(")
+                            .append("$S");
+                    // , target.field
+                    if (supportDefaultValue(param.asType())) {
+                        statement.append(", $L.$L");
+                        args = new Object[]{TARGET, fieldName, ClassName.get(param.asType()), EXTRAS, key, TARGET, fieldName};
+                    } else {
+                        args = new Object[]{TARGET, fieldName, ClassName.get(param.asType()), EXTRAS, key};
+                    }
+                    statement.append(")");
+
+                    injectMethodBuilder.addStatement(statement.toString(), args);
                 }
             }
 
-            typeBuilder.addMethod(injectMethodBuilder.build());
+            TypeSpec typeSpec = TypeSpec.classBuilder(fileName)
+                    .addJavadoc(CLASS_JAVA_DOC)
+                    .addSuperinterface(ClassName.get(PACKAGE_NAME, "ParamInjector"))
+                    .addModifiers(Modifier.PUBLIC)
+                    .addMethod(injectMethodBuilder.build())
+                    .build();
 
-            JavaFile.builder(packageName, typeBuilder.build()).build().writeTo(processingEnv.getFiler());
+            JavaFile.builder(packageName, typeSpec).build().writeTo(processingEnv.getFiler());
+
             mLogger.info(String.format("Params in class %s have been processed: %s.", simpleName, fileName));
         }
     }
 
-    private void concatStatement(boolean isActivity, TypeMirror type, StringBuilder statement) {
-        if (isActivity) {
-            // getIntent().getXXXExtra(key);
-            statement.append("getIntent().get").append(getBundleAccessor(type)).append("Extra");
-            if (type.getKind().isPrimitive()) {
-                if (type.getKind() == TypeKind.BOOLEAN) {
-                    statement.append("($S, false)");
-                } else if (type.getKind() == TypeKind.BYTE) {
-                    statement.append("($S, (byte)0)");
-                } else if (type.getKind() == TypeKind.SHORT) {
-                    statement.append("($S, (short)0)");
-                } else if (type.getKind() == TypeKind.CHAR) {
-                    statement.append("($S, (char)0)");
-                } else {
-                    statement.append("($S, 0)");
-                }
-            } else {
-                statement.append("($S)");
-            }
-        } else {
-            // getArguments().getXXX(key);
-            statement.append("getArguments().get").append(getBundleAccessor(type)).append("($S)");
+    private boolean supportDefaultValue(TypeMirror typeMirror) {
+        if (typeMirror instanceof PrimitiveType) {
+            return true;
         }
+        if (isSubtype(typeMirror, "java.lang.String") || isSubtype(typeMirror, "java.lang.CharSequence")) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -209,7 +231,7 @@ public class InjectParamProcessor extends AbstractProcessor {
      * @param typeMirror The type to access in the bundle
      * @return The string to append to 'get' or 'put'
      */
-    private String getBundleAccessor(TypeMirror typeMirror) {
+    private String getAccessorType(TypeMirror typeMirror) {
         if (typeMirror instanceof PrimitiveType) {
             return typeMirror.toString().toUpperCase().charAt(0) + typeMirror.toString().substring(1);
         } else if (typeMirror instanceof DeclaredType) {
@@ -221,10 +243,10 @@ public class InjectParamProcessor extends AbstractProcessor {
                         TypeMirror argType = typeArgs.get(0);
                         if (isSubtype(argType, "java.lang.Integer")) {
                             return "IntegerArrayList";
-                        } else if (isSubtype(argType, "java.lang.CharSequence")) {
-                            return "CharSequenceArrayList";
                         } else if (isSubtype(argType, "java.lang.String")) {
                             return "StringArrayList";
+                        } else if (isSubtype(argType, "java.lang.CharSequence")) {
+                            return "CharSequenceArrayList";
                         } else if (isSubtype(argType, "android.os.Parcelable")) {
                             return "ParcelableArrayList";
                         }
@@ -253,10 +275,10 @@ public class InjectParamProcessor extends AbstractProcessor {
             } else if (compType instanceof DeclaredType) {
                 Element compElement = ((DeclaredType) compType).asElement();
                 if (compElement instanceof TypeElement) {
-                    if (isSubtype(compElement, "java.lang.CharSequence")) {
-                        return "CharSequenceArray";
-                    } else if (isSubtype(compElement, "java.lang.String")) {
+                    if (isSubtype(compElement, "java.lang.String")) {
                         return "StringArray";
+                    } else if (isSubtype(compElement, "java.lang.CharSequence")) {
+                        return "CharSequenceArray";
                     } else if (isSubtype(compElement, "android.os.Parcelable")) {
                         return "ParcelableArray";
                     }

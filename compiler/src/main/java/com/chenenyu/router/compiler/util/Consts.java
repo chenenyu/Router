@@ -28,8 +28,6 @@ public class Consts {
     public static final String TABLE_INTERCEPTORS = "TargetInterceptors";
 
     public static final String METHOD_INJECT = "inject";
-    public static final String METHOD_INJECT_PARAM = "obj";
-    public static final String TARGET = "target";
     // XXXActivity$$Router$$Params
     public static final String INNER_CLASS_NAME = "$$Router$$ParamInjector";
 
