@@ -11,9 +11,9 @@ import com.chenenyu.router.annotation.Route;
 @Route({"test", "http://example.com/user", "router://test"})
 public class TestActivity extends AppCompatActivity {
     @InjectParam
-    String id;
+    String id = "0000";
     @InjectParam(key = "status")
-    private String sts;
+    private String sts = "default";
 
     @InjectParam
     private short test1;
@@ -30,6 +30,9 @@ public class TestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test);
 
         Router.injectParams(this);
+
+        Bundle mExtras = getIntent().getExtras();
+        id = mExtras.getString("id", id);
 
         TextView text = (TextView) findViewById(R.id.text_test);
         Bundle bundle = getIntent().getExtras();
