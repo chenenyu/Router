@@ -17,7 +17,7 @@ buildscript {
     }
     dependencies {
     	...
-        classpath 'com.chenenyu.router:gradle-plugin:1.2.2'
+        classpath 'com.chenenyu.router:gradle-plugin:1.2.3'
     }
 }
 
@@ -43,10 +43,6 @@ current `router` version: ![Download](https://api.bintray.com/packages/chenenyu/
 
 current `router-compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg)  
 
-## Features
-
-See [here](https://github.com/chenenyu/Router/wiki/%E7%89%B9%E6%80%A7) .
-
 ## Simple usage
 
 `Router` uses annotation to specify the mapping relationship.
@@ -68,21 +64,11 @@ Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more inf
 
 ## ProGuard
 
-```Java
-# Router
--keep class com.chenenyu.router.** {*;}
--keep class * implements com.chenenyu.router.RouteInterceptor {*;}
-```
+See [wiki](https://github.com/chenenyu/Router/wiki).
 
 ## Contact
 
 QQ group: 271849001
-
-## Other Libraries
-
-[SuperAdater](https://github.com/byteam/SuperAdapter) : 实用的Adapter.
-
-[img-optimizer-gradle-plugin](https://github.com/chenenyu/img-optimizer-gradle-plugin) : 一款用于优化png图片的gradle插件.
 
 ## License
 

@@ -26,4 +26,5 @@
 
 # Router
 -keep class com.chenenyu.router.** {*;}
--keep class * implements com.chenenyu.router.RouteInterceptor {*;}
+-keep class * implements com.chenenyu.router.ParamInjector {*;}
+

@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,7 @@ import com.chenenyu.router.module1.R;
 public class Module1Fragment extends Fragment {
     // Test param inject, not been used.
     @InjectParam
-    int test1;
+    int test1 = 123; // test default value
     @InjectParam(key = "test22")
     char[] test2;
 
@@ -53,5 +54,9 @@ public class Module1Fragment extends Fragment {
                 getActivity().finish();
             }
         });
+
+        Router.injectParams(Module1Fragment.this);
+
+        Log.d(Module1Fragment.class.getSimpleName(), "test1=" + test1);
     }
 }
