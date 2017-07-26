@@ -39,7 +39,7 @@ public abstract class AbsMatcher implements Matcher {
                 String key = keyIterator.next();
                 List<String> values = uri.getQueryParameters(key);
                 if (values.size() > 1) {
-                    bundle.putStringArray(key, (String[]) values.toArray());
+                    bundle.putStringArray(key, values.toArray(new String[0]));
                 } else if (values.size() == 1) {
                     bundle.putString(key, values.get(0));
                 }
