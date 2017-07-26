@@ -1,9 +1,6 @@
 package com.chenenyu.router
 
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
-import com.android.utils.FileUtils
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
 /**
@@ -11,11 +8,8 @@ import org.gradle.api.tasks.TaskAction
  * Created by Cheney on 2017/3/1.
  */
 class GenerateBuildInfoTask extends DefaultTask {
-    ApplicationVariantImpl applicationVariant
-    @Input
     File routerFolder
     File buildInfoFile
-    @Input
     String buildInfoContent
     final String buildInfoName = "RouterBuildInfo.java"
 
@@ -28,7 +22,7 @@ class GenerateBuildInfoTask extends DefaultTask {
         if (!routerFolder.exists()) {
             routerFolder.mkdirs()
         }
-        routerFolder = FileUtils.join(routerFolder, "com", "chenenyu", "router")
+        routerFolder = new File(routerFolder, "com" + File.separator + "chenenyu" + File.separator + "router")
         routerFolder.mkdirs()
         buildInfoFile = new File(routerFolder, buildInfoName)
         if (!buildInfoFile.exists()) {
