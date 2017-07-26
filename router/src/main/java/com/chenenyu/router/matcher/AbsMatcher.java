@@ -1,8 +1,14 @@
 package com.chenenyu.router.matcher;
 
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-import java.util.Map;
+import com.chenenyu.router.RouteRequest;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Abstract matcher.
@@ -19,15 +25,23 @@ public abstract class AbsMatcher implements Matcher {
         this.priority = priority;
     }
 
-    protected void parseParams(Map<String, String> map, String query) {
-        if (query != null && !query.isEmpty()) {
-            String[] entries = query.split("&");
-            for (String entry : entries) {
-                if (entry.contains("=")) {
-                    String[] kv = entry.split("=");
-                    if (kv.length > 1) {
-                        map.put(kv[0], kv[1]);
-                    }
+    protected void parseParams(Uri uri, RouteRequest routeRequest) {
+        if (uri.getQuery() != null) {
+            Bundle bundle = routeRequest.getExtras();
+            if (bundle == null) {
+                bundle = new Bundle();
+                routeRequest.setExtras(bundle);
+            }
+
+            Set<String> keys = uri.getQueryParameterNames();
+            Iterator<String> keyIterator = keys.iterator();
+            while (keyIterator.hasNext()) {
+                String key = keyIterator.next();
+                List<String> values = uri.getQueryParameters(key);
+                if (values.size() > 1) {
+                    bundle.putStringArray(key, (String[]) values.toArray());
+                } else if (values.size() == 1) {
+                    bundle.putString(key, values.get(0));
                 }
             }
         }
