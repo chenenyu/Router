@@ -2,13 +2,9 @@ package com.chenenyu.router.matcher;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.chenenyu.router.RouteRequest;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Standard scheme matcher. It matches scheme, authority(host, port) and path(if offered),
@@ -54,7 +50,7 @@ public class SchemeMatcher extends AbsExplicitMatcher {
                 // host1 == host2 == empty
                 return true;
             }
-            // google.com == google.com (include port)
+            // google.com == google.com:443 (include port)
             if (!isEmpty(uri.getAuthority()) && !isEmpty(routeUri.getAuthority())
                     && uri.getAuthority().equals(routeUri.getAuthority())) {
                 if (!cutSlash(uri.getPath()).equals(cutSlash(routeUri.getPath()))) {
@@ -63,20 +59,7 @@ public class SchemeMatcher extends AbsExplicitMatcher {
 
                 // bundle parser
                 if (uri.getQuery() != null) {
-                    // parse entry from given uri.
-                    Map<String, String> params = new HashMap<>();
-                    parseParams(params, uri.getQuery());
-
-                    if (!params.isEmpty()) {
-                        Bundle bundle = routeRequest.getExtras();
-                        if (bundle == null) {
-                            bundle = new Bundle();
-                            routeRequest.setExtras(bundle);
-                        }
-                        for (Map.Entry<String, String> entry : params.entrySet()) {
-                            bundle.putString(entry.getKey(), entry.getValue());
-                        }
-                    }
+                    parseParams(uri, routeRequest);
                 }
                 return true;
             }
