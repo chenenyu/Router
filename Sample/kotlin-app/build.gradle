@@ -17,11 +17,12 @@ android {
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = [ "moduleName" : project.name ]
-            }
-        }
+        // no need any more since 1.2.4
+//        javaCompileOptions {
+//            annotationProcessorOptions {
+//                arguments = [ "moduleName" : project.name ]
+//            }
+//        }
     }
 
     buildTypes {
@@ -29,6 +30,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
     }
 }
 
