@@ -8,21 +8,21 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.InjectParam;
 import com.chenenyu.router.annotation.Route;
 
-@Route({"test", "http://example.com/user", "router://test"})
+@Route({"test", "http://example.com/user", "router://filter/test"})
 public class TestActivity extends AppCompatActivity {
     @InjectParam
     String id = "0000";
     @InjectParam(key = "status")
-    private String sts = "default";
+    String sts = "default";
 
     @InjectParam
-    private short test1;
+    short test1;
     @InjectParam
     byte[] test2;
     @InjectParam
     Model test3;
     @InjectParam
-    private Model test4;
+    Model test4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

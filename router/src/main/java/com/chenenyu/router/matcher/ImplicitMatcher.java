@@ -3,6 +3,7 @@ package com.chenenyu.router.matcher;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
@@ -26,8 +27,9 @@ public class ImplicitMatcher extends AbsImplicitMatcher {
                 || uri.toString().toLowerCase().startsWith("https://")) {
             return false;
         }
-        if (context.getPackageManager().resolveActivity(
-                new Intent(Intent.ACTION_VIEW, uri), PackageManager.MATCH_DEFAULT_ONLY) != null) {
+        ResolveInfo resolveInfo = context.getPackageManager().resolveActivity(new Intent(Intent.ACTION_VIEW, uri),
+                PackageManager.MATCH_DEFAULT_ONLY | PackageManager.GET_RESOLVED_FILTER);
+        if (resolveInfo != null) {
             // bundle parser
             if (uri.getQuery() != null) {
                 parseParams(uri, routeRequest);
