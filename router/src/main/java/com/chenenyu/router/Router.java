@@ -43,7 +43,7 @@ public class Router {
         if (debuggable) {
             setDebuggable(true);
         }
-        AptHub.init();
+        AptHub.initDefault();
     }
 
     public static boolean isDebuggable() {

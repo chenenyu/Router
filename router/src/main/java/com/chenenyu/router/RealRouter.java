@@ -29,6 +29,8 @@ import java.util.Set;
  */
 class RealRouter extends AbsRouter {
     private static RealRouter sInstance;
+    private static final String PARAM_CLASS_SUFFIX = "$$Router$$ParamInjector";
+
     private Map<String, RouteInterceptor> mInterceptorInstance = new HashMap<>();
 
     private RealRouter() {
@@ -44,7 +46,7 @@ class RealRouter extends AbsRouter {
     /**
      * Handle route table.
      *
-     * @param routeTable RouteTable
+     * @param routeTable route table
      */
     void handleRouteTable(RouteTable routeTable) {
         if (routeTable != null) {
@@ -55,7 +57,7 @@ class RealRouter extends AbsRouter {
     /**
      * Handle interceptor table.
      *
-     * @param interceptorTable InterceptorTable
+     * @param interceptorTable interceptor table
      */
     void handleInterceptorTable(InterceptorTable interceptorTable) {
         if (interceptorTable != null) {
@@ -66,7 +68,7 @@ class RealRouter extends AbsRouter {
     /**
      * Handle targets' interceptors.
      *
-     * @param targetInterceptors TargetInterceptors
+     * @param targetInterceptors target -> interceptors
      */
     void handleTargetInterceptors(TargetInterceptors targetInterceptors) {
         if (targetInterceptors != null) {
@@ -79,14 +81,14 @@ class RealRouter extends AbsRouter {
      *
      * @param obj Activity or Fragment.
      */
-    @SuppressWarnings("unchecked")
     void injectParams(Object obj) {
         if (obj instanceof Activity || obj instanceof Fragment || obj instanceof android.app.Fragment) {
             String key = obj.getClass().getCanonicalName();
             Class<ParamInjector> clz;
             if (!AptHub.injectors.containsKey(key)) {
                 try {
-                    clz = (Class<ParamInjector>) Class.forName(key + AptHub.PARAM_CLASS_SUFFIX);
+                    //noinspection unchecked
+                    clz = (Class<ParamInjector>) Class.forName(key + PARAM_CLASS_SUFFIX);
                     AptHub.injectors.put(key, clz);
                 } catch (ClassNotFoundException e) {
                     RLog.e("Inject params failed.", e);
