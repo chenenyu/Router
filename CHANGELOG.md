@@ -1,3 +1,10 @@
+## 2017.09.08
+
+`router: 1.2.5`: 
+
+1. [issues46](https://github.com/chenenyu/Router/issues/46)
+2. [issues48](https://github.com/chenenyu/Router/issues/48)
+
 ## 2017.07.26
 
 `router-gradle-plugin: 1.2.4`:
