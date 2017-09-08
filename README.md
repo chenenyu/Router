@@ -17,7 +17,7 @@ buildscript {
     }
     dependencies {
     	...
-        classpath 'com.chenenyu.router:gradle-plugin:1.2.4'
+        classpath 'com.chenenyu.router:gradle-plugin:最新版本'
     }
 }
 

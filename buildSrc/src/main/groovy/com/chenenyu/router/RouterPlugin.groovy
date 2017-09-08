@@ -38,7 +38,7 @@ class RouterPlugin implements Plugin<Project> {
         // Add dependencies
         Project router = project.rootProject.findProject("router")
         Project routerCompiler = project.rootProject.findProject("compiler")
-        if (router && routerCompiler) {
+        if (router && routerCompiler) { // local
             project.dependencies {
                 compile router
                 if (isKotlinProject) {
@@ -47,9 +47,9 @@ class RouterPlugin implements Plugin<Project> {
                     annotationProcessor routerCompiler
                 }
             }
-        } else {
-            String routerVersion = "1.2.4"
-            String compilerVersion = "1.2.4"
+        } else { // remote
+            String routerVersion = "1.2.5"
+            String compilerVersion = "1.2.5"
             // org.gradle.api.internal.plugins.DefaultExtraPropertiesExtension
             ExtraPropertiesExtension ext = project.rootProject.ext
             if (ext.has("routerVersion")) {
