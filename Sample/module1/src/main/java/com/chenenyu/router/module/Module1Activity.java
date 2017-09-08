@@ -8,7 +8,7 @@ import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.chenenyu.router.module1.R;
 
-@Route("module1")
+@Route({"module1", "router://filter/module1"})
 public class Module1Activity extends AppCompatActivity {
 
     @Override

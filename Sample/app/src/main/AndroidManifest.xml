@@ -23,14 +23,14 @@
             android:name=".SchemeFilterActivity"
             android:label="SchemeFilterActivity">
             <intent-filter>
-                <data
-                    android:host="test"
-                    android:scheme="router" />
-
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="filter"
+                    android:scheme="router" />
             </intent-filter>
         </activity>
         <activity
@@ -49,6 +49,7 @@
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
                     android:host="implicit"
@@ -58,7 +59,7 @@
         <activity
             android:name=".InterceptedActivity"
             android:label="InterceptedActivity" />
-        <activity android:name=".WebActivity"></activity>
+        <activity android:name=".WebActivity" />
     </application>
 
 </manifest>

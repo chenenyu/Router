@@ -5,16 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.ArraySet;
 
 import com.chenenyu.router.matcher.AbsImplicitMatcher;
 import com.chenenyu.router.matcher.AbsMatcher;
 import com.chenenyu.router.util.RLog;
 
 import java.lang.reflect.Constructor;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,8 @@ import java.util.Set;
  */
 class RealRouter extends AbsRouter {
     private static RealRouter sInstance;
+    private static final String PARAM_CLASS_SUFFIX = "$$Router$$ParamInjector";
+
     private Map<String, RouteInterceptor> mInterceptorInstance = new HashMap<>();
 
     private RealRouter() {
@@ -41,7 +46,7 @@ class RealRouter extends AbsRouter {
     /**
      * Handle route table.
      *
-     * @param routeTable RouteTable
+     * @param routeTable route table
      */
     void handleRouteTable(RouteTable routeTable) {
         if (routeTable != null) {
@@ -52,7 +57,7 @@ class RealRouter extends AbsRouter {
     /**
      * Handle interceptor table.
      *
-     * @param interceptorTable InterceptorTable
+     * @param interceptorTable interceptor table
      */
     void handleInterceptorTable(InterceptorTable interceptorTable) {
         if (interceptorTable != null) {
@@ -63,7 +68,7 @@ class RealRouter extends AbsRouter {
     /**
      * Handle targets' interceptors.
      *
-     * @param targetInterceptors TargetInterceptors
+     * @param targetInterceptors target -> interceptors
      */
     void handleTargetInterceptors(TargetInterceptors targetInterceptors) {
         if (targetInterceptors != null) {
@@ -76,14 +81,14 @@ class RealRouter extends AbsRouter {
      *
      * @param obj Activity or Fragment.
      */
-    @SuppressWarnings("unchecked")
     void injectParams(Object obj) {
         if (obj instanceof Activity || obj instanceof Fragment || obj instanceof android.app.Fragment) {
             String key = obj.getClass().getCanonicalName();
             Class<ParamInjector> clz;
             if (!AptHub.injectors.containsKey(key)) {
                 try {
-                    clz = (Class<ParamInjector>) Class.forName(key + AptHub.PARAM_CLASS_SUFFIX);
+                    //noinspection unchecked
+                    clz = (Class<ParamInjector>) Class.forName(key + PARAM_CLASS_SUFFIX);
                     AptHub.injectors.put(key, clz);
                 } catch (ClassNotFoundException e) {
                     RLog.e("Inject params failed.", e);
@@ -128,12 +133,13 @@ class RealRouter extends AbsRouter {
             }
         }
 
-        List<AbsMatcher> matchers = MatcherRegistry.getMatcher();
-        if (matchers.isEmpty()) {
+        List<AbsMatcher> matcherList = MatcherRegistry.getMatcher();
+        if (matcherList.isEmpty()) {
             callback(RouteResult.FAILED, "The MatcherRegistry contains no Matcher.");
             return null;
         }
 
+        // fragment only matches explicit route
         if (AptHub.routeTable.isEmpty()) {
             callback(RouteResult.FAILED, "The route table contains no mapping.");
             return null;
@@ -141,7 +147,7 @@ class RealRouter extends AbsRouter {
 
         Set<Map.Entry<String, Class<?>>> entries = AptHub.routeTable.entrySet();
 
-        for (AbsMatcher matcher : matchers) {
+        for (AbsMatcher matcher : matcherList) {
             if (matcher instanceof AbsImplicitMatcher) { // Ignore implicit matcher.
                 continue;
             }
@@ -159,22 +165,25 @@ class RealRouter extends AbsRouter {
                             fragment.setArguments(bundle);
                         }
                         return fragment;
-                    }
-                    if (result instanceof android.app.Fragment) {
+                    } else if (result instanceof android.app.Fragment) {
                         android.app.Fragment fragment = (android.app.Fragment) result;
                         Bundle bundle = mRouteRequest.getExtras();
                         if (bundle != null && !bundle.isEmpty()) {
                             fragment.setArguments(bundle);
                         }
                         return fragment;
+                    } else {
+                        callback(RouteResult.FAILED, String.format(
+                                "The matcher can't generate a fragment instance for uri: %s",
+                                mRouteRequest.getUri().toString()));
+                        return null;
                     }
-                    return null;
                 }
             }
         }
 
-        callback(RouteResult.FAILED, "Can not find an Fragment that matches the given uri: "
-                + mRouteRequest.getUri());
+        callback(RouteResult.FAILED, String.format(
+                "Can not find an Fragment that matches the given uri: %s", mRouteRequest.getUri()));
         return null;
     }
 
@@ -194,48 +203,57 @@ class RealRouter extends AbsRouter {
             }
         }
 
-        List<AbsMatcher> matchers = MatcherRegistry.getMatcher();
-        if (matchers.isEmpty()) {
+        List<AbsMatcher> matcherList = MatcherRegistry.getMatcher();
+        if (matcherList.isEmpty()) {
             callback(RouteResult.FAILED, "The MatcherRegistry contains no Matcher.");
             return null;
         }
 
         Set<Map.Entry<String, Class<?>>> entries = AptHub.routeTable.entrySet();
 
-        for (AbsMatcher matcher : matchers) {
+        for (AbsMatcher matcher : matcherList) {
             if (AptHub.routeTable.isEmpty()) { // implicit totally.
                 if (matcher.match(context, mRouteRequest.getUri(), null, mRouteRequest)) {
                     RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                    Object intent = matcher.generate(context, mRouteRequest.getUri(), null);
-                    if (intent instanceof Intent) {
-                        assembleIntent((Intent) intent);
-                        return (Intent) intent;
-                    }
-                    return null;
+                    return finalizeIntent(context, matcher, null);
                 }
             } else {
                 for (Map.Entry<String, Class<?>> entry : entries) {
                     if (matcher.match(context, mRouteRequest.getUri(), entry.getKey(), mRouteRequest)) {
                         RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                        // Ignore implicit intent.
-                        if (!(matcher instanceof AbsImplicitMatcher) &&
-                                intercept(context, entry.getValue())) {
-                            return null;
-                        }
-                        Object intent = matcher.generate(context, mRouteRequest.getUri(), entry.getValue());
-                        if (intent instanceof Intent) {
-                            assembleIntent((Intent) intent);
-                            return (Intent) intent;
-                        }
-                        return null;
+                        return finalizeIntent(context, matcher, entry.getValue());
                     }
                 }
             }
         }
 
-        callback(RouteResult.FAILED, "Can not find an Activity that matches the given uri: "
-                + mRouteRequest.getUri());
+        callback(RouteResult.FAILED, String.format(
+                "Can not find an Activity that matches the given uri: %s", mRouteRequest.getUri()));
         return null;
+    }
+
+    /**
+     * Do intercept and then generate intent by the given matcher, finally assemble extras.
+     *
+     * @param context Context
+     * @param matcher current matcher
+     * @param target  route target
+     * @return Finally intent.
+     */
+    private Intent finalizeIntent(Context context, AbsMatcher matcher, @Nullable Class<?> target) {
+        if (intercept(context, target)) {
+            return null;
+        }
+        Object intent = matcher.generate(context, mRouteRequest.getUri(), target);
+        if (intent instanceof Intent) {
+            assembleIntent((Intent) intent);
+            return (Intent) intent;
+        } else {
+            callback(RouteResult.FAILED, String.format(
+                    "The matcher can't generate an intent for uri: %s",
+                    mRouteRequest.getUri().toString()));
+            return null;
+        }
     }
 
     private void assembleIntent(Intent intent) {
@@ -250,13 +268,37 @@ class RealRouter extends AbsRouter {
         }
     }
 
-    private boolean intercept(Context context, Class<?> target) {
-        if (AptHub.targetInterceptors.isEmpty()) {
+    /**
+     * Find interceptors
+     *
+     * @param context Context
+     * @param target  target page.
+     * @return True if intercepted, false otherwise.
+     */
+    private boolean intercept(Context context, @Nullable Class<?> target) {
+        if (mRouteRequest.isSkipInterceptors()) {
             return false;
         }
-        String[] interceptors = AptHub.targetInterceptors.get(target);
-        if (interceptors != null && interceptors.length > 0) {
-            for (String name : interceptors) {
+        // Assemble final interceptors
+        Set<String> finalInterceptors = new ArraySet<>();
+        if (target != null) {
+            // 1. Add original interceptors in Map
+            String[] baseInterceptors = AptHub.targetInterceptors.get(target);
+            if (baseInterceptors != null && baseInterceptors.length > 0) {
+                Collections.addAll(finalInterceptors, baseInterceptors);
+            }
+            // 2. Skip temp removed interceptors
+            if (mRouteRequest.getRemovedInterceptors() != null) {
+                finalInterceptors.removeAll(mRouteRequest.getRemovedInterceptors());
+            }
+        }
+        // 3. Add temp added interceptors
+        if (mRouteRequest.getAddedInterceptors() != null) {
+            finalInterceptors.addAll(mRouteRequest.getAddedInterceptors());
+        }
+
+        if (!finalInterceptors.isEmpty()) {
+            for (String name : finalInterceptors) {
                 RouteInterceptor interceptor = mInterceptorInstance.get(name);
                 if (interceptor == null) {
                     Class<? extends RouteInterceptor> clz = AptHub.interceptorTable.get(name);
@@ -265,12 +307,15 @@ class RealRouter extends AbsRouter {
                         interceptor = constructor.newInstance();
                         mInterceptorInstance.put(name, interceptor);
                     } catch (Exception e) {
+                        RLog.e("Can't construct a interceptor with name: " + name);
                         e.printStackTrace();
                     }
                 }
+                // do intercept
                 if (interceptor != null && interceptor.intercept(context, mRouteRequest)) {
-                    callback(RouteResult.INTERCEPTED,
-                            String.format("Intercepted by interceptor: %s.", name));
+                    callback(RouteResult.INTERCEPTED, String.format(
+                            "Intercepted: {uri: %s, interceptor: %s}",
+                            mRouteRequest.getUri().toString(), name));
                     return true;
                 }
             }
@@ -285,8 +330,8 @@ class RealRouter extends AbsRouter {
             return;
         }
 
-        Bundle options = mRouteRequest.getActivityOptions() == null ?
-                null : mRouteRequest.getActivityOptions().toBundle();
+        Bundle options = mRouteRequest.getActivityOptionsCompat() == null ?
+                null : mRouteRequest.getActivityOptionsCompat().toBundle();
 
         if (context instanceof Activity) {
             ActivityCompat.startActivityForResult((Activity) context, intent,
@@ -314,8 +359,8 @@ class RealRouter extends AbsRouter {
         if (intent == null) {
             return;
         }
-        Bundle options = mRouteRequest.getActivityOptions() == null ?
-                null : mRouteRequest.getActivityOptions().toBundle();
+        Bundle options = mRouteRequest.getActivityOptionsCompat() == null ?
+                null : mRouteRequest.getActivityOptionsCompat().toBundle();
 
         if (mRouteRequest.getRequestCode() < 0) {
             fragment.startActivity(intent, options);
@@ -339,8 +384,8 @@ class RealRouter extends AbsRouter {
         if (intent == null) {
             return;
         }
-        Bundle options = mRouteRequest.getActivityOptions() == null ?
-                null : mRouteRequest.getActivityOptions().toBundle();
+        Bundle options = mRouteRequest.getActivityOptionsCompat() == null ?
+                null : mRouteRequest.getActivityOptionsCompat().toBundle();
 
         if (mRouteRequest.getRequestCode() < 0) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) { // 4.1

@@ -13,9 +13,11 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         // debug模式,显示log
-//        if (BuildConfig.DEBUG) {
-//            Router.setDebuggable(true);
-//        }
-        Router.initialize(this, true);
+        if (BuildConfig.DEBUG) {
+            Router.setDebuggable(true);
+        }
+        // The next comment line show how to process aar module.
+        // AptHub.registerModules("your-aar-module-name");
+        Router.initialize(this);
     }
 }

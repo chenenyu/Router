@@ -38,7 +38,7 @@ class RouterPlugin implements Plugin<Project> {
         // Add dependencies
         Project router = project.rootProject.findProject("router")
         Project routerCompiler = project.rootProject.findProject("compiler")
-        if (router && routerCompiler) {
+        if (router && routerCompiler) { // local
             project.dependencies {
                 compile router
                 if (isKotlinProject) {
@@ -47,9 +47,9 @@ class RouterPlugin implements Plugin<Project> {
                     annotationProcessor routerCompiler
                 }
             }
-        } else {
-            String routerVersion = "1.2.4"
-            String compilerVersion = "1.2.4"
+        } else { // remote
+            String routerVersion = "1.2.5"
+            String compilerVersion = "1.2.5"
             // org.gradle.api.internal.plugins.DefaultExtraPropertiesExtension
             ExtraPropertiesExtension ext = project.rootProject.ext
             if (ext.has("routerVersion")) {
@@ -80,6 +80,7 @@ class RouterPlugin implements Plugin<Project> {
             }
 
             if (project.plugins.hasPlugin(APP)) {
+
                 // Read template in advance, it can't be read in GenerateBuildInfoTask.
                 InputStream is = RouterPlugin.class.getResourceAsStream("/RouterBuildInfo.template")
                 String template
@@ -89,30 +90,35 @@ class RouterPlugin implements Plugin<Project> {
                 File routerFolder = new File(project.buildDir,
                         "generated" + File.separator + "source" + File.separator + "router")
 
-                // Record lib modules' name
-                StringBuilder sb = new StringBuilder()
-                Set<Project> subs = project.rootProject.subprojects
-                subs.each {
-                    if (it.plugins.hasPlugin(LIBRARY) && it.plugins.hasPlugin(RouterPlugin)) {
-                        sb.append(it.name.replace('.', '_').replace('-', '_')).append(",")
+                project.gradle.projectsEvaluated {
+                    // Record router modules' name, include library and app modules.
+                    StringBuilder sb = new StringBuilder()
+                    Set<Project> subs = project.rootProject.subprojects
+                    subs.findAll {
+                        it.plugins.hasPlugin(LIBRARY) && it.plugins.hasPlugin(RouterPlugin)
+                    }.each {
+                        sb.append(validateName(it.name)).append(",") // library
                     }
-                }
-                String validAppName = project.name.replace('.', '_').replace('-', '_')
-                sb.append(validAppName)
+                    sb.append(validateName(project.name)) // app
 
-                project.android.applicationVariants.all { variant ->
-                    // Create task
-                    Task generateTask = project.tasks.create("generate${variant.name.capitalize()}BuildInfo", GenerateBuildInfoTask) {
-                        it.routerFolder = routerFolder
-                        it.buildInfoContent = template.replaceAll("%ALL_MODULES%", sb.toString())
+                    project.android.applicationVariants.all { variant ->
+                        // Create task
+                        Task generateTask = project.tasks.create(
+                                "generate${variant.name.capitalize()}BuildInfo", GenerateBuildInfoTask) {
+                            it.routerFolder = routerFolder
+                            it.buildInfoContent = template.replaceAll("%ALL_MODULES%", sb.toString())
+                        }
+                        // Add generated file to javac source
+                        variant.javaCompile.source(routerFolder)
+                        variant.javaCompile.dependsOn generateTask
                     }
-
-                    // Add generated file to javac source
-                    variant.javaCompile.source(routerFolder)
-                    variant.javaCompile.dependsOn generateTask
                 }
             }
         }
+    }
+
+    static String validateName(String moduleName) {
+        moduleName.replace('.', '_').replace('-', '_')
     }
 
 }
