@@ -2,30 +2,40 @@ package com.chenenyu.router;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.ArraySet;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Route request object.
  * <p>
  * Created by Cheney on 2017/3/31.
  */
-public class RouteRequest implements Parcelable {
+public class RouteRequest implements Serializable {
     private static final int INVALID_REQUEST_CODE = -1;
 
     private Uri uri;
     private Bundle extras;
     private int flags;
+    // skip all the interceptors
     private boolean skipInterceptors;
-
+    // skip some interceptors temporarily
+    @Nullable
+    private Set<String> removedInterceptors;
+    // add some interceptors temporarily
+    @Nullable
+    private Set<String> addedInterceptors;
     @Nullable
     private RouteCallback callback;
     private int requestCode = INVALID_REQUEST_CODE;
     private int enterAnim;
     private int exitAnim;
-    private ActivityOptionsCompat activityOptions;
+    @Nullable
+    private ActivityOptionsCompat activityOptionsCompat;
 
 
     public RouteRequest(Uri uri) {
@@ -69,6 +79,36 @@ public class RouteRequest implements Parcelable {
     }
 
     @Nullable
+    public Set<String> getAddedInterceptors() {
+        return addedInterceptors;
+    }
+
+    @Nullable
+    public Set<String> getRemovedInterceptors() {
+        return removedInterceptors;
+    }
+
+    public void addInterceptors(String... interceptors) {
+        if (interceptors == null || interceptors.length <= 0) {
+            return;
+        }
+        if (this.addedInterceptors == null) {
+            this.addedInterceptors = new ArraySet<>(interceptors.length);
+        }
+        this.addedInterceptors.addAll(Arrays.asList(interceptors));
+    }
+
+    public void removeInterceptors(String... interceptors) {
+        if (interceptors == null || interceptors.length <= 0) {
+            return;
+        }
+        if (this.removedInterceptors == null) {
+            this.removedInterceptors = new ArraySet<>(interceptors.length);
+        }
+        this.removedInterceptors.addAll(Arrays.asList(interceptors));
+    }
+
+    @Nullable
     public RouteCallback getCallback() {
         return callback;
     }
@@ -105,43 +145,11 @@ public class RouteRequest implements Parcelable {
         this.exitAnim = exitAnim;
     }
 
-    public ActivityOptionsCompat getActivityOptions() {
-        return activityOptions;
+    public ActivityOptionsCompat getActivityOptionsCompat() {
+        return activityOptionsCompat;
     }
 
-    public void setActivityOptions(ActivityOptionsCompat activityOptions) {
-        this.activityOptions = activityOptions;
+    public void setActivityOptionsCompat(ActivityOptionsCompat activityOptionsCompat) {
+        this.activityOptionsCompat = activityOptionsCompat;
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.uri, flags);
-        dest.writeBundle(this.extras);
-        dest.writeInt(this.flags);
-        dest.writeByte(this.skipInterceptors ? (byte) 1 : (byte) 0);
-    }
-
-    protected RouteRequest(Parcel in) {
-        this.uri = in.readParcelable(Uri.class.getClassLoader());
-        this.extras = in.readBundle(Bundle.class.getClassLoader());
-        this.flags = in.readInt();
-        this.skipInterceptors = in.readByte() != 0;
-    }
-
-    public static final Creator<RouteRequest> CREATOR = new Creator<RouteRequest>() {
-        @Override
-        public RouteRequest createFromParcel(Parcel source) {
-            return new RouteRequest(source);
-        }
-
-        @Override
-        public RouteRequest[] newArray(int size) {
-            return new RouteRequest[size];
-        }
-    };
 }

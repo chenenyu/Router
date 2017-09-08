@@ -183,13 +183,25 @@ abstract class AbsRouter implements IRouter {
 
     @Override
     public IRouter activityOptions(ActivityOptionsCompat activityOptions) {
-        mRouteRequest.setActivityOptions(activityOptions);
+        mRouteRequest.setActivityOptionsCompat(activityOptions);
         return this;
     }
 
     @Override
     public IRouter skipInterceptors() {
         mRouteRequest.setSkipInterceptors(true);
+        return this;
+    }
+
+    @Override
+    public IRouter skipInterceptors(String... interceptors) {
+        mRouteRequest.removeInterceptors(interceptors);
+        return this;
+    }
+
+    @Override
+    public IRouter addInterceptors(String... interceptors) {
+        mRouteRequest.addInterceptors(interceptors);
         return this;
     }
 

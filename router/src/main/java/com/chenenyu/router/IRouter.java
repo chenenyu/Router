@@ -63,9 +63,19 @@ public interface IRouter {
     IRouter activityOptions(ActivityOptionsCompat activityOptions);
 
     /**
-     * Skip global interceptors.
+     * Skip all the interceptors.
      */
     IRouter skipInterceptors();
+
+    /**
+     * Skip the named interceptors.
+     */
+    IRouter skipInterceptors(String... interceptors);
+
+    /**
+     * Add interceptors temporarily for current route request.
+     */
+    IRouter addInterceptors(String... interceptors);
 
     Intent getIntent(Context context);
 
