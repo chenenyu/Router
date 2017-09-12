@@ -16,8 +16,13 @@ public class App extends Application {
         if (BuildConfig.DEBUG) {
             Router.setDebuggable(true);
         }
+
         // The next comment line show how to process aar module.
         // AptHub.registerModules("your-aar-module-name");
+
+        // init
         Router.initialize(this);
+
+        Router.addGlobalInterceptor(new GlobalInterceptor());
     }
 }

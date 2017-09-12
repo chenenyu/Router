@@ -6,8 +6,9 @@ import org.gradle.api.Task
 import org.gradle.api.plugins.ExtraPropertiesExtension
 
 /**
+ * Router gradle plugin.
  * <p>
- * Created by Cheney on 2017/1/10.
+ * Created by chenenyu on 2017/1/10.
  */
 class RouterPlugin implements Plugin<Project> {
     static final String APP = "com.android.application"
@@ -21,18 +22,19 @@ class RouterPlugin implements Plugin<Project> {
                     'Router gradle plugin can only be applied to android projects.')
         }
 
-        def isKotlinProject = project.plugins.hasPlugin('kotlin-android')
-        if (isKotlinProject) {
-            if (!project.plugins.hasPlugin('kotlin-kapt')) {
-                project.plugins.apply('kotlin-kapt')
-            }
-        }
-
         // Add annotationProcessorOptions
         def android = project.extensions.android // BaseExtension
         android.defaultConfig.javaCompileOptions.annotationProcessorOptions.argument(APT_OPTION_NAME, project.name)
         android.productFlavors.all {
             it.javaCompileOptions.annotationProcessorOptions.argument(APT_OPTION_NAME, project.name)
+        }
+
+        // Kotlin project ?
+        def isKotlinProject = project.plugins.hasPlugin('kotlin-android')
+        if (isKotlinProject) {
+            if (!project.plugins.hasPlugin('kotlin-kapt')) {
+                project.plugins.apply('kotlin-kapt')
+            }
         }
 
         // Add dependencies
@@ -71,47 +73,40 @@ class RouterPlugin implements Plugin<Project> {
             project.dependencies.add(apt, "com.chenenyu.router:compiler:${compilerVersion}")
         }
 
-        project.afterEvaluate {
-            project.rootProject.subprojects.each {
-                if (it.plugins.hasPlugin(APP) && !it.plugins.hasPlugin(RouterPlugin)) {
-                    project.logger.error("Have you forgotten to apply plugin: 'com.chenenyu.router'" +
-                            " in module: '${it.name}'?")
-                }
+
+        if (project.plugins.hasPlugin(APP)) {
+            // Read template in advance, it can't be read in GenerateBuildInfoTask.
+            InputStream is = RouterPlugin.class.getResourceAsStream("/RouterBuildInfo.template")
+            String template
+            new Scanner(is).with {
+                template = it.useDelimiter("\\A").next()
             }
+            File routerFolder = new File(project.buildDir,
+                    "generated" + File.separator + "source" + File.separator + "router")
 
-            if (project.plugins.hasPlugin(APP)) {
-
-                // Read template in advance, it can't be read in GenerateBuildInfoTask.
-                InputStream is = RouterPlugin.class.getResourceAsStream("/RouterBuildInfo.template")
-                String template
-                new Scanner(is).with {
-                    template = it.useDelimiter("\\A").next()
+            project.afterEvaluate {
+                // Record router modules' name, include library and app modules.
+                StringBuilder sb = new StringBuilder()
+                Set<Project> subs = project.rootProject.subprojects
+                subs.findAll {
+                    it.plugins.hasPlugin(LIBRARY) && it.plugins.hasPlugin(RouterPlugin)
+                }.each {
+                    sb.append(validateName(it.name)).append(",") // library
                 }
-                File routerFolder = new File(project.buildDir,
-                        "generated" + File.separator + "source" + File.separator + "router")
+                sb.append(validateName(project.name)) // app
 
-                project.gradle.projectsEvaluated {
-                    // Record router modules' name, include library and app modules.
-                    StringBuilder sb = new StringBuilder()
-                    Set<Project> subs = project.rootProject.subprojects
-                    subs.findAll {
-                        it.plugins.hasPlugin(LIBRARY) && it.plugins.hasPlugin(RouterPlugin)
-                    }.each {
-                        sb.append(validateName(it.name)).append(",") // library
+                android.applicationVariants.all { variant ->
+                    // Create task
+                    Task generateTask = project.tasks.create(
+                            "generate${variant.name.capitalize()}BuildInfo", GenerateBuildInfoTask) {
+                        it.routerFolder = routerFolder
+                        it.buildInfoContent = template.replaceAll("%ALL_MODULES%", sb.toString())
                     }
-                    sb.append(validateName(project.name)) // app
-
-                    project.android.applicationVariants.all { variant ->
-                        // Create task
-                        Task generateTask = project.tasks.create(
-                                "generate${variant.name.capitalize()}BuildInfo", GenerateBuildInfoTask) {
-                            it.routerFolder = routerFolder
-                            it.buildInfoContent = template.replaceAll("%ALL_MODULES%", sb.toString())
-                        }
-                        // Add generated file to javac source
-                        variant.javaCompile.source(routerFolder)
-                        variant.javaCompile.dependsOn generateTask
-                    }
+                    // Add generated file to javac source
+                    Task javac = variant.javaCompile
+                    javac.source(routerFolder)
+                    generateTask.dependsOn javac.taskDependencies.getDependencies(javac)
+                    javac.dependsOn generateTask
                 }
             }
         }

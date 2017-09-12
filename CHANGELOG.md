@@ -1,3 +1,9 @@
+## 2017.09.12
+
+`router-gradle-plugin: 1.2.5.1`:
+
+Bug fix for [issues51](https://github.com/chenenyu/Router/issues/51) in `1.2.5`.
+
 ## 2017.09.08
 
 `router: 1.2.5`: 

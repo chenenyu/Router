@@ -2,7 +2,7 @@
 
 # Router
 
-建议浏览[中文wiki](https://github.com/chenenyu/Router/wiki).
+建议浏览[中文wiki](https://github.com/chenenyu/Router/wiki). It's better than you think.
 
 ![screenshot](static/screenshot.gif)
 
