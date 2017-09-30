@@ -2,6 +2,7 @@ package com.chenenyu.router.app;
 
 import android.app.Application;
 
+import com.chenenyu.router.AptHub;
 import com.chenenyu.router.Router;
 
 /**
@@ -17,12 +18,12 @@ public class App extends Application {
             Router.setDebuggable(true);
         }
 
-        // The next comment line show how to process aar module.
-        // AptHub.registerModules("your-aar-module-name");
+        // The next line shows how to process modules (e.g. aar modules).
+        AptHub.registerModules("module1", "module2");
 
         // init
         Router.initialize(this);
 
-        Router.addGlobalInterceptor(new GlobalInterceptor());
+//        Router.addGlobalInterceptor(new GlobalInterceptor());
     }
 }
