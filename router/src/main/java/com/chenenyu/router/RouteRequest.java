@@ -21,6 +21,9 @@ public class RouteRequest implements Serializable {
     private Uri uri;
     private Bundle extras;
     private int flags;
+    private Uri data;
+    private String type;
+    private String action;
     // skip all the interceptors
     private boolean skipInterceptors;
     // skip some interceptors temporarily
@@ -68,6 +71,30 @@ public class RouteRequest implements Serializable {
 
     public void addFlags(int flags) {
         this.flags |= flags;
+    }
+
+    public Uri getData() {
+        return data;
+    }
+
+    public void setData(Uri data) {
+        this.data = data;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 
     public boolean isSkipInterceptors() {

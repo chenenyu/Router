@@ -48,13 +48,6 @@ abstract class AbsRouter implements IRouter {
     }
 
     @Override
-    @Deprecated
-    public IRouter extras(Bundle bundle) {
-        mRouteRequest.setExtras(bundle);
-        return this;
-    }
-
-    @Override
     public IRouter with(Bundle bundle) {
         if (bundle != null && !bundle.isEmpty()) {
             Bundle extras = mRouteRequest.getExtras();
@@ -171,6 +164,31 @@ abstract class AbsRouter implements IRouter {
     @Override
     public IRouter addFlags(int flags) {
         mRouteRequest.addFlags(flags);
+        return this;
+    }
+
+    @Override
+    public IRouter setData(Uri data) {
+        mRouteRequest.setData(data);
+        return this;
+    }
+
+    @Override
+    public IRouter setType(String type) {
+        mRouteRequest.setType(type);
+        return this;
+    }
+
+    @Override
+    public IRouter setDataAndType(Uri data, String type) {
+        mRouteRequest.setData(data);
+        mRouteRequest.setType(type);
+        return this;
+    }
+
+    @Override
+    public IRouter setAction(String action) {
+        mRouteRequest.setAction(action);
         return this;
     }
 
