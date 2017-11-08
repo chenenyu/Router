@@ -9,9 +9,6 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -37,14 +34,11 @@ version.load(project.file('../VERSION.properties').newDataInputStream())
 def annoVersion = version.getProperty("ANNOTATION_VERSION")
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    testCompile 'junit:junit:4.12'
-    provided "com.android.support:support-v4:${rootProject.ext.supportVersion}"
-//    compile project(':annotation')
-    compile "com.chenenyu.router:annotation:${annoVersion}"
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
+    compileOnly "com.android.support:support-v4:${rootProject.ext.supportVersion}"
+//    api project(':annotation')
+    api "com.chenenyu.router:annotation:${annoVersion}"
 }
 
 apply from: 'publish.gradle'
