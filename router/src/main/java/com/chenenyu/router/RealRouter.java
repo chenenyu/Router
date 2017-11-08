@@ -266,6 +266,15 @@ class RealRouter extends AbsRouter {
         if (mRouteRequest.getFlags() != 0) {
             intent.addFlags(mRouteRequest.getFlags());
         }
+        if (mRouteRequest.getData() != null) {
+            intent.setData(mRouteRequest.getData());
+        }
+        if (mRouteRequest.getType() != null) {
+            intent.setType(mRouteRequest.getType());
+        }
+        if (mRouteRequest.getAction() != null) {
+            intent.setAction(mRouteRequest.getAction());
+        }
     }
 
     /**

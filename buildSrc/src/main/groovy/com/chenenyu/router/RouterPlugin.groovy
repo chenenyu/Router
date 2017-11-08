@@ -50,8 +50,8 @@ class RouterPlugin implements Plugin<Project> {
                 }
             }
         } else { // remote
-            String routerVersion = "1.2.5"
-            String compilerVersion = "1.2.5"
+            String routerVersion = "1.2.6"
+            String compilerVersion = "1.2.6"
             // org.gradle.api.internal.plugins.DefaultExtraPropertiesExtension
             ExtraPropertiesExtension ext = project.rootProject.ext
             if (ext.has("routerVersion")) {

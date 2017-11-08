@@ -26,12 +26,6 @@ public interface IRouter {
     IRouter requestCode(int requestCode);
 
     /**
-     * Deprecated. Use {@link #with(Bundle)} instead.
-     */
-    @Deprecated
-    IRouter extras(Bundle bundle);
-
-    /**
      * @see Bundle#putAll(Bundle)
      */
     IRouter with(Bundle bundle);
@@ -51,6 +45,26 @@ public interface IRouter {
      * @see Intent#addFlags(int)
      */
     IRouter addFlags(int flags);
+
+    /**
+     * @see Intent#setData(Uri)
+     */
+    IRouter setData(Uri data);
+
+    /**
+     * @see Intent#setType(String)
+     */
+    IRouter setType(String type);
+
+    /**
+     * @see Intent#setDataAndType(Uri, String)
+     */
+    IRouter setDataAndType(Uri data, String type);
+
+    /**
+     * @see Intent#setAction(String)
+     */
+    IRouter setAction(String action);
 
     /**
      * @see android.app.Activity#overridePendingTransition(int, int)

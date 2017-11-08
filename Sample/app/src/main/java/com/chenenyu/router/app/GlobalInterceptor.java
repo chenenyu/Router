@@ -14,7 +14,7 @@ import com.chenenyu.router.RouteRequest;
 public class GlobalInterceptor implements RouteInterceptor {
     @Override
     public boolean intercept(Context context, RouteRequest routeRequest) {
-        Log.d("GlobalInterceptor", String.format("Intercepted: {uri: %s, interceptor: %s}",
+        Log.d("GlobalInterceptor", String.format("{uri: %s, interceptor: %s}",
                 routeRequest.getUri().toString(), GlobalInterceptor.class.getName()));
         return false;
     }

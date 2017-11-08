@@ -1,3 +1,10 @@
+## 2017.09.30
+
+`router: 1.2.6`:
+
+1. Fix bug in `AbsImplicitMatcher`.
+2. Add some api for Intent.
+
 ## 2017.09.12
 
 `router-gradle-plugin: 1.2.5.1`:

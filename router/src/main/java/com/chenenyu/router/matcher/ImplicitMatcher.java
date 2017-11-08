@@ -27,8 +27,8 @@ public class ImplicitMatcher extends AbsImplicitMatcher {
                 || uri.toString().toLowerCase().startsWith("https://")) {
             return false;
         }
-        ResolveInfo resolveInfo = context.getPackageManager().resolveActivity(new Intent(Intent.ACTION_VIEW, uri),
-                PackageManager.MATCH_DEFAULT_ONLY | PackageManager.GET_RESOLVED_FILTER);
+        ResolveInfo resolveInfo = context.getPackageManager().resolveActivity(
+                new Intent(Intent.ACTION_VIEW, uri), PackageManager.MATCH_DEFAULT_ONLY);
         if (resolveInfo != null) {
             // bundle parser
             if (uri.getQuery() != null) {
