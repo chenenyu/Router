@@ -58,9 +58,6 @@ public class RouteProcessor extends AbstractProcessor {
         mLogger = new Logger(processingEnvironment.getMessager());
     }
 
-    /**
-     * This method will be called some times.
-     */
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(Route.class);
@@ -80,7 +77,7 @@ public class RouteProcessor extends AbstractProcessor {
             generateRouteTable(validModuleName, typeElements);
             generateTargetInterceptors(validModuleName, typeElements);
         } else {
-            mLogger.error(String.format("No option `%s` passed to Route annotation processor.", OPTION_MODULE_NAME));
+            throw new RuntimeException(String.format("No option `%s` passed to Route annotation processor.", OPTION_MODULE_NAME));
         }
         mLogger.info(String.format(">>> %s: RouteProcessor end. <<<", mModuleName));
         return true;

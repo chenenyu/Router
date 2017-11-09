@@ -10,7 +10,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.ArraySet;
 
 import com.chenenyu.router.matcher.AbsImplicitMatcher;
 import com.chenenyu.router.matcher.AbsMatcher;
@@ -19,13 +18,14 @@ import com.chenenyu.router.util.RLog;
 import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * <p>
- * Created by Cheney on 2017/3/30.
+ * Created by chenenyu on 2017/3/30.
  */
 class RealRouter extends AbsRouter {
     private static RealRouter sInstance;
@@ -289,7 +289,7 @@ class RealRouter extends AbsRouter {
             return false;
         }
         // Assemble final interceptors
-        Set<String> finalInterceptors = new ArraySet<>();
+        Set<String> finalInterceptors = new HashSet<>();
         if (target != null) {
             // 1. Add original interceptors in Map
             String[] baseInterceptors = AptHub.targetInterceptors.get(target);

@@ -9,7 +9,7 @@ import com.chenenyu.router.RouteRequest;
 /**
  * Match rule.
  * <p>
- * Created by Cheney on 2017/3/7.
+ * Created by chenenyu on 2017/3/7.
  */
 interface Matcher extends Comparable<Matcher> {
     /**

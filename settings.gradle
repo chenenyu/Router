@@ -1,10 +1,10 @@
 // core
-include ':router', ':compiler', ':annotation', ':buildSrc'
+include ':router', ':compiler', ':annotation'
 // demo
 include ':app', ':module1', ':module2'
 project(':app').projectDir = new File("Sample/app")
 project(':module1').projectDir = new File("Sample/module1")
 project(':module2').projectDir = new File("Sample/module2")
 // kotlin-demo
-//include ':kotlin-app'
-//project(':kotlin-app').projectDir = new File("Sample/kotlin-app")
+include ':kotlin-app'
+project(':kotlin-app').projectDir = new File("Sample/kotlin-app")

@@ -3,7 +3,7 @@ package com.chenenyu.router;
 /**
  * Interface that help to generate param class.
  * <p>
- * Created by Enyu Chen on 2017/6/15.
+ * Created by chenenyu on 2017/6/15.
  */
 public interface ParamInjector {
     /**

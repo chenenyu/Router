@@ -1,6 +1,5 @@
 package com.chenenyu.router;
 
-import android.content.Context;
 import android.net.Uri;
 
 import com.chenenyu.router.matcher.AbsMatcher;
@@ -12,7 +11,7 @@ import java.util.List;
 /**
  * Entry class.
  * <p>
- * Created by Cheney on 2016/12/20.
+ * Created by chenenyu on 2016/12/20.
  */
 public class Router {
     /**
@@ -22,37 +21,10 @@ public class Router {
 
     private static List<RouteInterceptor> sGlobalInterceptors = new ArrayList<>();
 
-    private static boolean sDebuggable = false;
 
-    /**
-     * Initialize router.
-     *
-     * @param context placeholder for a future usage.
-     */
-    public static void initialize(Context context) {
-        initialize(context, false);
-    }
-
-    /**
-     * Initialize router.
-     *
-     * @param context    placeholder for a future usage.
-     * @param debuggable {@link #setDebuggable(boolean)}.
-     */
-    public static void initialize(Context context, boolean debuggable) {
-        if (debuggable) {
-            setDebuggable(true);
-        }
-        AptHub.initDefault();
-    }
-
-    public static boolean isDebuggable() {
-        return sDebuggable;
-    }
-
-    public static void setDebuggable(boolean debuggable) {
-        sDebuggable = debuggable;
-        RLog.showLog(debuggable);
+    public static void initialize(Configuration configuration) {
+        RLog.showLog(configuration.debuggable);
+        AptHub.registerModules(configuration.modules);
     }
 
     public static IRouter build(String path) {

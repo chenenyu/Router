@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.chenenyu.router'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -10,6 +9,12 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["moduleName": project.name]
+            }
+        }
     }
 
     buildTypes {
@@ -31,6 +36,8 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile "com.android.support:appcompat-v7:${rootProject.ext.supportVersion}"
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportVersion}"
+    implementation project(':router')
+    annotationProcessor project(':compiler')
 }
