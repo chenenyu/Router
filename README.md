@@ -13,7 +13,7 @@
 ```Groovy
 android {
     defaultConfig {
-		...
+        ...
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["moduleName": project.name]
