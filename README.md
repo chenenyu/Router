@@ -8,57 +8,85 @@
 
 ## Getting started
 
-*  Add dependencies by adding the following lines to your top level `project/build.gradle`:  
+*  Add dependencies by adding the following lines to your `build.gradle`:  
 
 ```Groovy
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-    	...
-        classpath 'com.chenenyu.router:gradle-plugin:最新版本'
+android {
+    defaultConfig {
+		...
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["moduleName": project.name]
+            }
+        }
     }
 }
 
-// 可选配置.
-ext {
-    ...
-    routerVersion = "x.y.z" // 指定特定的router版本
-    compilerVersion = "x.y.z" // 指定特定的router-compiler版本
+dependencies {
+    implementation 'com.chenenyu.router:router:版本号'
+    annotationProcessor 'com.chenenyu.router:compiler:版本号'
 }
 ```
 
-* Apply router plugin in your `module/build.gradle`:  
+latest `router` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router/images/download.svg)
 
-```  Groovy
-apply plugin: 'com.android.application'
-...
-apply plugin: 'com.chenenyu.router'
-```
+latest `compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg)  
 
-current `router-gradle-plugin` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router-gradle-plugin/images/download.svg)
+## 基本用法
 
-current `router` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router/images/download.svg)
-
-current `router-compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg)  
-
-## Simple usage
-
-`Router` uses annotation to specify the mapping relationship.
+1. 初始化
 
 ```java
-@Route("test")
+Router.initialize(new Configuration.Builder()
+        // 调试模式，开启后会打印log
+        .setDebuggable(BuildConfig.DEBUG)
+        // 模块名，每个使用Router的module都要在这里注册
+        .registerModules("your app module", "your lib module", "other module")
+        .build());
+```
+
+2. 添加注解
+
+```java
+// 这里添加了path和拦截器
+@Route(value = "test", interceptors = "SampleInterceptor")
 public class TestActivity extends AppCompatActivity {
 	...
 }
 ```
 
-Then you can just call `Router.build("test").go(context)` to open `TestActivity`, so cool! ​:clap:​​:clap:​​:clap:​
+3. 添加拦截器
 
-If you configured multiple route `@Route({"test","wtf"})`, both `test` and `wtf` can lead to `TestActivity`.
+```java
+@Interceptor("SampleInterceptor")
+public class SampleInterceptor implements RouteInterceptor {
+    @Override
+    public boolean intercept(Context context, RouteRequest routeRequest) {
+        // do something
+        return false;
+    }
+}
+```
 
-## Advanced usage
+4. 跳转
+
+```java
+// 简单跳转
+Router.build("test").go(this);
+// startActivityForResult
+Router.build("test").requestCode(0).go(this);
+// 携带bundle参数
+Router.build("test").with("key", Object).go(this);
+// 添加回调
+Router.build("test").go(this, new RouteCallback() {
+        @Override
+        public void callback(RouteResult state, Uri uri, String message) {
+             // do something
+        }
+});
+```
+
+## 进阶用法
 
 Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more informations.
 
@@ -66,7 +94,7 @@ Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more inf
 
 See [wiki](https://github.com/chenenyu/Router/wiki).
 
-## Contact
+## 讨论
 
 QQ group: 271849001
 
