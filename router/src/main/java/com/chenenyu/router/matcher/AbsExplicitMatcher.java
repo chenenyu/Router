@@ -10,7 +10,7 @@ import android.support.v4.app.Fragment;
 /**
  * Base mather for explicit intent and fragment.
  * <p>
- * Created by Cheney on 2017/3/12.
+ * Created by chenenyu on 2017/3/12.
  */
 public abstract class AbsExplicitMatcher extends AbsMatcher {
 

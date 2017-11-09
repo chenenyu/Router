@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * Target interceptorTable mapping.
  * <p>
- * Created by Enyu Chen on 2017/6/29.
+ * Created by chenenyu on 2017/6/29.
  */
 public interface TargetInterceptors {
     /**

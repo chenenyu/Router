@@ -14,7 +14,7 @@ import com.chenenyu.router.RouteRequest;
  * cause we may want to resolve them in custom matcher, such as {@link SchemeMatcher},
  * or {@link BrowserMatcher}.
  * <p>
- * Created by Cheney on 2017/01/08.
+ * Created by chenenyu on 2017/01/08.
  */
 public class ImplicitMatcher extends AbsImplicitMatcher {
     public ImplicitMatcher(int priority) {
@@ -27,8 +27,8 @@ public class ImplicitMatcher extends AbsImplicitMatcher {
                 || uri.toString().toLowerCase().startsWith("https://")) {
             return false;
         }
-        ResolveInfo resolveInfo = context.getPackageManager().resolveActivity(new Intent(Intent.ACTION_VIEW, uri),
-                PackageManager.MATCH_DEFAULT_ONLY | PackageManager.GET_RESOLVED_FILTER);
+        ResolveInfo resolveInfo = context.getPackageManager().resolveActivity(
+                new Intent(Intent.ACTION_VIEW, uri), PackageManager.MATCH_DEFAULT_ONLY);
         if (resolveInfo != null) {
             // bundle parser
             if (uri.getQuery() != null) {

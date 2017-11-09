@@ -75,7 +75,7 @@ public class InterceptorProcessor extends AbstractProcessor {
             String validModuleName = mModuleName.replace(".", "_").replace("-", "_");
             generateInterceptors(validModuleName, typeElements);
         } else {
-            mLogger.error(String.format("No option `%s` passed to Interceptor annotation processor.", OPTION_MODULE_NAME));
+            throw new RuntimeException(String.format("No option `%s` passed to Interceptor annotation processor.", OPTION_MODULE_NAME));
         }
         mLogger.info(String.format(">>> %s: InterceptorProcessor end. <<<", mModuleName));
         return true;
