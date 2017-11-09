@@ -3,20 +3,17 @@ package com.chenenyu.router;
 import com.chenenyu.router.util.RLog;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Hub for 'apt' classes.
  * <p>
- * Created by Cheney on 2017/3/13.
+ * Created by chenenyu on 2017/3/13.
  */
-public class AptHub {
+class AptHub {
     private static final String PACKAGE_NAME = "com.chenenyu.router";
     private static final String DOT = ".";
-    private static final String ROUTER_BUILD_INFO = "RouterBuildInfo";
-    private static final String ALL_MODULES = "ALL_MODULES";
     private static final String ROUTE_TABLE = "RouteTable";
     private static final String INTERCEPTOR_TABLE = "InterceptorTable";
     private static final String TARGET_INTERCEPTORS = "TargetInterceptors";
@@ -31,35 +28,11 @@ public class AptHub {
     static Map<String, Class<ParamInjector>> injectors = new HashMap<>();
 
     /**
-     * This method offers an ability to register extra route info for developers,
-     * such as you compile an aar as dependencies rather than a project module.
+     * This method offers an ability to register extra modules for developers.
      *
      * @param modules extra modules' name
      */
-    public static void registerModules(String... modules) {
-        init(modules);
-    }
-
-    static void initDefault() {
-        String[] modules;
-        try {
-            /* RouterBuildInfo */
-            Class<?> buildInfo = Class.forName(PACKAGE_NAME + DOT + ROUTER_BUILD_INFO);
-            Field allModules = buildInfo.getField(ALL_MODULES);
-            String modules_name = (String) allModules.get(buildInfo);
-            modules = modules_name.split(",");
-        } catch (ClassNotFoundException e) {
-            RLog.e("Initialization failed, have you forgotten to apply plugin: " +
-                    "'com.chenenyu.router' in application module?");
-            return;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
-        init(modules);
-    }
-
-    private synchronized static void init(String... modules) {
+    synchronized static void registerModules(String... modules) {
         if (modules == null || modules.length == 0) {
             RLog.w("empty modules.");
         } else {

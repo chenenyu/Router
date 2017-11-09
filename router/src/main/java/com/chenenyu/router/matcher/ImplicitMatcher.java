@@ -14,7 +14,7 @@ import com.chenenyu.router.RouteRequest;
  * cause we may want to resolve them in custom matcher, such as {@link SchemeMatcher},
  * or {@link BrowserMatcher}.
  * <p>
- * Created by Cheney on 2017/01/08.
+ * Created by chenenyu on 2017/01/08.
  */
 public class ImplicitMatcher extends AbsImplicitMatcher {
     public ImplicitMatcher(int priority) {

@@ -4,17 +4,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.ArraySet;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Route request object.
  * <p>
- * Created by Cheney on 2017/3/31.
+ * Created by chenenyu on 2017/3/31.
  */
+@SuppressWarnings("WeakerAccess")
 public class RouteRequest implements Serializable {
     private static final int INVALID_REQUEST_CODE = -1;
 
@@ -120,7 +121,7 @@ public class RouteRequest implements Serializable {
             return;
         }
         if (this.addedInterceptors == null) {
-            this.addedInterceptors = new ArraySet<>(interceptors.length);
+            this.addedInterceptors = new HashSet<>(interceptors.length);
         }
         this.addedInterceptors.addAll(Arrays.asList(interceptors));
     }
@@ -130,7 +131,7 @@ public class RouteRequest implements Serializable {
             return;
         }
         if (this.removedInterceptors == null) {
-            this.removedInterceptors = new ArraySet<>(interceptors.length);
+            this.removedInterceptors = new HashSet<>(interceptors.length);
         }
         this.removedInterceptors.addAll(Arrays.asList(interceptors));
     }
@@ -172,11 +173,12 @@ public class RouteRequest implements Serializable {
         this.exitAnim = exitAnim;
     }
 
+    @Nullable
     public ActivityOptionsCompat getActivityOptionsCompat() {
         return activityOptionsCompat;
     }
 
-    public void setActivityOptionsCompat(ActivityOptionsCompat activityOptionsCompat) {
+    public void setActivityOptionsCompat(@Nullable ActivityOptionsCompat activityOptionsCompat) {
         this.activityOptionsCompat = activityOptionsCompat;
     }
 }

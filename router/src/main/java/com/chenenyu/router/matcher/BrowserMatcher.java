@@ -10,7 +10,7 @@ import com.chenenyu.router.RouteRequest;
  * This matcher will generate an intent with an {@link android.content.Intent#ACTION_VIEW} action
  * and open a browser.
  * <p>
- * Created by Cheney on 2017/1/5.
+ * Created by chenenyu on 2017/1/5.
  */
 public class BrowserMatcher extends AbsImplicitMatcher {
     public BrowserMatcher(int priority) {

@@ -29,7 +29,7 @@ install {
             developer {
                 id 'chenenyu'
                 name 'chenenyu'
-                email 'echocey@gmail.com'
+                email 'ceychina@gmail.com'
             }
         }
     }

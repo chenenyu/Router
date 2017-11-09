@@ -5,7 +5,7 @@ import android.util.Log;
 /**
  * Internal simple log.
  * <p>
- * Created by Cheney on 2016/12/27.
+ * Created by chenenyu on 2016/12/27.
  */
 public class RLog {
     private static final String TAG = "Router";
