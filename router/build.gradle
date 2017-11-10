@@ -38,7 +38,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     compileOnly "com.android.support:support-v4:${rootProject.ext.supportVersion}"
 //    api project(':annotation')
-    api "com.chenenyu.router:annotation:${annoVersion}"
+    // 这里不能使用implementation，因为pom依赖不识别
+    compile "com.chenenyu.router:annotation:${annoVersion}"
 }
 
 apply from: 'publish.gradle'
