@@ -12,6 +12,7 @@ import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.WildcardTypeName;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -122,12 +123,21 @@ public class RouteProcessor extends AbstractProcessor {
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(mapParameterSpec);
+
+        // 记录path->element，防止重复的route path
+        Map<String, String> pathRecorder = new HashMap<>();
+
         for (TypeElement element : elements) {
             mLogger.info(String.format("Found routed target: %s", element.getQualifiedName()));
             Route route = element.getAnnotation(Route.class);
             String[] paths = route.value();
             for (String path : paths) {
+                if (pathRecorder.containsKey(path)) {
+                    throw new RuntimeException(String.format("Duplicate route path: %s[%s, %s]",
+                            path, element.getQualifiedName(), pathRecorder.get(path)));
+                }
                 methodHandle.addStatement("map.put($S, $T.class)", path, ClassName.get(element));
+                pathRecorder.put(path, element.getQualifiedName().toString());
             }
         }
 
