@@ -51,7 +51,7 @@ Router.initialize(new Configuration.Builder()
 // 这里添加了path和拦截器
 @Route(value = "test", interceptors = "SampleInterceptor")
 public class TestActivity extends AppCompatActivity {
-	...
+    ...
 }
 ```
 

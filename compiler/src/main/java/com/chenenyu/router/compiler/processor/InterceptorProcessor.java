@@ -11,6 +11,7 @@ import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.WildcardTypeName;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -103,11 +104,18 @@ public class InterceptorProcessor extends AbstractProcessor {
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(mapParameterSpec);
+
+        Map<String, String> interceptorRecorder = new HashMap<>();
         for (TypeElement element : elements) {
             mLogger.info(String.format("Found interceptor: %s", element.getQualifiedName()));
             Interceptor interceptor = element.getAnnotation(Interceptor.class);
             String name = interceptor.value();
+            if (interceptorRecorder.containsKey(name)) {
+                throw new RuntimeException(String.format("Duplicate interceptor name: %s[%s, %s]",
+                        name, element.getQualifiedName(), interceptorRecorder.get(name)));
+            }
             handleInterceptors.addStatement("map.put($S, $T.class)", name, ClassName.get(element));
+            interceptorRecorder.put(name, element.getQualifiedName().toString());
         }
 
         /*

@@ -1,3 +1,13 @@
+## 2017.11.29
+
+`router: 1.3.2`:
+
+1. 兼容低版本的v4包. [issue59](https://github.com/chenenyu/Router/issues/59)
+
+`compiler:1.3.2`:
+
+1. 编译时检查是否存在重复的注解. [issue60](https://github.com/chenenyu/Router/issues/60)
+
 ## 2017.11.09
 
 `router: 1.3.0`:
