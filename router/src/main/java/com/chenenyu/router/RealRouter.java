@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 
 import com.chenenyu.router.matcher.AbsImplicitMatcher;
 import com.chenenyu.router.matcher.AbsMatcher;
@@ -353,7 +352,13 @@ class RealRouter extends AbsRouter {
             }
         } else {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            ContextCompat.startActivity(context, intent, options);
+            // The below api added in v4:25.1.0
+            // ContextCompat.startActivity(context, intent, options);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                context.startActivity(intent, options);
+            } else {
+                context.startActivity(intent);
+            }
         }
 
         callback(RouteResult.SUCCEED, null);
