@@ -4,6 +4,7 @@ import com.chenenyu.router.matcher.AbsMatcher;
 import com.chenenyu.router.matcher.BrowserMatcher;
 import com.chenenyu.router.matcher.DirectMatcher;
 import com.chenenyu.router.matcher.ImplicitMatcher;
+import com.chenenyu.router.matcher.RestfulParamsMatcher;
 import com.chenenyu.router.matcher.SchemeMatcher;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class MatcherRegistry {
     private static final List<AbsMatcher> registry = new ArrayList<>();
 
     static {
+        registry.add(new RestfulParamsMatcher(0x1001));
         registry.add(new DirectMatcher(0x1000));
         registry.add(new SchemeMatcher(0x0100));
         registry.add(new ImplicitMatcher(0x0010));
