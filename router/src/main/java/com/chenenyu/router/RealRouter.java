@@ -217,10 +217,11 @@ class RealRouter extends AbsRouter {
                     return finalizeIntent(context, matcher, null);
                 }
             } else {
+                boolean isiImplicit = matcher instanceof AbsImplicitMatcher;
                 for (Map.Entry<String, Class<?>> entry : entries) {
-                    if (matcher.match(context, mRouteRequest.getUri(), entry.getKey(), mRouteRequest)) {
+                    if (matcher.match(context, mRouteRequest.getUri(), isiImplicit ? null : entry.getKey(), mRouteRequest)) {
                         RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                        return finalizeIntent(context, matcher, entry.getValue());
+                        return finalizeIntent(context, matcher, isiImplicit ? null : entry.getValue());
                     }
                 }
             }
