@@ -45,17 +45,8 @@ Router.initialize(new Configuration.Builder()
         .build());
 ```
 
-2. 添加注解
 
-```java
-// 这里添加了path和拦截器
-@Route(value = "test", interceptors = "SampleInterceptor")
-public class TestActivity extends AppCompatActivity {
-    ...
-}
-```
-
-3. 添加拦截器
+2. 添加拦截器(可选)
 
 ```java
 @Interceptor("SampleInterceptor")
@@ -65,6 +56,16 @@ public class SampleInterceptor implements RouteInterceptor {
         // do something
         return false;
     }
+}
+```
+
+3. 添加注解
+
+```java
+// 这里添加了path和拦截器(可选)
+@Route(value = "test", interceptors = "SampleInterceptor")
+public class TestActivity extends AppCompatActivity {
+    ...
 }
 ```
 
