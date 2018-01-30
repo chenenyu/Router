@@ -19,7 +19,11 @@ public class BrowserMatcher extends AbsImplicitMatcher {
 
     @Override
     public boolean match(Context context, Uri uri, @Nullable String route, RouteRequest routeRequest) {
-        return (uri.toString().toLowerCase().startsWith("http://")
-                || uri.toString().toLowerCase().startsWith("https://"));
+        if ((uri.toString().toLowerCase().startsWith("http://")
+                || uri.toString().toLowerCase().startsWith("https://"))) {
+            routeRequest.setSkipInterceptors(true);
+            return true;
+        }
+        return false;
     }
 }
