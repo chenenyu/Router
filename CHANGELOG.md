@@ -1,3 +1,9 @@
+## 2018.01.30
+
+`router: 1.3.3`:
+
+1. fix: https://github.com/chenenyu/Router/pull/68
+
 ## 2017.11.29
 
 `router: 1.3.2`:

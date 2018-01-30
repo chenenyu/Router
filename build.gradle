@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.1.51'
+    ext.kotlin_version = '1.2.10'
     repositories {
         google()
         jcenter()
@@ -27,10 +27,10 @@ ext {
     sourceCompatibility = JavaVersion.VERSION_1_7
     targetCompatibility = JavaVersion.VERSION_1_7
 
-    compileSdkVersion = 26
-    buildToolsVersion = "26.0.3"
+    compileSdkVersion = 27
+    buildToolsVersion = "27.0.3"
     minSdkVersion = 14
-    targetSdkVersion = 26
+    targetSdkVersion = 27
 
-    supportVersion = "26.1.0"
+    supportVersion = "27.0.2"
 }
