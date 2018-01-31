@@ -382,7 +382,7 @@ class RealRouter extends AbsRouter {
         } else {
             fragment.startActivityForResult(intent, mRouteRequest.getRequestCode(), options);
         }
-        if (activity != null && mRouteRequest.getEnterAnim() != 0 && mRouteRequest.getExitAnim() != 0) {
+        if (activity != null && mRouteRequest.getEnterAnim() != -1 && mRouteRequest.getExitAnim() != -1) {
             // Add transition animation.
             activity.overridePendingTransition(
                     mRouteRequest.getEnterAnim(), mRouteRequest.getExitAnim());
@@ -415,7 +415,7 @@ class RealRouter extends AbsRouter {
                 fragment.startActivityForResult(intent, mRouteRequest.getRequestCode());
             }
         }
-        if (activity != null && mRouteRequest.getEnterAnim() != 0 && mRouteRequest.getExitAnim() != 0) {
+        if (activity != null && mRouteRequest.getEnterAnim() != -1 && mRouteRequest.getExitAnim() != -1) {
             // Add transition animation.
             activity.overridePendingTransition(
                     mRouteRequest.getEnterAnim(), mRouteRequest.getExitAnim());
