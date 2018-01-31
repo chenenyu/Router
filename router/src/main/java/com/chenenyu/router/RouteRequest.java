@@ -36,8 +36,8 @@ public class RouteRequest implements Serializable {
     @Nullable
     private RouteCallback callback;
     private int requestCode = INVALID_REQUEST_CODE;
-    private int enterAnim;
-    private int exitAnim;
+    private int enterAnim = -1;//use -1 to mark use default animation
+    private int exitAnim = -1;
     @Nullable
     private ActivityOptionsCompat activityOptionsCompat;
 

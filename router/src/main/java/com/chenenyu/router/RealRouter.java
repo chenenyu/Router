@@ -346,7 +346,7 @@ class RealRouter extends AbsRouter {
             ActivityCompat.startActivityForResult((Activity) context, intent,
                     mRouteRequest.getRequestCode(), options);
 
-            if (mRouteRequest.getEnterAnim() != 0 && mRouteRequest.getExitAnim() != 0) {
+            if (mRouteRequest.getEnterAnim() != -1 || mRouteRequest.getExitAnim() != -1) {
                 // Add transition animation.
                 ((Activity) context).overridePendingTransition(
                         mRouteRequest.getEnterAnim(), mRouteRequest.getExitAnim());
