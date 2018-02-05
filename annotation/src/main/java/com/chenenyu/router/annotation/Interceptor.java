@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Annotation for interceptor class.
  * <p>
  * Created by Cheney on 2017/3/6.
  */

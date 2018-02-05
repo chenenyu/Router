@@ -8,13 +8,13 @@ import java.lang.annotation.Target;
 /**
  * Annotation for injected params.
  * <p>
- * Created by Enyu Chen on 2017/6/12.
+ * Created by chenenyu on 2017/6/12.
  */
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.CLASS)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
 public @interface InjectParam {
     /**
-     * Map param field with the specify key in bundle.
+     * Map param field with the specify key in extras.
      */
     String key() default "";
 }

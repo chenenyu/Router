@@ -8,10 +8,10 @@ import java.lang.annotation.Target;
 /**
  * Annotation for route.
  * <p>
- * Created by Cheney on 2016/12/20.
+ * Created by chenenyu on 2016/12/20.
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.CLASS)
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Route {
     /**
      * Route path.
