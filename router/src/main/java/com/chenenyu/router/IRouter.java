@@ -106,4 +106,26 @@ public interface IRouter {
     void go(android.app.Fragment fragment, RouteCallback callback);
 
     void go(android.app.Fragment fragment);
+
+    /**
+     * Call method by a {@link MethodCallable} instance. The method can be static or not.
+     * If the method has parameters, each param's type must be {@link String} and
+     * all the params must be annotated by {@link com.chenenyu.router.annotation.InjectParam}.
+     *
+     * @param context  Context
+     * @param callable A {@link MethodCallable} instance.
+     * @return True if find the method and invoke successfully, false otherwise.
+     */
+    boolean go(Context context, MethodCallable callable);
+
+    /**
+     * Call method by a subclass of {@link MethodCallable}. <strong>The method must be static.</strong>
+     * If the method has parameters, each param's type must be {@link String} and
+     * all the params must be annotated by {@link com.chenenyu.router.annotation.InjectParam}.
+     *
+     * @param context Context
+     * @param clz     Class that implements {@link MethodCallable} interface.
+     * @return True if find the method and invoke successfully, false otherwise.
+     */
+    boolean go(Context context, Class<? extends MethodCallable> clz);
 }
