@@ -38,7 +38,7 @@ import static com.chenenyu.router.compiler.util.Consts.PACKAGE_NAME;
 /**
  * {@link Interceptor} annotation processor.
  * <p>
- * Created by Cheney on 2017/3/6.
+ * Created by chenenyu on 2017/3/6.
  */
 @SupportedAnnotationTypes(INTERCEPTOR_ANNOTATION_TYPE)
 @SupportedOptions(OPTION_MODULE_NAME)

@@ -9,12 +9,20 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.util.ArrayMap;
+import android.util.Pair;
 
+import com.chenenyu.router.annotation.InjectParam;
+import com.chenenyu.router.annotation.Route;
+import com.chenenyu.router.matcher.AbsExplicitMatcher;
 import com.chenenyu.router.matcher.AbsImplicitMatcher;
 import com.chenenyu.router.matcher.AbsMatcher;
 import com.chenenyu.router.util.RLog;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +31,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * <p>
+ * Core of router.
+ * <br>
  * Created by chenenyu on 2017/3/30.
  */
 class RealRouter extends AbsRouter {
@@ -126,15 +135,18 @@ class RealRouter extends AbsRouter {
         if (!mRouteRequest.isSkipInterceptors()) {
             for (RouteInterceptor interceptor : Router.getGlobalInterceptors()) {
                 if (interceptor.intercept(context, mRouteRequest)) {
-                    callback(RouteResult.INTERCEPTED, "Intercepted by global interceptor.");
+                    callback(RouteResult.INTERCEPTED, String.format(
+                            "Intercepted by global interceptor: %s.",
+                            interceptor.getClass().getSimpleName()));
                     return null;
                 }
             }
         }
 
-        List<AbsMatcher> matcherList = MatcherRegistry.getMatcher();
+        // Fragment只能匹配显式Matcher
+        List<AbsExplicitMatcher> matcherList = MatcherRegistry.getExplicitMatcher();
         if (matcherList.isEmpty()) {
-            callback(RouteResult.FAILED, "The MatcherRegistry contains no Matcher.");
+            callback(RouteResult.FAILED, "The MatcherRegistry contains no AbsExplicitMatcher.");
             return null;
         }
 
@@ -146,14 +158,11 @@ class RealRouter extends AbsRouter {
 
         Set<Map.Entry<String, Class<?>>> entries = AptHub.routeTable.entrySet();
 
-        for (AbsMatcher matcher : matcherList) {
-            if (matcher instanceof AbsImplicitMatcher) { // Ignore implicit matcher.
-                continue;
-            }
+        for (AbsExplicitMatcher matcher : matcherList) {
             for (Map.Entry<String, Class<?>> entry : entries) {
                 if (matcher.match(context, mRouteRequest.getUri(), entry.getKey(), mRouteRequest)) {
                     RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                    if (intercept(context, entry.getValue())) {
+                    if (intercept(context, assembleClassInterceptors(entry.getValue()))) {
                         return null;
                     }
                     Object result = matcher.generate(context, mRouteRequest.getUri(), entry.getValue());
@@ -196,7 +205,9 @@ class RealRouter extends AbsRouter {
         if (!mRouteRequest.isSkipInterceptors()) {
             for (RouteInterceptor interceptor : Router.getGlobalInterceptors()) {
                 if (interceptor.intercept(context, mRouteRequest)) {
-                    callback(RouteResult.INTERCEPTED, "Intercepted by global interceptor.");
+                    callback(RouteResult.INTERCEPTED, String.format(
+                            "Intercepted by global interceptor: %s.",
+                            interceptor.getClass().getSimpleName()));
                     return null;
                 }
             }
@@ -241,13 +252,28 @@ class RealRouter extends AbsRouter {
      * @return Finally intent.
      */
     private Intent finalizeIntent(Context context, AbsMatcher matcher, @Nullable Class<?> target) {
-        if (intercept(context, target)) {
+        if (intercept(context, assembleClassInterceptors(target))) {
             return null;
         }
-        Object intent = matcher.generate(context, mRouteRequest.getUri(), target);
-        if (intent instanceof Intent) {
-            assembleIntent((Intent) intent);
-            return (Intent) intent;
+        Object result = matcher.generate(context, mRouteRequest.getUri(), target);
+        if (result instanceof Intent) {
+            Intent intent = (Intent) result;
+            if (mRouteRequest.getExtras() != null && !mRouteRequest.getExtras().isEmpty()) {
+                intent.putExtras(mRouteRequest.getExtras());
+            }
+            if (mRouteRequest.getFlags() != 0) {
+                intent.addFlags(mRouteRequest.getFlags());
+            }
+            if (mRouteRequest.getData() != null) {
+                intent.setData(mRouteRequest.getData());
+            }
+            if (mRouteRequest.getType() != null) {
+                intent.setType(mRouteRequest.getType());
+            }
+            if (mRouteRequest.getAction() != null) {
+                intent.setAction(mRouteRequest.getAction());
+            }
+            return intent;
         } else {
             callback(RouteResult.FAILED, String.format(
                     "The matcher can't generate an intent for uri: %s",
@@ -256,38 +282,13 @@ class RealRouter extends AbsRouter {
         }
     }
 
-    private void assembleIntent(Intent intent) {
-        if (intent == null) {
-            return;
-        }
-        if (mRouteRequest.getExtras() != null && !mRouteRequest.getExtras().isEmpty()) {
-            intent.putExtras(mRouteRequest.getExtras());
-        }
-        if (mRouteRequest.getFlags() != 0) {
-            intent.addFlags(mRouteRequest.getFlags());
-        }
-        if (mRouteRequest.getData() != null) {
-            intent.setData(mRouteRequest.getData());
-        }
-        if (mRouteRequest.getType() != null) {
-            intent.setType(mRouteRequest.getType());
-        }
-        if (mRouteRequest.getAction() != null) {
-            intent.setAction(mRouteRequest.getAction());
-        }
-    }
-
     /**
-     * Find interceptors
+     * Assemble final interceptors for class.
      *
-     * @param context Context
-     * @param target  target page.
-     * @return True if intercepted, false otherwise.
+     * @param target activity or fragment
+     * @return Interceptors set.
      */
-    private boolean intercept(Context context, @Nullable Class<?> target) {
-        if (mRouteRequest.isSkipInterceptors()) {
-            return false;
-        }
+    private Set<String> assembleClassInterceptors(@Nullable Class<?> target) {
         // Assemble final interceptors
         Set<String> finalInterceptors = new HashSet<>();
         if (target != null) {
@@ -305,8 +306,141 @@ class RealRouter extends AbsRouter {
         if (mRouteRequest.getAddedInterceptors() != null) {
             finalInterceptors.addAll(mRouteRequest.getAddedInterceptors());
         }
+        return finalInterceptors;
+    }
 
-        if (!finalInterceptors.isEmpty()) {
+    /**
+     * 从method列表中找出相应的方法
+     *
+     * @return Method
+     */
+    private Method getMethod(Context context, ArrayMap<Method, Pair<String[], String[]>> map) {
+        if (mRouteRequest.getUri() == null) {
+            callback(RouteResult.FAILED, "uri == null.");
+            return null;
+        }
+
+        if (!mRouteRequest.isSkipInterceptors()) {
+            for (RouteInterceptor interceptor : Router.getGlobalInterceptors()) {
+                if (interceptor.intercept(context, mRouteRequest)) {
+                    callback(RouteResult.INTERCEPTED, String.format(
+                            "Intercepted by global interceptor: %s.",
+                            interceptor.getClass().getSimpleName()));
+                    return null;
+                }
+            }
+        }
+
+        // Method只匹配显式Matcher
+        List<AbsExplicitMatcher> matcherList = MatcherRegistry.getExplicitMatcher();
+        if (matcherList.isEmpty()) {
+            callback(RouteResult.FAILED, "The MatcherRegistry contains no AbsExplicitMatcher.");
+            return null;
+        }
+
+        Set<Map.Entry<Method, Pair<String[], String[]>>> entries = map.entrySet();
+        for (AbsExplicitMatcher matcher : matcherList) {
+            for (Map.Entry<Method, Pair<String[], String[]>> entry : entries) {
+                for (String route : entry.getValue().first) {
+                    if (matcher.match(context, mRouteRequest.getUri(), route, mRouteRequest)) {
+                        if (!mRouteRequest.isSkipInterceptors() &&
+                                intercept(context, assembleMethodInterceptors(entry.getValue().second))) {
+                            return null;
+                        }
+                        return entry.getKey();
+                    }
+                }
+            }
+        }
+
+        callback(RouteResult.FAILED, String.format(
+                "Can not find an method that matches the given uri: %s", mRouteRequest.getUri()));
+        return null;
+    }
+
+    /**
+     * Fetch method's args.
+     *
+     * @param method target method.
+     * @return args array.
+     */
+    @Nullable
+    private Object[] getMethodArgs(Method method) {
+        // 获取参数类型
+        Class[] paramTypes = method.getParameterTypes();
+        // 获取参数注解
+        Annotation[][] paramAnnotations = method.getParameterAnnotations();
+        if (paramTypes != null && paramTypes.length > 0) { // 有参
+            if (paramTypes.length != paramAnnotations.length) {
+                callback(RouteResult.FAILED,
+                        String.format("Each parameter of method[%s] must be annotated by @InjectParam.",
+                                method.getName()));
+                return null;
+            }
+            Object[] args = new Object[paramTypes.length];
+            for (int i = 0; i < paramTypes.length; i++) {
+                Class paramType = paramTypes[i];
+                if (paramType != String.class) {
+                    callback(RouteResult.FAILED,
+                            String.format("Method[%s] has a non-string type parameter: %s",
+                                    method.getName(), paramType.getSimpleName()));
+                    return null;
+                }
+                Annotation annotation = paramAnnotations[i][0];
+                if (annotation instanceof InjectParam) {
+                    InjectParam injectParam = (InjectParam) annotation;
+                    args[i] = mRouteRequest.getExtras().getString(injectParam.key());
+                } else {
+                    callback(RouteResult.FAILED,
+                            String.format("The parameter of method[%s] is annotated by @%s, however it must be @InjectParam.",
+                                    method.getName(), annotation.annotationType().getSimpleName()));
+                    return null;
+                }
+            }
+            return args;
+        }
+
+        callback(RouteResult.FAILED, String.format("Method[%s] has no parameters", method.getName()));
+        return null;
+    }
+
+    /**
+     * Assemble final interceptors for method.
+     *
+     * @param baseInterceptors interceptors defined in method annotation
+     * @return Interceptors set.
+     */
+    private Set<String> assembleMethodInterceptors(String[] baseInterceptors) {
+        // Assemble final interceptors
+        Set<String> finalInterceptors = new HashSet<>();
+        // 1. Add original interceptors in array
+        if (baseInterceptors != null && baseInterceptors.length > 0) {
+            Collections.addAll(finalInterceptors, baseInterceptors);
+        }
+        // 2. Skip temp removed interceptors
+        if (mRouteRequest.getRemovedInterceptors() != null) {
+            finalInterceptors.removeAll(mRouteRequest.getRemovedInterceptors());
+        }
+        // 3. Add temp added interceptors
+        if (mRouteRequest.getAddedInterceptors() != null) {
+            finalInterceptors.addAll(mRouteRequest.getAddedInterceptors());
+        }
+        return finalInterceptors;
+    }
+
+    /**
+     * Find interceptors
+     *
+     * @param context           Context
+     * @param finalInterceptors all interceptors
+     * @return True if intercepted, false otherwise.
+     */
+    private boolean intercept(Context context, Set<String> finalInterceptors) {
+        if (mRouteRequest.isSkipInterceptors()) {
+            return false;
+        }
+
+        if (finalInterceptors != null && !finalInterceptors.isEmpty()) {
             for (String name : finalInterceptors) {
                 RouteInterceptor interceptor = mInterceptorInstance.get(name);
                 if (interceptor == null) {
@@ -346,7 +480,7 @@ class RealRouter extends AbsRouter {
             ActivityCompat.startActivityForResult((Activity) context, intent,
                     mRouteRequest.getRequestCode(), options);
 
-            if (mRouteRequest.getEnterAnim() != 0 && mRouteRequest.getExitAnim() != 0) {
+            if (mRouteRequest.getEnterAnim() >= 0 && mRouteRequest.getExitAnim() >= 0) {
                 // Add transition animation.
                 ((Activity) context).overridePendingTransition(
                         mRouteRequest.getEnterAnim(), mRouteRequest.getExitAnim());
@@ -365,7 +499,6 @@ class RealRouter extends AbsRouter {
         callback(RouteResult.SUCCEED, null);
     }
 
-
     @Override
     public void go(Fragment fragment) {
         FragmentActivity activity = fragment.getActivity();
@@ -382,7 +515,7 @@ class RealRouter extends AbsRouter {
         } else {
             fragment.startActivityForResult(intent, mRouteRequest.getRequestCode(), options);
         }
-        if (activity != null && mRouteRequest.getEnterAnim() != 0 && mRouteRequest.getExitAnim() != 0) {
+        if (activity != null && mRouteRequest.getEnterAnim() >= 0 && mRouteRequest.getExitAnim() >= 0) {
             // Add transition animation.
             activity.overridePendingTransition(
                     mRouteRequest.getEnterAnim(), mRouteRequest.getExitAnim());
@@ -390,7 +523,6 @@ class RealRouter extends AbsRouter {
 
         callback(RouteResult.SUCCEED, null);
     }
-
 
     @Override
     public void go(android.app.Fragment fragment) {
@@ -415,7 +547,7 @@ class RealRouter extends AbsRouter {
                 fragment.startActivityForResult(intent, mRouteRequest.getRequestCode());
             }
         }
-        if (activity != null && mRouteRequest.getEnterAnim() != 0 && mRouteRequest.getExitAnim() != 0) {
+        if (activity != null && mRouteRequest.getEnterAnim() >= 0 && mRouteRequest.getExitAnim() >= 0) {
             // Add transition animation.
             activity.overridePendingTransition(
                     mRouteRequest.getEnterAnim(), mRouteRequest.getExitAnim());
@@ -423,4 +555,100 @@ class RealRouter extends AbsRouter {
 
         callback(RouteResult.SUCCEED, null);
     }
+
+    @Override
+    public boolean go(Context context, MethodCallable callable) {
+        Class clz = callable.getClass();
+        ArrayMap<Method, Pair<String[], String[]>> map = new ArrayMap<>();
+        for (Method method : clz.getDeclaredMethods()) {
+            Route route = method.getAnnotation(Route.class);
+            if (route != null) {
+                map.put(method, new Pair<>(route.value(), route.interceptors()));
+            }
+        }
+        if (map.isEmpty()) {
+            callback(RouteResult.FAILED, String.format("%s contains no method that annotated by Route.",
+                    clz.getSimpleName()));
+            return false;
+        } else {
+            Method method = getMethod(context, map);
+            if (method == null) {
+                return false;
+            }
+            try {
+                method.setAccessible(true);
+                // 获取参数类型
+                Class[] paramTypes = method.getParameterTypes();
+                if (paramTypes != null && paramTypes.length > 0) { // 有参
+                    Object[] args = getMethodArgs(method);
+                    if (args == null) {
+                        return false;
+                    }
+
+                    if (Modifier.isStatic(method.getModifiers())) { // static method
+                        method.invoke(null, args);
+                    } else {
+                        method.invoke(callable, args);
+                    }
+                } else { // 无参
+                    if (Modifier.isStatic(method.getModifiers())) { // static method
+                        method.invoke(null);
+                    } else {
+                        method.invoke(callable);
+                    }
+                }
+            } catch (Exception e) {
+                callback(RouteResult.FAILED, e.getMessage());
+                return false;
+            }
+        }
+
+        callback(RouteResult.SUCCEED, null);
+        return true;
+    }
+
+    @Override
+    public boolean go(Context context, Class<? extends MethodCallable> clz) {
+        ArrayMap<Method, Pair<String[], String[]>> map = new ArrayMap<>();
+        for (Method method : clz.getDeclaredMethods()) {
+            Route route = method.getAnnotation(Route.class);
+            if (route != null && Modifier.isStatic(method.getModifiers())) {
+                map.put(method, new Pair<>(route.value(), route.interceptors()));
+            }
+        }
+        if (map.isEmpty()) {
+            callback(RouteResult.FAILED, String.format("%s contains no method that annotated by Route.",
+                    clz.getSimpleName()));
+            return false;
+        } else {
+            Method method = getMethod(context, map);
+            if (method == null) {
+                return false;
+            }
+            if (!Modifier.isStatic(method.getModifiers())) {
+                callback(RouteResult.FAILED, String.format("Method[%s] must be static", method.getName()));
+            }
+            try {
+                method.setAccessible(true);
+                // 获取参数类型
+                Class[] paramTypes = method.getParameterTypes();
+                if (paramTypes != null && paramTypes.length > 0) { // 有参
+                    Object[] args = getMethodArgs(method);
+                    if (args == null) {
+                        return false;
+                    }
+                    method.invoke(null, args);
+                } else { // 无参
+                    method.invoke(null);
+                }
+            } catch (Exception e) {
+                callback(RouteResult.FAILED, e.getMessage());
+                return false;
+            }
+        }
+
+        callback(RouteResult.SUCCEED, null);
+        return true;
+    }
+
 }

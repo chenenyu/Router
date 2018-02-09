@@ -40,7 +40,7 @@ latest `compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu
 Router.initialize(new Configuration.Builder()
         // 调试模式，开启后会打印log
         .setDebuggable(BuildConfig.DEBUG)
-        // 模块名，每个使用Router的module都要在这里注册
+        // 模块名(即project.name)，每个使用Router的module都要在这里注册
         .registerModules("your app module", "your lib module", "other module")
         .build());
 ```
@@ -62,10 +62,43 @@ public class SampleInterceptor implements RouteInterceptor {
 3. 添加注解
 
 ```java
-// 这里添加了path和拦截器(可选)
+// 给Activity添加注解，指定了路径和拦截器(可选)
 @Route(value = "test", interceptors = "SampleInterceptor")
 public class TestActivity extends AppCompatActivity {
+    @InjectParam(key="foo") // 参数映射
+    String foo;
+  
+     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Router.injectParams(this);  // 自动从bundle中获取并注入参数
+        ...
+    }
+}
+
+// 给Fragment添加注解
+@Route("test")
+public class TestFragment extends Fragment {
     ...
+}
+
+// 给方法添加注解(类必须实现MethodCallable接口)
+public class Foo implements MethodCallable {
+    private Context mContext;
+
+    public CallToast(Context context) {
+        mContext = context;
+    }
+
+    @Route("showToast") // 注解到方法上,方法若有参数,则每个参数必须
+    public void toast(@InjectParam(key = "param") String msg) {
+        Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+    }
+  
+    @Route({"showLog"})
+    public static void log() {
+        Log.i("Foo", "a log shows how to call native static method.");
+    }
 }
 ```
 
@@ -85,6 +118,17 @@ Router.build("test").go(this, new RouteCallback() {
              // do something
         }
 });
+// 获取路由对应的intent
+Router.build("test").getIntent(content);
+// 获取注解的Fragment
+Router.build("test").getFragment(context);
+
+// 通过对象调用方法
+Foo foo = new Foo(context);
+Router.build("showToast").with("param", "Hello, Router!").go(context, foo); // 调用非静态方法
+Router.build("showLog").go(context, foo); // 调用静态方法
+// 通过类调用方法(只能调用静态方法)
+Router.build("showLog").go(context, MethodCallable.class);
 ```
 
 ## 进阶用法

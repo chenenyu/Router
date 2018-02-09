@@ -45,7 +45,7 @@ import static com.chenenyu.router.compiler.util.Consts.PARAM_ANNOTATION_TYPE;
 /**
  * {@link InjectParam} annotation processor.
  * <p>
- * Created by Enyu Chen on 2017/6/12.
+ * Created by chenenyu on 2017/6/12.
  */
 @SupportedAnnotationTypes(PARAM_ANNOTATION_TYPE)
 @SupportedOptions(OPTION_MODULE_NAME)
@@ -84,14 +84,16 @@ public class InjectParamProcessor extends AbstractProcessor {
 
     private void parseParams(Set<? extends Element> elements) {
         for (Element element : elements) {
-            TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
+            if (element.getKind().isField()) { // 注解到字段，支持Activity/Fragment
+                TypeElement typeElement = (TypeElement) element.getEnclosingElement();
 
-            if (mClzAndParams.containsKey(enclosingElement)) {
-                mClzAndParams.get(enclosingElement).add(element);
-            } else {
-                List<Element> params = new ArrayList<>();
-                params.add(element);
-                mClzAndParams.put(enclosingElement, params);
+                if (mClzAndParams.containsKey(typeElement)) {
+                    mClzAndParams.get(typeElement).add(element);
+                } else {
+                    List<Element> params = new ArrayList<>();
+                    params.add(element);
+                    mClzAndParams.put(typeElement, params);
+                }
             }
         }
     }
