@@ -146,11 +146,10 @@ class RealRouter extends AbsRouter {
         // Fragment只能匹配显式Matcher
         List<AbsExplicitMatcher> matcherList = MatcherRegistry.getExplicitMatcher();
         if (matcherList.isEmpty()) {
-            callback(RouteResult.FAILED, "The MatcherRegistry contains no AbsExplicitMatcher.");
+            callback(RouteResult.FAILED, "The MatcherRegistry contains no explicit matcher.");
             return null;
         }
 
-        // fragment only matches explicit route
         if (AptHub.routeTable.isEmpty()) {
             callback(RouteResult.FAILED, "The route table contains no mapping.");
             return null;
@@ -215,7 +214,7 @@ class RealRouter extends AbsRouter {
 
         List<AbsMatcher> matcherList = MatcherRegistry.getMatcher();
         if (matcherList.isEmpty()) {
-            callback(RouteResult.FAILED, "The MatcherRegistry contains no Matcher.");
+            callback(RouteResult.FAILED, "The MatcherRegistry contains no matcher.");
             return null;
         }
 
@@ -228,11 +227,11 @@ class RealRouter extends AbsRouter {
                     return finalizeIntent(context, matcher, null);
                 }
             } else {
-                boolean isiImplicit = matcher instanceof AbsImplicitMatcher;
+                boolean isImplicit = matcher instanceof AbsImplicitMatcher;
                 for (Map.Entry<String, Class<?>> entry : entries) {
-                    if (matcher.match(context, mRouteRequest.getUri(), isiImplicit ? null : entry.getKey(), mRouteRequest)) {
+                    if (matcher.match(context, mRouteRequest.getUri(), isImplicit ? null : entry.getKey(), mRouteRequest)) {
                         RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                        return finalizeIntent(context, matcher, isiImplicit ? null : entry.getValue());
+                        return finalizeIntent(context, matcher, isImplicit ? null : entry.getValue());
                     }
                 }
             }
@@ -334,7 +333,7 @@ class RealRouter extends AbsRouter {
         // Method只匹配显式Matcher
         List<AbsExplicitMatcher> matcherList = MatcherRegistry.getExplicitMatcher();
         if (matcherList.isEmpty()) {
-            callback(RouteResult.FAILED, "The MatcherRegistry contains no AbsExplicitMatcher.");
+            callback(RouteResult.FAILED, "The MatcherRegistry contains no explicit matcher.");
             return null;
         }
 
