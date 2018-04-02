@@ -1,4 +1,4 @@
-package com.chenenyu.router;
+package com.chenenyu.router.template;
 
 import java.util.Map;
 

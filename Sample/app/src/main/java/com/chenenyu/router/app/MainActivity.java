@@ -13,8 +13,8 @@ import android.widget.Toast;
 
 import com.chenenyu.router.RouteCallback;
 import com.chenenyu.router.RouteResult;
-import com.chenenyu.router.RouteTable;
 import com.chenenyu.router.Router;
+import com.chenenyu.router.template.RouteTable;
 
 import java.util.Map;
 

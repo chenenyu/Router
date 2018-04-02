@@ -13,6 +13,10 @@ import android.support.v4.app.FragmentActivity;
 import com.chenenyu.router.matcher.AbsExplicitMatcher;
 import com.chenenyu.router.matcher.AbsImplicitMatcher;
 import com.chenenyu.router.matcher.AbsMatcher;
+import com.chenenyu.router.template.InterceptorTable;
+import com.chenenyu.router.template.ParamInjector;
+import com.chenenyu.router.template.RouteTable;
+import com.chenenyu.router.template.TargetInterceptors;
 import com.chenenyu.router.util.RLog;
 
 import java.lang.reflect.Constructor;

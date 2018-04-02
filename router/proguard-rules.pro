@@ -23,3 +23,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Router
+-keep class com.chenenyu.router.** {*;}
+-keep class * implements com.chenenyu.router.template.ParamInjector {*;}
