@@ -1,7 +1,5 @@
 package com.chenenyu.router;
 
-import android.content.Context;
-
 /**
  * Interceptor before route.
  * <p>
@@ -9,9 +7,9 @@ import android.content.Context;
  */
 public interface RouteInterceptor {
     /**
-     * @param context      Context
+     * @param source       Context or Fragment instance
      * @param routeRequest RouteRequest
      * @return True if you want to intercept this route, false otherwise.
      */
-    boolean intercept(Context context, RouteRequest routeRequest);
+    boolean intercept(Object source, RouteRequest routeRequest);
 }
