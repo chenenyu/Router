@@ -213,15 +213,32 @@ class RealRouter extends AbsRouter {
     }
 
     @Override
-    public Intent getIntent(Context context) {
+    public Intent getIntent(Object source) {
         if (mRouteRequest.getUri() == null) {
             callback(RouteResult.FAILED, "uri == null.");
             return null;
         }
 
+        Context context = null;
+        if (source instanceof Context) {
+            context = (Context) source;
+        } else if (source instanceof Fragment) {
+            context = ((Fragment) source).getContext();
+        } else if (source instanceof android.app.Fragment) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                context = ((android.app.Fragment) source).getContext();
+            } else {
+                context = ((android.app.Fragment) source).getActivity();
+            }
+        }
+        if (context == null) {
+            callback(RouteResult.FAILED, "Can't retrieve context from source.");
+            return null;
+        }
+
         if (!mRouteRequest.isSkipInterceptors()) {
             for (RouteInterceptor interceptor : Router.getGlobalInterceptors()) {
-                if (interceptor.intercept(context, mRouteRequest)) {
+                if (interceptor.intercept(source, mRouteRequest)) {
                     callback(RouteResult.INTERCEPTED, String.format(
                             "Intercepted by global interceptor: %s.",
                             interceptor.getClass().getSimpleName()));
@@ -242,14 +259,14 @@ class RealRouter extends AbsRouter {
             if (AptHub.routeTable.isEmpty()) { // implicit totally.
                 if (matcher.match(context, mRouteRequest.getUri(), null, mRouteRequest)) {
                     RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                    return finalizeIntent(context, matcher, null);
+                    return generateIntent(source, context, matcher, null);
                 }
             } else {
                 boolean isImplicit = matcher instanceof AbsImplicitMatcher;
                 for (Map.Entry<String, Class<?>> entry : entries) {
                     if (matcher.match(context, mRouteRequest.getUri(), isImplicit ? null : entry.getKey(), mRouteRequest)) {
                         RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                        return finalizeIntent(context, matcher, isImplicit ? null : entry.getValue());
+                        return generateIntent(source, context, matcher, isImplicit ? null : entry.getValue());
                     }
                 }
             }
@@ -263,16 +280,20 @@ class RealRouter extends AbsRouter {
     /**
      * Do intercept and then generate intent by the given matcher, finally assemble extras.
      *
-     * @param context Context
+     * @param source  activity or fragment
+     * @param context source context
      * @param matcher current matcher
      * @param target  route target
-     * @return Finally intent.
+     * @return finally intent.
      */
-    private Intent finalizeIntent(Context context, AbsMatcher matcher, @Nullable Class<?> target) {
-        if (intercept(context, assembleClassInterceptors(target))) {
+    private Intent generateIntent(Object source, Context context, AbsMatcher matcher, @Nullable Class<?> target) {
+        // 1. intercept
+        if (intercept(source, assembleClassInterceptors(target))) {
             return null;
         }
+        // 2. generate
         Object result = matcher.generate(context, mRouteRequest.getUri(), target);
+        // 3. assemble
         if (result instanceof Intent) {
             Intent intent = (Intent) result;
             if (mRouteRequest.getExtras() != null && !mRouteRequest.getExtras().isEmpty()) {
@@ -306,6 +327,9 @@ class RealRouter extends AbsRouter {
      * @return Interceptors set.
      */
     private Set<String> assembleClassInterceptors(@Nullable Class<?> target) {
+        if (mRouteRequest.isSkipInterceptors()) {
+            return null;
+        }
         // Assemble final interceptors
         Set<String> finalInterceptors = new HashSet<>();
         if (target != null) {
@@ -329,7 +353,7 @@ class RealRouter extends AbsRouter {
     /**
      * Find interceptors
      *
-     * @param source            Activity or Fragment instance.
+     * @param source            activity or fragment instance.
      * @param finalInterceptors all interceptors
      * @return True if intercepted, false otherwise.
      */
@@ -337,7 +361,6 @@ class RealRouter extends AbsRouter {
         if (mRouteRequest.isSkipInterceptors()) {
             return false;
         }
-
         if (finalInterceptors != null && !finalInterceptors.isEmpty()) {
             for (String name : finalInterceptors) {
                 RouteInterceptor interceptor = mInterceptorInstance.get(name);
@@ -399,19 +422,23 @@ class RealRouter extends AbsRouter {
     @Override
     public void go(Fragment fragment) {
         FragmentActivity activity = fragment.getActivity();
-        Context context = fragment.getContext();
-        Intent intent = getIntent(activity != null ? activity : context);
+        if (activity == null) {
+            callback(RouteResult.FAILED, "The FragmentActivity this fragment is currently associated with is null.");
+            return;
+        }
+
+        Intent intent = getIntent(fragment);
         if (intent == null) {
             return;
         }
-        Bundle options = mRouteRequest.getActivityOptionsBundle();
 
+        Bundle options = mRouteRequest.getActivityOptionsBundle();
         if (mRouteRequest.getRequestCode() < 0) {
             fragment.startActivity(intent, options);
         } else {
             fragment.startActivityForResult(intent, mRouteRequest.getRequestCode(), options);
         }
-        if (activity != null && mRouteRequest.getEnterAnim() >= 0 && mRouteRequest.getExitAnim() >= 0) {
+        if (mRouteRequest.getEnterAnim() >= 0 && mRouteRequest.getExitAnim() >= 0) {
             // Add transition animation.
             activity.overridePendingTransition(
                     mRouteRequest.getEnterAnim(), mRouteRequest.getExitAnim());
@@ -423,13 +450,17 @@ class RealRouter extends AbsRouter {
     @Override
     public void go(android.app.Fragment fragment) {
         Activity activity = fragment.getActivity();
-        Intent intent = getIntent(activity);
+        if (activity == null) {
+            callback(RouteResult.FAILED, "The FragmentActivity this fragment is currently associated with is null.");
+            return;
+        }
+
+        Intent intent = getIntent(fragment);
         if (intent == null) {
             return;
         }
 
         Bundle options = mRouteRequest.getActivityOptionsBundle();
-
         if (mRouteRequest.getRequestCode() < 0) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) { // 4.1
                 fragment.startActivity(intent, options);
@@ -443,7 +474,7 @@ class RealRouter extends AbsRouter {
                 fragment.startActivityForResult(intent, mRouteRequest.getRequestCode());
             }
         }
-        if (activity != null && mRouteRequest.getEnterAnim() >= 0 && mRouteRequest.getExitAnim() >= 0) {
+        if (mRouteRequest.getEnterAnim() >= 0 && mRouteRequest.getExitAnim() >= 0) {
             // Add transition animation.
             activity.overridePendingTransition(
                     mRouteRequest.getEnterAnim(), mRouteRequest.getExitAnim());

@@ -100,8 +100,11 @@ public interface IRouter {
 
     /**
      * Get an intent instance.
+     *
+     * @param source Activity or Fragment instance.
+     * @return {@link Intent} instance.
      */
-    Intent getIntent(Context context);
+    Intent getIntent(Object source);
 
     /**
      * Get a fragment instance.
