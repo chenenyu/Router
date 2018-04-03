@@ -2,10 +2,10 @@ package com.chenenyu.router;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityOptionsCompat;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,7 +16,7 @@ import java.util.Set;
  * Created by chenenyu on 2017/3/31.
  */
 @SuppressWarnings("WeakerAccess")
-public class RouteRequest implements Serializable {
+public class RouteRequest implements Parcelable {
     private static final int INVALID_CODE = -1;
 
     private Uri uri;
@@ -29,17 +29,17 @@ public class RouteRequest implements Serializable {
     private boolean skipInterceptors;
     // skip some interceptors temporarily
     @Nullable
-    private Set<String> removedInterceptors;
+    private HashSet<String> removedInterceptors;
     // add some interceptors temporarily
     @Nullable
-    private Set<String> addedInterceptors;
+    private HashSet<String> addedInterceptors;
     @Nullable
-    private RouteCallback callback;
+    private RouteCallback routeCallback;
     private int requestCode = INVALID_CODE;
     private int enterAnim = INVALID_CODE;
     private int exitAnim = INVALID_CODE;
     @Nullable
-    private ActivityOptionsCompat activityOptionsCompat;
+    private Bundle activityOptionsBundle;
 
 
     public RouteRequest(Uri uri) {
@@ -137,12 +137,12 @@ public class RouteRequest implements Serializable {
     }
 
     @Nullable
-    public RouteCallback getCallback() {
-        return callback;
+    public RouteCallback getRouteCallback() {
+        return routeCallback;
     }
 
-    public void setCallback(@Nullable RouteCallback callback) {
-        this.callback = callback;
+    public void setRouteCallback(@Nullable RouteCallback routeCallback) {
+        this.routeCallback = routeCallback;
     }
 
     public int getRequestCode() {
@@ -182,11 +182,64 @@ public class RouteRequest implements Serializable {
     }
 
     @Nullable
-    public ActivityOptionsCompat getActivityOptionsCompat() {
-        return activityOptionsCompat;
+    public Bundle getActivityOptionsBundle() {
+        return activityOptionsBundle;
     }
 
-    public void setActivityOptionsCompat(@Nullable ActivityOptionsCompat activityOptionsCompat) {
-        this.activityOptionsCompat = activityOptionsCompat;
+    public void setActivityOptionsBundle(@Nullable Bundle activityOptionsBundle) {
+        this.activityOptionsBundle = activityOptionsBundle;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.uri, flags);
+        dest.writeBundle(this.extras);
+        dest.writeInt(this.flags);
+        dest.writeParcelable(this.data, flags);
+        dest.writeString(this.type);
+        dest.writeString(this.action);
+        dest.writeByte(this.skipInterceptors ? (byte) 1 : (byte) 0);
+        dest.writeSerializable(this.removedInterceptors);
+        dest.writeSerializable(this.addedInterceptors);
+        dest.writeSerializable(this.routeCallback);
+        dest.writeInt(this.requestCode);
+        dest.writeInt(this.enterAnim);
+        dest.writeInt(this.exitAnim);
+        dest.writeBundle(this.activityOptionsBundle);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected RouteRequest(Parcel in) {
+        this.uri = in.readParcelable(Uri.class.getClassLoader());
+        this.extras = in.readBundle(Bundle.class.getClassLoader());
+        this.flags = in.readInt();
+        this.data = in.readParcelable(Uri.class.getClassLoader());
+        this.type = in.readString();
+        this.action = in.readString();
+        this.skipInterceptors = in.readByte() != 0;
+        this.removedInterceptors = (HashSet<String>) in.readSerializable();
+        this.addedInterceptors = (HashSet<String>) in.readSerializable();
+        this.routeCallback = (RouteCallback) in.readSerializable();
+        this.requestCode = in.readInt();
+        this.enterAnim = in.readInt();
+        this.exitAnim = in.readInt();
+        this.activityOptionsBundle = in.readBundle(Bundle.class.getClassLoader());
+    }
+
+    public static final Creator<RouteRequest> CREATOR = new Creator<RouteRequest>() {
+        @Override
+        public RouteRequest createFromParcel(Parcel source) {
+            return new RouteRequest(source);
+        }
+
+        @Override
+        public RouteRequest[] newArray(int size) {
+            return new RouteRequest[size];
+        }
+    };
 }

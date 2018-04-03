@@ -36,11 +36,11 @@ import static com.chenenyu.router.compiler.util.Consts.ACTIVITY_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Consts.CLASS_JAVA_DOC;
 import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_V4_FULL_NAME;
-import static com.chenenyu.router.compiler.util.Consts.INNER_CLASS_NAME;
 import static com.chenenyu.router.compiler.util.Consts.METHOD_INJECT;
 import static com.chenenyu.router.compiler.util.Consts.OPTION_MODULE_NAME;
-import static com.chenenyu.router.compiler.util.Consts.PACKAGE_NAME;
 import static com.chenenyu.router.compiler.util.Consts.PARAM_ANNOTATION_TYPE;
+import static com.chenenyu.router.compiler.util.Consts.PARAM_CLASS_SUFFIX;
+import static com.chenenyu.router.compiler.util.Consts.PARAM_INJECTOR_FULL_NAME;
 
 /**
  * {@link InjectParam} annotation processor.
@@ -112,7 +112,7 @@ public class InjectParamProcessor extends AbstractProcessor {
             String qualifiedName = parent.getQualifiedName().toString();
             String simpleName = parent.getSimpleName().toString();
             String packageName = qualifiedName.substring(0, qualifiedName.lastIndexOf("."));
-            String fileName = simpleName + INNER_CLASS_NAME;
+            String fileName = simpleName + PARAM_CLASS_SUFFIX;
 
             // validate
             boolean isActivity;
@@ -203,11 +203,12 @@ public class InjectParamProcessor extends AbstractProcessor {
                 }
             }
 
+            TypeElement interfaceType = processingEnv.getElementUtils().getTypeElement(PARAM_INJECTOR_FULL_NAME);
             TypeSpec typeSpec = TypeSpec.classBuilder(fileName)
-                    .addJavadoc(CLASS_JAVA_DOC)
-                    .addSuperinterface(ClassName.get(PACKAGE_NAME, "ParamInjector"))
+                    .addSuperinterface(ClassName.get(interfaceType))
                     .addModifiers(Modifier.PUBLIC)
                     .addMethod(injectMethodBuilder.build())
+                    .addJavadoc(CLASS_JAVA_DOC)
                     .build();
 
             JavaFile.builder(packageName, typeSpec).build().writeTo(processingEnv.getFiler());

@@ -28,10 +28,11 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 
 import static com.chenenyu.router.compiler.util.Consts.CLASS_JAVA_DOC;
-import static com.chenenyu.router.compiler.util.Consts.HANDLE;
 import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_ANNOTATION_TYPE;
-import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_INTERFACE;
+import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_TABLE;
+import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_TABLE_FULL_NAME;
+import static com.chenenyu.router.compiler.util.Consts.METHOD_HANDLE;
 import static com.chenenyu.router.compiler.util.Consts.OPTION_MODULE_NAME;
 import static com.chenenyu.router.compiler.util.Consts.PACKAGE_NAME;
 
@@ -68,7 +69,7 @@ public class InterceptorProcessor extends AbstractProcessor {
                 typeElements.add((TypeElement) element);
             } else {
                 mLogger.error(element, String.format("The annotated element is not a implementation class of %s",
-                        INTERCEPTOR_INTERFACE));
+                        INTERCEPTOR_FULL_NAME));
             }
         }
 
@@ -84,14 +85,14 @@ public class InterceptorProcessor extends AbstractProcessor {
 
     private boolean validateElement(Element element) {
         return element.getKind().isClass() && processingEnv.getTypeUtils().isAssignable(element.asType(),
-                processingEnv.getElementUtils().getTypeElement(INTERCEPTOR_INTERFACE).asType());
+                processingEnv.getElementUtils().getTypeElement(INTERCEPTOR_FULL_NAME).asType());
     }
 
     private void generateInterceptors(String moduleName, Set<TypeElement> elements) {
         /*
          * params
          */
-        TypeElement interceptorType = processingEnv.getElementUtils().getTypeElement(INTERCEPTOR_INTERFACE);
+        TypeElement interceptorType = processingEnv.getElementUtils().getTypeElement(INTERCEPTOR_FULL_NAME);
         // Map<String, Class<? extends RouteInterceptor>> map
         ParameterizedTypeName mapTypeName = ParameterizedTypeName.get(ClassName.get(Map.class),
                 ClassName.get(String.class), ParameterizedTypeName.get(ClassName.get(Class.class),
@@ -100,7 +101,7 @@ public class InterceptorProcessor extends AbstractProcessor {
         /*
          * method
          */
-        MethodSpec.Builder handleInterceptors = MethodSpec.methodBuilder(HANDLE)
+        MethodSpec.Builder handleInterceptors = MethodSpec.methodBuilder(METHOD_HANDLE)
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(mapParameterSpec);
@@ -121,8 +122,9 @@ public class InterceptorProcessor extends AbstractProcessor {
         /*
          * class
          */
+        TypeElement interfaceType = processingEnv.getElementUtils().getTypeElement(INTERCEPTOR_TABLE_FULL_NAME);
         TypeSpec type = TypeSpec.classBuilder(capitalize(moduleName) + INTERCEPTOR_TABLE)
-                .addSuperinterface(ClassName.get(PACKAGE_NAME, INTERCEPTOR_TABLE))
+                .addSuperinterface(ClassName.get(interfaceType))
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(handleInterceptors.build())
                 .addJavadoc(CLASS_JAVA_DOC)

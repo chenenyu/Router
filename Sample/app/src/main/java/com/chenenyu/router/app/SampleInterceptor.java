@@ -15,8 +15,8 @@ import com.chenenyu.router.annotation.Interceptor;
 @Interceptor("SampleInterceptor")
 public class SampleInterceptor implements RouteInterceptor {
     @Override
-    public boolean intercept(Context context, RouteRequest routeRequest) {
-        Toast.makeText(context, String.format("Intercepted: {uri: %s, interceptor: %s}",
+    public boolean intercept(Object source, RouteRequest routeRequest) {
+        Toast.makeText((Context) source, String.format("Intercepted: {uri: %s, interceptor: %s}",
                 routeRequest.getUri().toString(), SampleInterceptor.class.getName()),
                 Toast.LENGTH_LONG).show();
         return true;

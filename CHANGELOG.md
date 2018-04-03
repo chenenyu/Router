@@ -1,9 +1,17 @@
+## 2018.04.03
+
+`router:1.4.0`:
+
+1. [issue76](https://github.com/chenenyu/Router/issues/76)
+2. Refactor `RouteInterceptor`
+3. Remove Method-Callable support
+
 ## 2018.02.06
 
 `router:1.4.0-beta1` `compiler:1.4.0-beta1` `annotation:0.4.0`:
 
 1. fix: https://github.com/chenenyu/Router/pull/71
-2. Router can annotate methods now!
+2. ~~Router can annotate methods now!~~ (Removed in 1.4.0)
 
 ## 2018.01.30
 

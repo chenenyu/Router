@@ -81,25 +81,6 @@ public class TestActivity extends AppCompatActivity {
 public class TestFragment extends Fragment {
     ...
 }
-
-// 给方法添加注解(类必须实现MethodCallable接口)
-public class Foo implements MethodCallable {
-    private Context mContext;
-
-    public CallToast(Context context) {
-        mContext = context;
-    }
-
-    @Route("showToast") // 注解到方法上,方法若有参数,则每个参数必须
-    public void toast(@InjectParam(key = "param") String msg) {
-        Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
-    }
-  
-    @Route({"showLog"})
-    public static void log() {
-        Log.i("Foo", "a log shows how to call native static method.");
-    }
-}
 ```
 
 4. 跳转
@@ -119,16 +100,9 @@ Router.build("test").go(this, new RouteCallback() {
         }
 });
 // 获取路由对应的intent
-Router.build("test").getIntent(content);
+Router.build("test").getIntent();
 // 获取注解的Fragment
-Router.build("test").getFragment(context);
-
-// 通过对象调用方法
-Foo foo = new Foo(context);
-Router.build("showToast").with("param", "Hello, Router!").go(context, foo); // 调用非静态方法
-Router.build("showLog").go(context, foo); // 调用静态方法
-// 通过类调用方法(只能调用静态方法)
-Router.build("showLog").go(context, MethodCallable.class);
+Router.build("test").getFragment();
 ```
 
 ## 进阶用法
@@ -137,11 +111,19 @@ Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more inf
 
 ## ProGuard
 
-See [wiki](https://github.com/chenenyu/Router/wiki).
+```
+# Router
+-keep class com.chenenyu.router.** {*;}
+-keep class * implements com.chenenyu.router.template.ParamInjector {*;}
+```
 
 ## 讨论
 
 QQ group: 271849001
+
+## Donate
+
+![donate_wechat](static/donate_wechat.png)
 
 ## License
 

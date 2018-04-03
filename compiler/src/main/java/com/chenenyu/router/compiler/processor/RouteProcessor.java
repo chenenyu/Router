@@ -37,13 +37,14 @@ import static com.chenenyu.router.compiler.util.Consts.ACTIVITY_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Consts.CLASS_JAVA_DOC;
 import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_V4_FULL_NAME;
-import static com.chenenyu.router.compiler.util.Consts.HANDLE;
+import static com.chenenyu.router.compiler.util.Consts.METHOD_HANDLE;
 import static com.chenenyu.router.compiler.util.Consts.OPTION_MODULE_NAME;
 import static com.chenenyu.router.compiler.util.Consts.PACKAGE_NAME;
 import static com.chenenyu.router.compiler.util.Consts.ROUTE_ANNOTATION_TYPE;
 import static com.chenenyu.router.compiler.util.Consts.ROUTE_TABLE;
 import static com.chenenyu.router.compiler.util.Consts.ROUTE_TABLE_FULL_NAME;
-import static com.chenenyu.router.compiler.util.Consts.TABLE_INTERCEPTORS;
+import static com.chenenyu.router.compiler.util.Consts.TARGET_INTERCEPTORS;
+import static com.chenenyu.router.compiler.util.Consts.TARGET_INTERCEPTORS_FULL_NAME;
 
 /**
  * {@link Route} annotation processor.
@@ -155,7 +156,7 @@ public class RouteProcessor extends AbstractProcessor {
                         WildcardTypeName.subtypeOf(Object.class)));
         ParameterSpec mapParameterSpec = ParameterSpec.builder(mapTypeName, "map").build();
 
-        MethodSpec.Builder methodHandle = MethodSpec.methodBuilder(HANDLE)
+        MethodSpec.Builder methodHandle = MethodSpec.methodBuilder(METHOD_HANDLE)
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(mapParameterSpec);
@@ -202,7 +203,7 @@ public class RouteProcessor extends AbstractProcessor {
                         WildcardTypeName.subtypeOf(Object.class)),
                 TypeName.get(String[].class));
         ParameterSpec mapParameterSpec = ParameterSpec.builder(mapTypeName, "map").build();
-        MethodSpec.Builder methodHandle = MethodSpec.methodBuilder(HANDLE)
+        MethodSpec.Builder methodHandle = MethodSpec.methodBuilder(METHOD_HANDLE)
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(mapParameterSpec);
@@ -227,8 +228,10 @@ public class RouteProcessor extends AbstractProcessor {
         if (!hasInterceptor) { // if there are no interceptors, ignore.
             return;
         }
-        TypeSpec type = TypeSpec.classBuilder(capitalize(moduleName) + TABLE_INTERCEPTORS)
-                .addSuperinterface(ClassName.get(PACKAGE_NAME, TABLE_INTERCEPTORS))
+
+        TypeElement interfaceType = processingEnv.getElementUtils().getTypeElement(TARGET_INTERCEPTORS_FULL_NAME);
+        TypeSpec type = TypeSpec.classBuilder(capitalize(moduleName) + TARGET_INTERCEPTORS)
+                .addSuperinterface(ClassName.get(interfaceType))
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(methodHandle.build())
                 .addJavadoc(CLASS_JAVA_DOC)

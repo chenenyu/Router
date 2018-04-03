@@ -9,7 +9,6 @@ import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.annotation.AnimRes;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.util.SparseArray;
 
@@ -37,7 +36,7 @@ abstract class AbsRouter implements IRouter {
 
     @Override
     public IRouter callback(RouteCallback callback) {
-        mRouteRequest.setCallback(callback);
+        mRouteRequest.setRouteCallback(callback);
         return this;
     }
 
@@ -155,7 +154,7 @@ abstract class AbsRouter implements IRouter {
         } else if (value instanceof Serializable) {
             bundle.putSerializable(key, (Serializable) value);
         } else {
-            RLog.w("Unknown object type.");
+            RLog.w("Unknown object type: " + value.getClass().getName());
         }
         mRouteRequest.setExtras(bundle);
         return this;
@@ -200,8 +199,8 @@ abstract class AbsRouter implements IRouter {
     }
 
     @Override
-    public IRouter activityOptions(ActivityOptionsCompat activityOptions) {
-        mRouteRequest.setActivityOptionsCompat(activityOptions);
+    public IRouter activityOptionsBundle(Bundle activityOptionsBundle) {
+        mRouteRequest.setActivityOptionsBundle(activityOptionsBundle);
         return this;
     }
 
@@ -225,19 +224,19 @@ abstract class AbsRouter implements IRouter {
 
     @Override
     public void go(Context context, RouteCallback callback) {
-        mRouteRequest.setCallback(callback);
+        mRouteRequest.setRouteCallback(callback);
         go(context);
     }
 
     @Override
     public void go(Fragment fragment, RouteCallback callback) {
-        mRouteRequest.setCallback(callback);
+        mRouteRequest.setRouteCallback(callback);
         go(fragment);
     }
 
     @Override
     public void go(android.app.Fragment fragment, RouteCallback callback) {
-        mRouteRequest.setCallback(callback);
+        mRouteRequest.setRouteCallback(callback);
         go(fragment);
     }
 }

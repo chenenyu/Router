@@ -1,6 +1,5 @@
 package com.chenenyu.router.app;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.chenenyu.router.RouteInterceptor;
@@ -13,7 +12,7 @@ import com.chenenyu.router.RouteRequest;
  */
 public class GlobalInterceptor implements RouteInterceptor {
     @Override
-    public boolean intercept(Context context, RouteRequest routeRequest) {
+    public boolean intercept(Object source, RouteRequest routeRequest) {
         Log.d("GlobalInterceptor", String.format("{uri: %s, interceptor: %s}",
                 routeRequest.getUri().toString(), GlobalInterceptor.class.getName()));
         return false;

@@ -1,4 +1,4 @@
-package com.chenenyu.router;
+package com.chenenyu.router.template;
 
 /**
  * Interface that help to generate param class.

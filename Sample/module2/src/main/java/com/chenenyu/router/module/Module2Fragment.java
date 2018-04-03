@@ -1,17 +1,13 @@
 package com.chenenyu.router.module;
 
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.chenenyu.router.RouteCallback;
-import com.chenenyu.router.RouteResult;
 import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.Route;
 import com.chenenyu.router.module2.R;
@@ -38,12 +34,7 @@ public class Module2Fragment extends Fragment {
         getView().findViewById(R.id.btn_go).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Router.build("module2").go(getContext(), new RouteCallback() {
-                    @Override
-                    public void callback(RouteResult state, Uri uri, String message) {
-                        Toast.makeText(getContext(), state.name() + ", " + uri, Toast.LENGTH_SHORT).show();
-                    }
-                });
+                Router.build("module2").go(Module2Fragment.this);
                 getActivity().finish();
             }
         });
