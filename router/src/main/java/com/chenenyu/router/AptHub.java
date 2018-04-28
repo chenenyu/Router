@@ -21,6 +21,7 @@ class AptHub {
     private static final String ROUTE_TABLE = "RouteTable";
     private static final String INTERCEPTOR_TABLE = "InterceptorTable";
     private static final String TARGET_INTERCEPTORS = "TargetInterceptors";
+    static final String PARAM_CLASS_SUFFIX = "$$Router$$ParamInjector";
 
     // Uri -> Activity/Fragment
     static Map<String, Class<?>> routeTable = new HashMap<>();
@@ -28,6 +29,7 @@ class AptHub {
     static Map<Class<?>, String[]> targetInterceptors = new HashMap<>();
     // interceptor's name -> interceptor
     static Map<String, Class<? extends RouteInterceptor>> interceptorTable = new HashMap<>();
+    static Map<String, RouteInterceptor> interceptorInstances = new HashMap<>();
     // injector's name -> injector
     static Map<String, Class<ParamInjector>> injectors = new HashMap<>();
 

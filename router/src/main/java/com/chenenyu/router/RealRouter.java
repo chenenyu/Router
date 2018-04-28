@@ -13,15 +13,11 @@ import android.support.v4.app.FragmentActivity;
 import com.chenenyu.router.matcher.AbsExplicitMatcher;
 import com.chenenyu.router.matcher.AbsImplicitMatcher;
 import com.chenenyu.router.matcher.AbsMatcher;
-import com.chenenyu.router.template.InterceptorTable;
 import com.chenenyu.router.template.ParamInjector;
-import com.chenenyu.router.template.RouteTable;
-import com.chenenyu.router.template.TargetInterceptors;
 import com.chenenyu.router.util.RLog;
 
 import java.lang.reflect.Constructor;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -33,56 +29,7 @@ import java.util.Set;
  * Created by chenenyu on 2017/3/30.
  */
 class RealRouter extends AbsRouter {
-    private static RealRouter sInstance;
-    private static final String PARAM_CLASS_SUFFIX = "$$Router$$ParamInjector";
-
-    private Map<String, RouteInterceptor> mInterceptorInstance = new HashMap<>();
-
-    private RealRouter() {
-    }
-
-    static synchronized RealRouter getInstance() {
-        if (sInstance == null) {
-            synchronized (RealRouter.class) {
-                if (sInstance == null) {
-                    sInstance = new RealRouter();
-                }
-            }
-        }
-        return sInstance;
-    }
-
-    /**
-     * Handle route table.
-     *
-     * @param routeTable route table
-     */
-    void handleRouteTable(RouteTable routeTable) {
-        if (routeTable != null) {
-            routeTable.handle(AptHub.routeTable);
-        }
-    }
-
-    /**
-     * Handle interceptor table.
-     *
-     * @param interceptorTable interceptor table
-     */
-    void handleInterceptorTable(InterceptorTable interceptorTable) {
-        if (interceptorTable != null) {
-            interceptorTable.handle(AptHub.interceptorTable);
-        }
-    }
-
-    /**
-     * Handle targets' interceptors.
-     *
-     * @param targetInterceptors target -> interceptors
-     */
-    void handleTargetInterceptors(TargetInterceptors targetInterceptors) {
-        if (targetInterceptors != null) {
-            targetInterceptors.handle(AptHub.targetInterceptors);
-        }
+    RealRouter() {
     }
 
     /**
@@ -90,14 +37,14 @@ class RealRouter extends AbsRouter {
      *
      * @param obj Activity or Fragment.
      */
-    void injectParams(Object obj) {
+    static void injectParams(Object obj) {
         if (obj instanceof Activity || obj instanceof Fragment || obj instanceof android.app.Fragment) {
             String key = obj.getClass().getCanonicalName();
             Class<ParamInjector> clz;
             if (!AptHub.injectors.containsKey(key)) {
                 try {
                     //noinspection unchecked
-                    clz = (Class<ParamInjector>) Class.forName(key + PARAM_CLASS_SUFFIX);
+                    clz = (Class<ParamInjector>) Class.forName(key + AptHub.PARAM_CLASS_SUFFIX);
                     AptHub.injectors.put(key, clz);
                 } catch (ClassNotFoundException e) {
                     RLog.e("Inject params failed.", e);
@@ -363,13 +310,13 @@ class RealRouter extends AbsRouter {
         }
         if (finalInterceptors != null && !finalInterceptors.isEmpty()) {
             for (String name : finalInterceptors) {
-                RouteInterceptor interceptor = mInterceptorInstance.get(name);
+                RouteInterceptor interceptor = AptHub.interceptorInstances.get(name);
                 if (interceptor == null) {
                     Class<? extends RouteInterceptor> clz = AptHub.interceptorTable.get(name);
                     try {
                         Constructor<? extends RouteInterceptor> constructor = clz.getConstructor();
                         interceptor = constructor.newInstance();
-                        mInterceptorInstance.put(name, interceptor);
+                        AptHub.interceptorInstances.put(name, interceptor);
                     } catch (Exception e) {
                         RLog.e("Can't construct a interceptor with name: " + name);
                         e.printStackTrace();

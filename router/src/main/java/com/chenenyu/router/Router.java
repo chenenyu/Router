@@ -35,38 +35,34 @@ public class Router {
     }
 
     public static IRouter build(Uri uri) {
-        return RealRouter.getInstance().build(uri);
-    }
-
-    /**
-     * Use {@link #handleRouteTable(RouteTable)} instead.
-     * <p>
-     * This method will be <strong>removed</strong> in a future release.
-     */
-    @Deprecated
-    public static void addRouteTable(RouteTable routeTable) {
-        handleRouteTable(routeTable);
+        return new RealRouter().build(uri);
     }
 
     /**
      * Custom route table.
      */
     public static void handleRouteTable(RouteTable routeTable) {
-        RealRouter.getInstance().handleRouteTable(routeTable);
+        if (routeTable != null) {
+            routeTable.handle(AptHub.routeTable);
+        }
     }
 
     /**
      * Custom interceptor table.
      */
     public static void handleInterceptorTable(InterceptorTable interceptorTable) {
-        RealRouter.getInstance().handleInterceptorTable(interceptorTable);
+        if (interceptorTable != null) {
+            interceptorTable.handle(AptHub.interceptorTable);
+        }
     }
 
     /**
      * Custom targets' interceptors.
      */
     public static void handleTargetInterceptors(TargetInterceptors targetInterceptors) {
-        RealRouter.getInstance().handleTargetInterceptors(targetInterceptors);
+        if (targetInterceptors != null) {
+            targetInterceptors.handle(AptHub.targetInterceptors);
+        }
     }
 
     /**
@@ -75,7 +71,7 @@ public class Router {
      * @param obj Instance of Activity or Fragment.
      */
     public static void injectParams(Object obj) {
-        RealRouter.getInstance().injectParams(obj);
+        RealRouter.injectParams(obj);
     }
 
     /**
