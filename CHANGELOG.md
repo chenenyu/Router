@@ -1,5 +1,11 @@
 ## 2018.04.03
 
+`router:1.4.1`:
+
+1. fix ClassCastException in muilti-thread condition
+
+## 2018.04.03
+
 `router:1.4.0`:
 
 1. [issue76](https://github.com/chenenyu/Router/issues/76)
