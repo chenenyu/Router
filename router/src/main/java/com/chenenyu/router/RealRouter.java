@@ -18,7 +18,7 @@ import com.chenenyu.router.util.RLog;
 
 import java.lang.reflect.Constructor;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -278,7 +278,7 @@ class RealRouter extends AbsRouter {
             return null;
         }
         // Assemble final interceptors
-        Set<String> finalInterceptors = new HashSet<>();
+        Set<String> finalInterceptors = new LinkedHashSet<>();
         if (target != null) {
             // 1. Add original interceptors in Map
             String[] baseInterceptors = AptHub.targetInterceptors.get(target);
