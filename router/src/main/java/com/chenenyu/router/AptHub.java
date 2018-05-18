@@ -8,6 +8,7 @@ import com.chenenyu.router.util.RLog;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -26,7 +27,7 @@ class AptHub {
     // Uri -> Activity/Fragment
     static Map<String, Class<?>> routeTable = new HashMap<>();
     // Activity/Fragment -> interceptorTable' name
-    static Map<Class<?>, String[]> targetInterceptors = new HashMap<>();
+    static Map<Class<?>, String[]> targetInterceptors = new LinkedHashMap<>();
     // interceptor's name -> interceptor
     static Map<String, Class<? extends RouteInterceptor>> interceptorTable = new HashMap<>();
     static Map<String, RouteInterceptor> interceptorInstances = new HashMap<>();
@@ -34,7 +35,7 @@ class AptHub {
     static Map<String, Class<ParamInjector>> injectors = new HashMap<>();
 
     /**
-     * This method offers an ability to register extra modules for developers.
+     * This method offers an ability to register modules for developers.
      *
      * @param modules extra modules' name
      */

@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/chenenyu/Router.svg?branch=master)](https://travis-ci.org/chenenyu/Router) ![license](https://img.shields.io/badge/license-Apache%202-yellow.svg) ![PullRequest](https://img.shields.io/badge/PRs-welcome-brightgreen.svg) 
+![Build Status](https://travis-ci.org/chenenyu/Router.svg?branch=master) ![license](https://img.shields.io/badge/license-Apache%202-yellow.svg) ![PullRequest](https://img.shields.io/badge/PRs-welcome-brightgreen.svg) 
 
 # Router
 
@@ -24,6 +24,7 @@ android {
 
 dependencies {
     implementation 'com.chenenyu.router:router:版本号'
+    // 每个使用了@Router注解的module都要添加该注解处理器
     annotationProcessor 'com.chenenyu.router:compiler:版本号'
 }
 ```
@@ -107,7 +108,7 @@ Router.build("test").getFragment();
 
 ## 进阶用法
 
-Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more informations.
+Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more information.
 
 ## ProGuard
 
@@ -121,9 +122,9 @@ Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more inf
 
 QQ group: 271849001
 
-## Donate
+## Donate ❤️
 
-![donate_wechat](static/donate_wechat.png)
+[Click here](https://github.com/chenenyu/Router/wiki/Donate).
 
 ## License
 

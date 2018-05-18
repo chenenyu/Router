@@ -12,12 +12,12 @@ import com.chenenyu.router.annotation.Interceptor;
  * <p>
  * Created by Cheney on 2017/3/6.
  */
-@Interceptor("SampleInterceptor")
-public class SampleInterceptor implements RouteInterceptor {
+@Interceptor("AInterceptor")
+public class AInterceptor implements RouteInterceptor {
     @Override
     public boolean intercept(Object source, RouteRequest routeRequest) {
         Toast.makeText((Context) source, String.format("Intercepted: {uri: %s, interceptor: %s}",
-                routeRequest.getUri().toString(), SampleInterceptor.class.getName()),
+                routeRequest.getUri().toString(), AInterceptor.class.getName()),
                 Toast.LENGTH_LONG).show();
         return true;
     }
