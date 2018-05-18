@@ -5,7 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.chenenyu.router.annotation.Route;
 
-@Route(value = "intercepted", interceptors = "SampleInterceptor")
+@Route(value = "intercepted", interceptors = {"AInterceptor", "BInterceptor"})
+//@Route(value = "intercepted", interceptors = {"BInterceptor", "AInterceptor"})
 public class InterceptedActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

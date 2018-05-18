@@ -115,9 +115,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (v == btn9) {
             Router.build("intercepted").go(this);
         } else if (v == btn10) {
-            Router.build("intercepted").skipInterceptors("SampleInterceptor").go(this);
+            Router.build("intercepted").skipInterceptors("AInterceptor").go(this);
         } else if (v == btn11) {
-            Router.build("test").addInterceptors("SampleInterceptor").go(this);
+            Router.build("test").addInterceptors("AInterceptor").go(this);
         }
     }
 
