@@ -1,3 +1,9 @@
+## 2018.05.18
+
+`router:1.4.2`:
+
+1. Ordered interceptors.
+
 ## 2018.04.03
 
 `router:1.4.1`:
