@@ -27,19 +27,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        EditText editRoute = (EditText) findViewById(R.id.edit_route);
-        btn0 = (Button) findViewById(R.id.btn0);
-        btn1 = (Button) findViewById(R.id.btn1);
-        btn2 = (Button) findViewById(R.id.btn2);
-        btn3 = (Button) findViewById(R.id.btn3);
-        btn4 = (Button) findViewById(R.id.btn4);
-        btn5 = (Button) findViewById(R.id.btn5);
-        btn6 = (Button) findViewById(R.id.btn6);
-        btn7 = (Button) findViewById(R.id.btn7);
-        btn8 = (Button) findViewById(R.id.btn8);
-        btn9 = (Button) findViewById(R.id.btn9);
-        btn10 = (Button) findViewById(R.id.btn10);
-        btn11 = (Button) findViewById(R.id.btn11);
+        EditText editRoute = findViewById(R.id.edit_route);
+        btn0 = findViewById(R.id.btn0);
+        btn1 = findViewById(R.id.btn1);
+        btn2 = findViewById(R.id.btn2);
+        btn3 = findViewById(R.id.btn3);
+        btn4 = findViewById(R.id.btn4);
+        btn5 = findViewById(R.id.btn5);
+        btn6 = findViewById(R.id.btn6);
+        btn7 = findViewById(R.id.btn7);
+        btn8 = findViewById(R.id.btn8);
+        btn9 = findViewById(R.id.btn9);
+        btn10 = findViewById(R.id.btn10);
+        btn11 = findViewById(R.id.btn11);
 
         editRoute.addTextChangedListener(new TextWatcher() {
             @Override
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (v == btn9) {
             Router.build("intercepted").go(this);
         } else if (v == btn10) {
-            Router.build("intercepted").skipInterceptors("AInterceptor").go(this);
+            Router.build("intercepted").skipInterceptors().go(this);
         } else if (v == btn11) {
             Router.build("test").addInterceptors("AInterceptor").go(this);
         }

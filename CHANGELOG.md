@@ -1,14 +1,23 @@
+## 2018.06.11
+
+`router:1.4.3`:
+
+Optimize implementation in for multi-thread call.
+优化多线程下并发调用的解决方式。
+
 ## 2018.05.18
 
 `router:1.4.2`:
 
-1. Ordered interceptors.
+Ordered interceptors.
+拦截器现在是有序的。
 
 ## 2018.04.03
 
 `router:1.4.1`:
 
-1. fix ClassCastException in muilti-thread condition
+Fix ClassCastException in multi-thread condition.
+修复在多线程调用场景下的Exception。
 
 ## 2018.04.03
 

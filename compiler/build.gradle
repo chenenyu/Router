@@ -6,6 +6,7 @@ tasks.withType(JavaCompile) {
 
 Properties version = new Properties()
 version.load(project.file('../VERSION.properties').newDataInputStream())
+def compilerVersion = version.getProperty("COMPILER_VERSION")
 def annoVersion = version.getProperty("ANNOTATION_VERSION")
 
 dependencies {
@@ -18,4 +19,11 @@ dependencies {
 sourceCompatibility = rootProject.ext.sourceCompatibility
 targetCompatibility = rootProject.ext.targetCompatibility
 
-apply from: 'publish.gradle'
+ext {
+    GROUP = 'com.chenenyu.router'  // required.
+    ARTIFACT = 'compiler' // required.
+    VERSION = compilerVersion // required.
+    BINTRAY_NAME = 'compiler' // optional.
+}
+
+apply from: 'https://raw.githubusercontent.com/chenenyu/gradle-bintray-plugin/master/publish.gradle'

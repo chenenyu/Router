@@ -1,11 +1,11 @@
 # annotation
-./gradlew :annotation:clean :annotation:pBPTML
-./gradlew :annotation:bintrayUpload
+./gradlew clean pBPTML -p annotation
+./gradlew bintrayUpload -p annotation
 
 # compiler
-./gradlew :compiler:clean :compiler:pBPTML
-./gradlew :compiler:bintrayUpload
+./gradlew clean pBPTML -p compiler
+./gradlew bintrayUpload -p compiler
 
 # router
-./gradlew :router:clean :router:install
-./gradlew :router:bintrayUpload
+./gradlew clean pBPTML -p router
+./gradlew bintrayUpload -p router
