@@ -47,7 +47,6 @@ ext {
     ARTIFACT = 'router' // required.
     VERSION = routerVersion // required.
     BINTRAY_NAME = 'router' // optional.
-    DRYRUN = true // optional.
 }
 
 apply from: 'https://raw.githubusercontent.com/chenenyu/gradle-bintray-plugin/master/publish.gradle'
