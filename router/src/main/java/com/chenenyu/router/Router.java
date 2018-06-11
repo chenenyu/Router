@@ -35,7 +35,7 @@ public class Router {
     }
 
     public static IRouter build(Uri uri) {
-        return new RealRouter().build(uri);
+        return RealRouter.getInstance().build(uri);
     }
 
     /**

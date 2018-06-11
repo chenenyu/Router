@@ -29,7 +29,19 @@ import java.util.Set;
  * Created by chenenyu on 2017/3/30.
  */
 class RealRouter extends AbsRouter {
-    RealRouter() {
+
+    private static final ThreadLocal<RealRouter> mRouterThreadLocal = new ThreadLocal<RealRouter>() {
+        @Override
+        protected RealRouter initialValue() {
+            return new RealRouter();
+        }
+    };
+
+    private RealRouter() {
+    }
+
+    static RealRouter getInstance() {
+        return mRouterThreadLocal.get();
     }
 
     /**
