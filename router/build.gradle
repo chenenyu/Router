@@ -31,6 +31,7 @@ android {
 
 Properties version = new Properties()
 version.load(project.file('../VERSION.properties').newDataInputStream())
+def routerVersion = version.getProperty("ROUTER_VERSION")
 def annoVersion = version.getProperty("ANNOTATION_VERSION")
 
 dependencies {
@@ -38,8 +39,15 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     compileOnly "com.android.support:support-v4:24.2.0"
 //    api project(':annotation')
-    // 这里不能使用implementation，因为pom依赖不识别
-    compile "com.chenenyu.router:annotation:${annoVersion}"
+    implementation "com.chenenyu.router:annotation:${annoVersion}"
 }
 
-apply from: 'publish.gradle'
+ext {
+    GROUP = 'com.chenenyu.router'  // required.
+    ARTIFACT = 'router' // required.
+    VERSION = routerVersion // required.
+    BINTRAY_NAME = 'router' // optional.
+    DRYRUN = true // optional.
+}
+
+apply from: 'https://raw.githubusercontent.com/chenenyu/gradle-bintray-plugin/master/publish.gradle'
