@@ -39,7 +39,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     compileOnly "com.android.support:support-v4:24.2.0"
 //    api project(':annotation')
-    implementation "com.chenenyu.router:annotation:${annoVersion}"
+    api "com.chenenyu.router:annotation:${annoVersion}"
 }
 
 ext {
