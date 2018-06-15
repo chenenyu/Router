@@ -22,7 +22,7 @@ public class Router {
      */
     public static final String RAW_URI = "raw_uri";
 
-    private static List<RouteInterceptor> sGlobalInterceptors = new ArrayList<>();
+    private static final List<RouteInterceptor> sGlobalInterceptors = new ArrayList<>();
 
 
     public static void initialize(Configuration configuration) {
@@ -50,6 +50,7 @@ public class Router {
     /**
      * Custom interceptor table.
      */
+    @Deprecated
     public static void handleInterceptorTable(InterceptorTable interceptorTable) {
         if (interceptorTable != null) {
             interceptorTable.handle(AptHub.interceptorTable);
@@ -59,6 +60,7 @@ public class Router {
     /**
      * Custom targets' interceptors.
      */
+    @Deprecated
     public static void handleTargetInterceptors(TargetInterceptors targetInterceptors) {
         if (targetInterceptors != null) {
             targetInterceptors.handle(AptHub.targetInterceptors);
@@ -75,12 +77,14 @@ public class Router {
     }
 
     /**
-     * Global interceptor.
+     * Global interceptor. This feature will be removed in a future release.
      */
+    @Deprecated
     public static void addGlobalInterceptor(RouteInterceptor routeInterceptor) {
         sGlobalInterceptors.add(routeInterceptor);
     }
 
+    @Deprecated
     public static List<RouteInterceptor> getGlobalInterceptors() {
         return sGlobalInterceptors;
     }

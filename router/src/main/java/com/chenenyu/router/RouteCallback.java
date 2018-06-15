@@ -12,9 +12,9 @@ public interface RouteCallback extends Serializable {
     /**
      * Callback
      *
-     * @param state   {@link RouteResult}
+     * @param state   {@link RouteStatus}
      * @param uri     Uri
      * @param message notice msg
      */
-    void callback(RouteResult state, Uri uri, String message);
+    void callback(RouteStatus state, Uri uri, String message);
 }

@@ -16,7 +16,7 @@ import java.util.Map;
  * <p>
  * Created by chenenyu on 2017/3/13.
  */
-class AptHub {
+public final class AptHub {
     private static final String PACKAGE_NAME = "com.chenenyu.router";
     private static final String DOT = ".";
     private static final String ROUTE_TABLE = "RouteTable";
@@ -25,12 +25,13 @@ class AptHub {
     static final String PARAM_CLASS_SUFFIX = "$$Router$$ParamInjector";
 
     // Uri -> Activity/Fragment
-    static Map<String, Class<?>> routeTable = new HashMap<>();
+    public final static Map<String, Class<?>> routeTable = new HashMap<>();
     // Activity/Fragment -> interceptorTable' name
-    static Map<Class<?>, String[]> targetInterceptors = new LinkedHashMap<>();
+    // Note: 这里用LinkedHashMap保证有序
+    public final static Map<Class<?>, String[]> targetInterceptors = new LinkedHashMap<>();
     // interceptor's name -> interceptor
-    static Map<String, Class<? extends RouteInterceptor>> interceptorTable = new HashMap<>();
-    static Map<String, RouteInterceptor> interceptorInstances = new HashMap<>();
+    public final static Map<String, Class<? extends RouteInterceptor>> interceptorTable = new HashMap<>();
+    public final static Map<String, RouteInterceptor> interceptorInstances = new HashMap<>();
     // injector's name -> injector
     static Map<String, Class<ParamInjector>> injectors = new HashMap<>();
 

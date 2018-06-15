@@ -1,15 +1,36 @@
 package com.chenenyu.router;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+
 /**
  * Interceptor before route.
  * <p>
  * Created by chenenyu on 2016/12/20.
  */
 public interface RouteInterceptor {
-    /**
-     * @param source       Context or Fragment instance
-     * @param routeRequest RouteRequest
-     * @return True if you want to intercept this route, false otherwise.
-     */
-    boolean intercept(Object source, RouteRequest routeRequest);
+    @NonNull
+    RouteResponse intercept(Chain chain);
+
+    interface Chain {
+        @NonNull
+        RouteRequest getRequest();
+
+        @NonNull
+        Object getSource();
+
+        @NonNull
+        Context getContext();
+
+        @Nullable
+        android.app.Fragment getFragment();
+
+        @Nullable
+        Fragment getFragmentV4();
+
+        @NonNull
+        RouteResponse process();
+    }
 }

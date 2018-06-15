@@ -5,8 +5,9 @@ package com.chenenyu.router;
  * <p>
  * Created by chenenyu on 2017/3/9.
  */
-public enum RouteResult {
-    SUCCEED,
+public enum RouteStatus {
+    PROCESSING,
     INTERCEPTED,
+    SUCCEED,
     FAILED
 }
