@@ -19,7 +19,5 @@ public class App extends Application {
                 .setDebuggable(BuildConfig.DEBUG)
                 .registerModules("module1", "module2", "app")
                 .build());
-
-//        Router.addGlobalInterceptor(new GlobalInterceptor());
     }
 }

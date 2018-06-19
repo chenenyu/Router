@@ -1,9 +1,10 @@
 package com.chenenyu.router.app;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.chenenyu.router.RouteInterceptor;
-import com.chenenyu.router.RouteRequest;
+import com.chenenyu.router.RouteResponse;
 
 /**
  * Global interceptor.
@@ -11,10 +12,11 @@ import com.chenenyu.router.RouteRequest;
  * Created by chenenyu on 2017/9/11.
  */
 public class GlobalInterceptor implements RouteInterceptor {
+    @NonNull
     @Override
-    public boolean intercept(Object source, RouteRequest routeRequest) {
+    public RouteResponse intercept(Chain chain) {
         Log.d("GlobalInterceptor", String.format("{uri: %s, interceptor: %s}",
-                routeRequest.getUri().toString(), GlobalInterceptor.class.getName()));
-        return false;
+                chain.getRequest().getUri().toString(), GlobalInterceptor.class.getName()));
+        return chain.process();
     }
 }

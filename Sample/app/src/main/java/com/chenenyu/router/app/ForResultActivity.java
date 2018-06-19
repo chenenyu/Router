@@ -18,10 +18,10 @@ public class ForResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_for_result);
 
         String extra = getIntent().getStringExtra("extra");
-        TextView textExtra = (TextView) findViewById(R.id.text_extra);
+        TextView textExtra = findViewById(R.id.text_extra);
         textExtra.setText(extra);
 
-        Button result = (Button) findViewById(R.id.btn_result);
+        Button result = findViewById(R.id.btn_result);
         result.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
