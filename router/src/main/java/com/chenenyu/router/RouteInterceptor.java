@@ -1,9 +1,9 @@
 package com.chenenyu.router;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 
 /**
  * Interceptor before route.
@@ -14,10 +14,19 @@ public interface RouteInterceptor {
     @NonNull
     RouteResponse intercept(Chain chain);
 
+    /**
+     * Interceptor chain processor.
+     */
     interface Chain {
+        /**
+         * Get current RouteRequest object.
+         */
         @NonNull
         RouteRequest getRequest();
 
+        /**
+         * Get source object, activity or fragment instance.
+         */
         @NonNull
         Object getSource();
 
@@ -25,12 +34,21 @@ public interface RouteInterceptor {
         Context getContext();
 
         @Nullable
-        android.app.Fragment getFragment();
+        Fragment getFragment();
 
         @Nullable
-        Fragment getFragmentV4();
+        android.support.v4.app.Fragment getFragmentV4();
 
+        /**
+         * Continue to process this route request.
+         */
         @NonNull
         RouteResponse process();
+
+        /**
+         * Intercept this route request.
+         */
+        @NonNull
+        RouteResponse intercept();
     }
 }

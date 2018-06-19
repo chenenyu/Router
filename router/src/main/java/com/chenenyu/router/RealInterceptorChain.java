@@ -9,6 +9,8 @@ import android.support.annotation.Nullable;
 import java.util.List;
 
 /**
+ * Interceptor chain processor.
+ * <br>
  * Created by chenenyu on 2018/6/14.
  */
 public final class RealInterceptorChain implements RouteInterceptor.Chain {
@@ -18,7 +20,6 @@ public final class RealInterceptorChain implements RouteInterceptor.Chain {
     private final RouteRequest request;
     @NonNull
     private final List<RouteInterceptor> interceptors;
-
     private int index;
     @Nullable
     private Class<?> targetClass; // Intent/Fragment class
@@ -108,5 +109,11 @@ public final class RealInterceptorChain implements RouteInterceptor.Chain {
         }
         RouteInterceptor interceptor = interceptors.get(index++);
         return interceptor.intercept(this);
+    }
+
+    @NonNull
+    @Override
+    public RouteResponse intercept() {
+        return RouteResponse.assemble(RouteStatus.INTERCEPTED, null);
     }
 }

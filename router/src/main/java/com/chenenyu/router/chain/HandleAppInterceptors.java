@@ -15,11 +15,12 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
+ * Collect app interceptors and insert into chain queue to process.
+ * <br>
  * Created by chenenyu on 2018/6/15.
  */
-public class CollectAppInterceptors implements RouteInterceptor {
+public class HandleAppInterceptors implements RouteInterceptor {
     @NonNull
     @Override
     public RouteResponse intercept(Chain chain) {
@@ -38,7 +39,7 @@ public class CollectAppInterceptors implements RouteInterceptor {
         Set<String> finalInterceptors = new LinkedHashSet<>();
         // add annotated interceptors
         if (realChain.getTargetClass() != null) {
-            String[] baseInterceptors = AptHub.targetInterceptors.get(realChain.getTargetClass());
+            String[] baseInterceptors = AptHub.targetInterceptorTable.get(realChain.getTargetClass());
             if (baseInterceptors != null && baseInterceptors.length > 0) {
                 Collections.addAll(finalInterceptors, baseInterceptors);
             }
@@ -64,8 +65,7 @@ public class CollectAppInterceptors implements RouteInterceptor {
                         interceptor = clz.newInstance();
                         AptHub.interceptorInstances.put(name, interceptor);
                     } catch (Exception e) {
-                        RLog.e("Can't construct a interceptor with name: " + name);
-                        e.printStackTrace();
+                        RLog.e("Can't construct a interceptor instance for: " + name, e);
                     }
                 }
                 // enqueue

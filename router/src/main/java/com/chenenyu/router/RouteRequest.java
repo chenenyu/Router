@@ -12,7 +12,6 @@ import java.util.Map;
  * <p>
  * Created by chenenyu on 2017/3/31.
  */
-@SuppressWarnings("WeakerAccess")
 public final class RouteRequest {
     private static final int INVALID_CODE = -1;
 

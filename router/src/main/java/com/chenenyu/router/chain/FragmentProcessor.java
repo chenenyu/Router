@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
  * Created by chenenyu on 2018/6/15.
  */
@@ -32,11 +31,9 @@ public class FragmentProcessor implements RouteInterceptor {
         for (AbsExplicitMatcher matcher : matcherList) {
             for (Map.Entry<String, Class<?>> entry : entries) {
                 if (matcher.match(chain.getContext(), chain.getRequest().getUri(), entry.getKey(), chain.getRequest())) {
-                    RLog.i("Caught by " + matcher.getClass().getCanonicalName());
+                    RLog.i(String.format("{uri=%s, matcher=%s}",
+                            chain.getRequest().getUri(), matcher.getClass().getCanonicalName()));
                     realChain.setTargetClass(entry.getValue());
-//                    if (intercept(source, assembleClassInterceptors(entry.getValue()))) {
-//                        return null;
-//                    }
                     Object result = matcher.generate(chain.getContext(), chain.getRequest().getUri(), entry.getValue());
                     if (result instanceof Fragment) {
                         Fragment fragment = (Fragment) result;
@@ -62,7 +59,7 @@ public class FragmentProcessor implements RouteInterceptor {
             }
         }
 
-        return RouteResponse.assemble(RouteStatus.FAILED, String.format(
+        return RouteResponse.assemble(RouteStatus.NOT_FOUND, String.format(
                 "Can't find a fragment that matches the given uri: %s",
                 chain.getRequest().getUri().toString()));
     }

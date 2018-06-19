@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
  * Created by chenenyu on 2018/6/15.
  */
@@ -32,14 +31,16 @@ public class IntentProcessor implements RouteInterceptor {
         List<AbsImplicitMatcher> implicitMatcherList = MatcherRegistry.getImplicitMatcher();
         Set<Map.Entry<String, Class<?>>> entries = AptHub.routeTable.entrySet();
 
+        Intent intent = null;
         if (AptHub.routeTable.isEmpty()) {
             for (AbsImplicitMatcher implicitMatcher : implicitMatcherList) {
                 if (implicitMatcher.match(chain.getContext(), request.getUri(), null, request)) {
-                    RLog.i("Caught by " + implicitMatcher.getClass().getCanonicalName());
+                    RLog.i(String.format("{uri=%s, matcher=%s}",
+                            chain.getRequest().getUri(), implicitMatcher.getClass().getCanonicalName()));
                     realChain.setTargetClass(null);
                     Object result = implicitMatcher.generate(chain.getContext(), request.getUri(), null);
                     if (result instanceof Intent) {
-                        Intent intent = (Intent) result;
+                        intent = (Intent) result;
                         assembleIntent(intent, request);
                         realChain.setTargetObject(intent);
                     } else {
@@ -47,22 +48,21 @@ public class IntentProcessor implements RouteInterceptor {
                                 "The matcher can't generate an intent for uri: %s",
                                 request.getUri().toString()));
                     }
-                } else {
-                    return RouteResponse.assemble(RouteStatus.FAILED, String.format(
-                            "Can't find an activity that matches the given uri: %s",
-                            request.getUri().toString()));
+                    break;
                 }
             }
         } else {
+            MATCHER:
             for (AbsMatcher matcher : matcherList) {
                 boolean isImplicit = matcher instanceof AbsImplicitMatcher;
-                for (Map.Entry<String, Class<?>> entry : entries) {
-                    if (matcher.match(chain.getContext(), request.getUri(), isImplicit ? null : entry.getKey(), request)) {
-                        RLog.i("Caught by " + matcher.getClass().getCanonicalName());
-                        realChain.setTargetClass(entry.getValue());
-                        Object result = matcher.generate(chain.getContext(), request.getUri(), entry.getValue());
+                if (isImplicit) {
+                    if (matcher.match(chain.getContext(), request.getUri(), null, request)) {
+                        RLog.i(String.format("{uri=%s, matcher=%s}",
+                                chain.getRequest().getUri(), matcher.getClass().getCanonicalName()));
+                        realChain.setTargetClass(null);
+                        Object result = matcher.generate(chain.getContext(), request.getUri(), null);
                         if (result instanceof Intent) {
-                            Intent intent = (Intent) result;
+                            intent = (Intent) result;
                             assembleIntent(intent, request);
                             realChain.setTargetObject(intent);
                         } else {
@@ -70,15 +70,37 @@ public class IntentProcessor implements RouteInterceptor {
                                     "The matcher can't generate an intent for uri: %s",
                                     request.getUri().toString()));
                         }
-                    } else {
-                        return RouteResponse.assemble(RouteStatus.FAILED, String.format(
-                                "Can't find an activity that matches the given uri: %s",
-                                request.getUri().toString()));
+                        break;
+                    }
+                } else {
+                    for (Map.Entry<String, Class<?>> entry : entries) {
+                        if (matcher.match(chain.getContext(), request.getUri(), entry.getKey(), request)) {
+                            RLog.i(String.format("{uri=%s, matcher=%s}",
+                                    chain.getRequest().getUri(), matcher.getClass().getCanonicalName()));
+                            realChain.setTargetClass(entry.getValue());
+                            Object result = matcher.generate(chain.getContext(), request.getUri(), entry.getValue());
+                            if (result instanceof Intent) {
+                                intent = (Intent) result;
+                                assembleIntent(intent, request);
+                                realChain.setTargetObject(intent);
+                            } else {
+                                return RouteResponse.assemble(RouteStatus.FAILED, String.format(
+                                        "The matcher can't generate an intent for uri: %s",
+                                        request.getUri().toString()));
+                            }
+                            break MATCHER;
+                        }
                     }
                 }
+
             }
         }
 
+        if (intent == null) {
+            return RouteResponse.assemble(RouteStatus.NOT_FOUND, String.format(
+                    "Can't find an activity that matches the given uri: %s",
+                    request.getUri().toString()));
+        }
         return chain.process();
     }
 

@@ -18,7 +18,7 @@ import java.util.List;
  * <br>
  * Created by chenenyu on 2017/1/5.
  */
-public class MatcherRegistry {
+public final class MatcherRegistry {
 
     private static final List<AbsMatcher> ALL = new ArrayList<>();
     private static final List<AbsExplicitMatcher> explicitMatcher = new ArrayList<>();

@@ -7,7 +7,12 @@ package com.chenenyu.router;
  */
 public enum RouteStatus {
     PROCESSING,
-    INTERCEPTED,
     SUCCEED,
-    FAILED
+    INTERCEPTED,
+    NOT_FOUND,
+    FAILED;
+
+    public boolean isSuccessful() {
+        return this.equals(SUCCEED);
+    }
 }

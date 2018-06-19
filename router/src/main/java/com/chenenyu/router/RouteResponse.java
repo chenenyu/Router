@@ -7,12 +7,6 @@ import android.support.annotation.Nullable;
  * Created by chenenyu on 2018/6/15.
  */
 public final class RouteResponse {
-
-    public static final int STATUS_PROCESSING = 1;
-    public static final int STATUS_INTERCEPTED = 1 << 1;
-    public static final int STATUS_SUCCEED = 1 << 2;
-    public static final int STATUS_FAILED = 1 << 3;
-
     private RouteStatus status = RouteStatus.PROCESSING;
     private String msg; // assemble msg
     @Nullable
@@ -27,14 +21,6 @@ public final class RouteResponse {
         response.msg = msg;
         return response;
     }
-
-    public boolean isSuccessful() {
-        return status == RouteStatus.SUCCEED;
-    }
-//
-//    public boolean isProcessing() {
-//        return status == RouteStatus.PROCESSING;
-//    }
 
     public RouteStatus getStatus() {
         return status;

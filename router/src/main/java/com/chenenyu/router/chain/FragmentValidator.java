@@ -11,7 +11,6 @@ import com.chenenyu.router.matcher.AbsExplicitMatcher;
 
 import java.util.List;
 
-
 /**
  * Created by chenenyu on 2018/6/15.
  */
@@ -25,7 +24,7 @@ public class FragmentValidator implements RouteInterceptor {
             return RouteResponse.assemble(RouteStatus.FAILED, "The MatcherRegistry contains no explicit matcher.");
         }
         if (AptHub.routeTable.isEmpty()) {
-            return RouteResponse.assemble(RouteStatus.FAILED, "The route table is empty.");
+            return RouteResponse.assemble(RouteStatus.FAILED, "The RouteTable is empty.");
         }
         return chain.process();
     }
