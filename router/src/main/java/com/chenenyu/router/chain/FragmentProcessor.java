@@ -1,8 +1,8 @@
 package com.chenenyu.router.chain;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 
 import com.chenenyu.router.AptHub;
 import com.chenenyu.router.MatcherRegistry;
@@ -35,14 +35,14 @@ public class FragmentProcessor implements RouteInterceptor {
                             chain.getRequest().getUri(), matcher.getClass().getCanonicalName()));
                     realChain.setTargetClass(entry.getValue());
                     Object result = matcher.generate(chain.getContext(), chain.getRequest().getUri(), entry.getValue());
-                    if (result instanceof Fragment) {
-                        Fragment fragment = (Fragment) result;
+                    if (result instanceof android.support.v4.app.Fragment) {
+                        android.support.v4.app.Fragment fragment = (android.support.v4.app.Fragment) result;
                         Bundle bundle = chain.getRequest().getExtras();
                         if (bundle != null && !bundle.isEmpty()) {
                             fragment.setArguments(bundle);
                         }
                         realChain.setTargetObject(fragment);
-                    } else if (result instanceof android.app.Fragment) {
+                    } else if (result instanceof Fragment) {
                         android.app.Fragment fragment = (android.app.Fragment) result;
                         Bundle bundle = chain.getRequest().getExtras();
                         if (bundle != null && !bundle.isEmpty()) {

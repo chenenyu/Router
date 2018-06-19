@@ -39,7 +39,7 @@ public class HandleAppInterceptors implements RouteInterceptor {
         Set<String> finalInterceptors = new LinkedHashSet<>();
         // add annotated interceptors
         if (realChain.getTargetClass() != null) {
-            String[] baseInterceptors = AptHub.targetInterceptorTable.get(realChain.getTargetClass());
+            String[] baseInterceptors = AptHub.targetInterceptorsTable.get(realChain.getTargetClass());
             if (baseInterceptors != null && baseInterceptors.length > 0) {
                 Collections.addAll(finalInterceptors, baseInterceptors);
             }

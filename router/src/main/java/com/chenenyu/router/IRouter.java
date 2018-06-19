@@ -1,6 +1,7 @@
 package com.chenenyu.router;
 
 import android.app.ActivityOptions;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,7 +10,6 @@ import android.os.PersistableBundle;
 import android.support.annotation.AnimRes;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.Fragment;
 
 /**
  * Router interface.
@@ -122,7 +122,7 @@ public interface IRouter {
 
     void go(Fragment fragment);
 
-    void go(android.app.Fragment fragment, RouteCallback callback);
+    void go(android.support.v4.app.Fragment fragment, RouteCallback callback);
 
-    void go(android.app.Fragment fragment);
+    void go(android.support.v4.app.Fragment fragment);
 }

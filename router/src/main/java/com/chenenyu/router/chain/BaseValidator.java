@@ -1,9 +1,9 @@
 package com.chenenyu.router.chain;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 
 import com.chenenyu.router.RouteInterceptor;
 import com.chenenyu.router.RouteRequest;
@@ -26,13 +26,13 @@ public class BaseValidator implements RouteInterceptor {
         if (chain.getSource() instanceof Context) {
             context = (Context) chain.getSource();
         } else if (chain.getSource() instanceof Fragment) {
-            context = ((Fragment) chain.getSource()).getContext();
-        } else if (chain.getSource() instanceof android.app.Fragment) {
             if (Build.VERSION.SDK_INT >= 23) {
-                context = ((android.app.Fragment) chain.getSource()).getContext();
+                context = ((Fragment) chain.getSource()).getContext();
             } else {
-                context = ((android.app.Fragment) chain.getSource()).getActivity();
+                context = ((Fragment) chain.getSource()).getActivity();
             }
+        } else if (chain.getSource() instanceof android.support.v4.app.Fragment) {
+            context = ((android.support.v4.app.Fragment) chain.getSource()).getContext();
         }
         if (context == null) {
             return RouteResponse.assemble(RouteStatus.FAILED, "Can't retrieve context from source.");
