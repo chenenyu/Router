@@ -43,8 +43,8 @@ import static com.chenenyu.router.compiler.util.Consts.PACKAGE_NAME;
 import static com.chenenyu.router.compiler.util.Consts.ROUTE_ANNOTATION_TYPE;
 import static com.chenenyu.router.compiler.util.Consts.ROUTE_TABLE;
 import static com.chenenyu.router.compiler.util.Consts.ROUTE_TABLE_FULL_NAME;
-import static com.chenenyu.router.compiler.util.Consts.TARGET_INTERCEPTORS;
 import static com.chenenyu.router.compiler.util.Consts.TARGET_INTERCEPTORS_FULL_NAME;
+import static com.chenenyu.router.compiler.util.Consts.TARGET_INTERCEPTORS_TABLE;
 
 /**
  * {@link Route} annotation processor.
@@ -84,7 +84,7 @@ public class RouteProcessor extends AbstractProcessor {
         if (mModuleName != null) {
             String validModuleName = mModuleName.replace(".", "_").replace("-", "_");
             generateRouteTable(validModuleName, typeElements);
-            generateTargetInterceptors(validModuleName, typeElements);
+            generateTargetInterceptorsTable(validModuleName, typeElements);
         } else {
             throw new RuntimeException(String.format("No option `%s` passed to Route annotation processor.", OPTION_MODULE_NAME));
         }
@@ -195,7 +195,7 @@ public class RouteProcessor extends AbstractProcessor {
     /**
      * TargetInterceptors.
      */
-    private void generateTargetInterceptors(String moduleName, Set<TypeElement> elements) {
+    private void generateTargetInterceptorsTable(String moduleName, Set<TypeElement> elements) {
         // Map<Class<?>, String[]> map
         ParameterizedTypeName mapTypeName = ParameterizedTypeName.get(
                 ClassName.get(Map.class),
@@ -230,7 +230,7 @@ public class RouteProcessor extends AbstractProcessor {
         }
 
         TypeElement interfaceType = processingEnv.getElementUtils().getTypeElement(TARGET_INTERCEPTORS_FULL_NAME);
-        TypeSpec type = TypeSpec.classBuilder(capitalize(moduleName) + TARGET_INTERCEPTORS)
+        TypeSpec type = TypeSpec.classBuilder(capitalize(moduleName) + TARGET_INTERCEPTORS_TABLE)
                 .addSuperinterface(ClassName.get(interfaceType))
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(methodHandle.build())

@@ -6,7 +6,7 @@ import android.app.Fragment;
 import com.chenenyu.router.template.InterceptorTable;
 import com.chenenyu.router.template.ParamInjector;
 import com.chenenyu.router.template.RouteTable;
-import com.chenenyu.router.template.TargetInterceptors;
+import com.chenenyu.router.template.TargetInterceptorsTable;
 import com.chenenyu.router.util.RLog;
 
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public final class AptHub {
     private static final String DOT = ".";
     private static final String ROUTE_TABLE = "RouteTable";
     private static final String INTERCEPTOR_TABLE = "InterceptorTable";
-    private static final String TARGET_INTERCEPTORS = "TargetInterceptors";
+    private static final String TARGET_INTERCEPTORS_TABLE = "TargetInterceptorsTable";
     private static final String PARAM_CLASS_SUFFIX = "$$Router$$ParamInjector";
 
     // Uri -> Activity/Fragment
@@ -36,7 +36,7 @@ public final class AptHub {
 
     // Activity/Fragment -> interceptors' name
     // Note: 这里用LinkedHashMap保证有序
-    public final static Map<Class<?>, String[]> targetInterceptorTable = new LinkedHashMap<>();
+    public final static Map<Class<?>, String[]> targetInterceptorsTable = new LinkedHashMap<>();
 
     // injector's name -> injector
     private static Map<String, Class<ParamInjector>> injectors = new HashMap<>();
@@ -69,14 +69,14 @@ public final class AptHub {
             }
             RLog.i("RouteTable", routeTable.toString());
 
-            /* TargetInterceptorTable */
+            /* TargetInterceptorsTable */
             String targetInterceptorsName;
             for (String moduleName : modules) {
                 try {
-                    targetInterceptorsName = PACKAGE_NAME + DOT + capitalize(moduleName) + TARGET_INTERCEPTORS;
+                    targetInterceptorsName = PACKAGE_NAME + DOT + capitalize(moduleName) + TARGET_INTERCEPTORS_TABLE;
                     Class<?> clz = Class.forName(targetInterceptorsName);
-                    TargetInterceptors instance = (TargetInterceptors) clz.newInstance();
-                    instance.handle(targetInterceptorTable);
+                    TargetInterceptorsTable instance = (TargetInterceptorsTable) clz.newInstance();
+                    instance.handle(targetInterceptorsTable);
                 } catch (ClassNotFoundException e) {
                     // RLog.i(String.format("There is no TargetInterceptorTable in module: %s.", moduleName));
                 } catch (Exception e) {
