@@ -13,6 +13,6 @@ public enum RouteStatus {
     FAILED;
 
     public boolean isSuccessful() {
-        return this.equals(SUCCEED);
+        return this == SUCCEED;
     }
 }

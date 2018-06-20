@@ -47,12 +47,13 @@ final class RealRouter extends AbsRouter {
         return mRouterThreadLocal.get();
     }
 
-    private void callback(RouteStatus result, String msg) {
-        if (result != RouteStatus.SUCCEED) {
-            RLog.w(msg);
+    private void callback(RouteResponse response) {
+        if (response.getStatus() != RouteStatus.SUCCEED) {
+            RLog.w(response.getMessage());
         }
         if (mRouteRequest.getRouteCallback() != null) {
-            mRouteRequest.getRouteCallback().callback(result, mRouteRequest.getUri(), msg);
+            mRouteRequest.getRouteCallback().callback(
+                    response.getStatus(), mRouteRequest.getUri(), response.getMessage());
         }
     }
 
@@ -63,7 +64,7 @@ final class RealRouter extends AbsRouter {
                 mFragmentProcessor, mCollectAppInterceptors);
         RealInterceptorChain chain = new RealInterceptorChain(source, mRouteRequest, interceptors);
         RouteResponse response = chain.process();
-        callback(response.getStatus(), response.getMessage());
+        callback(response);
         return response.getResult();
     }
 
@@ -74,7 +75,7 @@ final class RealRouter extends AbsRouter {
                 mIntentProcessor, mCollectAppInterceptors);
         RealInterceptorChain chain = new RealInterceptorChain(source, mRouteRequest, interceptors);
         RouteResponse response = chain.process();
-        callback(response.getStatus(), response.getMessage());
+        callback(response);
         return (Intent) response.getResult();
     }
 

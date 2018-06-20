@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
  * Created by chenenyu on 2018/6/15.
  */
 public final class RouteResponse {
+    @NonNull
     private RouteStatus status = RouteStatus.PROCESSING;
     private String message;
     @Nullable
@@ -22,11 +23,12 @@ public final class RouteResponse {
         return response;
     }
 
+    @NonNull
     public RouteStatus getStatus() {
         return status;
     }
 
-    public void setStatus(RouteStatus status) {
+    public void setStatus(@NonNull RouteStatus status) {
         this.status = status;
     }
 

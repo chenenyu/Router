@@ -71,7 +71,6 @@ public class Router {
      * @see com.chenenyu.router.matcher.AbsExplicitMatcher
      * @see com.chenenyu.router.matcher.AbsImplicitMatcher
      */
-    @SuppressWarnings("unused")
     public static void registerMatcher(AbsMatcher matcher) {
         MatcherRegistry.register(matcher);
     }
