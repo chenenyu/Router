@@ -63,7 +63,7 @@ final class RealRouter extends AbsRouter {
                 mFragmentProcessor, mCollectAppInterceptors);
         RealInterceptorChain chain = new RealInterceptorChain(source, mRouteRequest, interceptors);
         RouteResponse response = chain.process();
-        callback(response.getStatus(), response.getMsg());
+        callback(response.getStatus(), response.getMessage());
         return response.getResult();
     }
 
@@ -74,7 +74,7 @@ final class RealRouter extends AbsRouter {
                 mIntentProcessor, mCollectAppInterceptors);
         RealInterceptorChain chain = new RealInterceptorChain(source, mRouteRequest, interceptors);
         RouteResponse response = chain.process();
-        callback(response.getStatus(), response.getMsg());
+        callback(response.getStatus(), response.getMessage());
         return (Intent) response.getResult();
     }
 

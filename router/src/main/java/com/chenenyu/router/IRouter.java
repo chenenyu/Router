@@ -110,7 +110,7 @@ public interface IRouter {
      * Get a fragment instance.
      *
      * @param source Activity or Fragment instance.
-     * @return {@link Fragment} or {@link android.app.Fragment} instance.
+     * @return {@link Fragment} or {@link android.support.v4.app.Fragment} instance.
      */
     Object getFragment(Object source);
 

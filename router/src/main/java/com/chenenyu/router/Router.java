@@ -55,14 +55,12 @@ public class Router {
     }
 
     /**
-     * Global interceptor. This feature will be removed in a future release.
+     * Global interceptor.
      */
-    @Deprecated
     public static void addGlobalInterceptor(RouteInterceptor routeInterceptor) {
         sGlobalInterceptors.add(routeInterceptor);
     }
 
-    @Deprecated
     public static List<RouteInterceptor> getGlobalInterceptors() {
         return sGlobalInterceptors;
     }
@@ -73,6 +71,7 @@ public class Router {
      * @see com.chenenyu.router.matcher.AbsExplicitMatcher
      * @see com.chenenyu.router.matcher.AbsImplicitMatcher
      */
+    @SuppressWarnings("unused")
     public static void registerMatcher(AbsMatcher matcher) {
         MatcherRegistry.register(matcher);
     }

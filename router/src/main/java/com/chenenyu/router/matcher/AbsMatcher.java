@@ -19,7 +19,7 @@ public abstract class AbsMatcher implements Matcher {
     /**
      * Priority in matcher list.
      */
-    private int priority = 10;
+    private int priority;
 
     public AbsMatcher(int priority) {
         this.priority = priority;

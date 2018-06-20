@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
  */
 public final class RouteResponse {
     private RouteStatus status = RouteStatus.PROCESSING;
-    private String msg; // assemble msg
+    private String message;
     @Nullable
     private Object result;
 
@@ -18,7 +18,7 @@ public final class RouteResponse {
     public static RouteResponse assemble(@NonNull RouteStatus status, @Nullable String msg) {
         RouteResponse response = new RouteResponse();
         response.status = status;
-        response.msg = msg;
+        response.message = msg;
         return response;
     }
 
@@ -30,8 +30,8 @@ public final class RouteResponse {
         this.status = status;
     }
 
-    public String getMsg() {
-        return msg;
+    public String getMessage() {
+        return message;
     }
 
     @Nullable

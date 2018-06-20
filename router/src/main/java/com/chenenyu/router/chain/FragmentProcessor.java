@@ -43,7 +43,7 @@ public class FragmentProcessor implements RouteInterceptor {
                         }
                         realChain.setTargetObject(fragment);
                     } else if (result instanceof Fragment) {
-                        android.app.Fragment fragment = (android.app.Fragment) result;
+                        Fragment fragment = (Fragment) result;
                         Bundle bundle = chain.getRequest().getExtras();
                         if (bundle != null && !bundle.isEmpty()) {
                             fragment.setArguments(bundle);

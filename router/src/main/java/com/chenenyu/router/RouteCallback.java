@@ -10,9 +10,9 @@ public interface RouteCallback {
     /**
      * Callback
      *
-     * @param state   {@link RouteStatus}
-     * @param uri     Uri
+     * @param status  {@link RouteStatus}
+     * @param uri     uri
      * @param message notice msg
      */
-    void callback(RouteStatus state, Uri uri, String message);
+    void callback(RouteStatus status, Uri uri, String message);
 }

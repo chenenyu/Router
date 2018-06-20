@@ -54,11 +54,11 @@ public final class RealInterceptorChain implements RouteInterceptor.Chain {
             context = (Context) source;
         } else if (source instanceof android.support.v4.app.Fragment) {
             context = ((android.support.v4.app.Fragment) source).getContext();
-        } else if (source instanceof android.app.Fragment) {
+        } else if (source instanceof Fragment) {
             if (Build.VERSION.SDK_INT >= 23) {
-                context = ((android.app.Fragment) source).getContext();
+                context = ((Fragment) source).getContext();
             } else {
-                context = ((android.app.Fragment) source).getActivity();
+                context = ((Fragment) source).getActivity();
             }
         }
         assert context != null;
