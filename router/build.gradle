@@ -43,10 +43,10 @@ dependencies {
 }
 
 ext {
-    GROUP = 'com.chenenyu.router'  // required.
-    ARTIFACT = 'router' // required.
-    VERSION = routerVersion // required.
-    BINTRAY_NAME = 'router' // optional.
+    GROUP = 'com.chenenyu.router'
+    ARTIFACT = 'router'
+    VERSION = routerVersion
+    BINTRAY_NAME = 'router'
 }
 
 apply from: 'https://raw.githubusercontent.com/chenenyu/gradle-bintray-plugin/master/publish.gradle'
