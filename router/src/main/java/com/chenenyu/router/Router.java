@@ -36,6 +36,10 @@ public class Router {
         return RealRouter.getInstance().build(uri);
     }
 
+    public static IRouter build(RouteRequest request) {
+        return RealRouter.getInstance().build(request);
+    }
+
     /**
      * Custom route table.
      */
