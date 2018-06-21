@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -12,9 +13,9 @@ import java.util.Map;
  * <p>
  * Created by chenenyu on 2017/3/31.
  */
-public final class RouteRequest {
+public final class RouteRequest implements Serializable {
+    private static final long serialVersionUID = 1424703717999094150L;
     private static final int INVALID_CODE = -1;
-
     private Uri uri;
     private Bundle extras;
     private int flags;
