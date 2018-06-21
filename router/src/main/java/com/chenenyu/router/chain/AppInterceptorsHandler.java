@@ -20,7 +20,7 @@ import java.util.Set;
  * <br>
  * Created by chenenyu on 2018/6/15.
  */
-public class HandleAppInterceptors implements RouteInterceptor {
+public class AppInterceptorsHandler implements RouteInterceptor {
     @NonNull
     @Override
     public RouteResponse intercept(Chain chain) {

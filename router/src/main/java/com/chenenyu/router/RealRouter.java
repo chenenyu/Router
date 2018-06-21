@@ -6,12 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 
+import com.chenenyu.router.chain.AppInterceptorsHandler;
 import com.chenenyu.router.chain.BaseValidator;
 import com.chenenyu.router.chain.FragmentProcessor;
 import com.chenenyu.router.chain.FragmentValidator;
-import com.chenenyu.router.chain.HandleAppInterceptors;
 import com.chenenyu.router.chain.IntentProcessor;
 import com.chenenyu.router.chain.IntentValidator;
 import com.chenenyu.router.util.RLog;
@@ -31,7 +32,7 @@ final class RealRouter extends AbsRouter {
     private final RouteInterceptor mFragmentValidator = new FragmentValidator();
     private final RouteInterceptor mIntentProcessor = new IntentProcessor();
     private final RouteInterceptor mFragmentProcessor = new FragmentProcessor();
-    private final RouteInterceptor mCollectAppInterceptors = new HandleAppInterceptors();
+    private final RouteInterceptor mAppInterceptorsHandler = new AppInterceptorsHandler();
 
     private static final ThreadLocal<RealRouter> mRouterThreadLocal = new ThreadLocal<RealRouter>() {
         @Override
@@ -58,10 +59,10 @@ final class RealRouter extends AbsRouter {
     }
 
     @Override
-    public Object getFragment(Object source) {
+    public Object getFragment(@NonNull Object source) {
         List<RouteInterceptor> interceptors = new ArrayList<>();
         Collections.addAll(interceptors, mBaseValidator, mFragmentValidator,
-                mFragmentProcessor, mCollectAppInterceptors);
+                mFragmentProcessor, mAppInterceptorsHandler);
         RealInterceptorChain chain = new RealInterceptorChain(source, mRouteRequest, interceptors);
         RouteResponse response = chain.process();
         callback(response);
@@ -69,10 +70,10 @@ final class RealRouter extends AbsRouter {
     }
 
     @Override
-    public Intent getIntent(Object source) {
+    public Intent getIntent(@NonNull Object source) {
         List<RouteInterceptor> interceptors = new ArrayList<>();
         Collections.addAll(interceptors, mBaseValidator, mIntentValidator,
-                mIntentProcessor, mCollectAppInterceptors);
+                mIntentProcessor, mAppInterceptorsHandler);
         RealInterceptorChain chain = new RealInterceptorChain(source, mRouteRequest, interceptors);
         RouteResponse response = chain.process();
         callback(response);

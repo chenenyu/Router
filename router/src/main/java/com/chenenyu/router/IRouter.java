@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.AnimRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityOptionsCompat;
 
@@ -104,7 +105,7 @@ public interface IRouter {
      * @param source Activity or Fragment instance.
      * @return {@link Intent} instance.
      */
-    Intent getIntent(Object source);
+    Intent getIntent(@NonNull Object source);
 
     /**
      * Get a fragment instance.
@@ -112,7 +113,7 @@ public interface IRouter {
      * @param source Activity or Fragment instance.
      * @return {@link Fragment} or {@link android.support.v4.app.Fragment} instance.
      */
-    Object getFragment(Object source);
+    Object getFragment(@NonNull Object source);
 
     void go(Context context, RouteCallback callback);
 
