@@ -3,9 +3,7 @@ package com.chenenyu.router;
 import android.net.Uri;
 
 import com.chenenyu.router.matcher.AbsMatcher;
-import com.chenenyu.router.template.InterceptorTable;
 import com.chenenyu.router.template.RouteTable;
-import com.chenenyu.router.template.TargetInterceptors;
 import com.chenenyu.router.util.RLog;
 
 import java.util.ArrayList;
@@ -22,7 +20,7 @@ public class Router {
      */
     public static final String RAW_URI = "raw_uri";
 
-    private static List<RouteInterceptor> sGlobalInterceptors = new ArrayList<>();
+    private static final List<RouteInterceptor> sGlobalInterceptors = new ArrayList<>();
 
 
     public static void initialize(Configuration configuration) {
@@ -38,6 +36,10 @@ public class Router {
         return RealRouter.getInstance().build(uri);
     }
 
+    public static IRouter build(RouteRequest request) {
+        return RealRouter.getInstance().build(request);
+    }
+
     /**
      * Custom route table.
      */
@@ -48,30 +50,12 @@ public class Router {
     }
 
     /**
-     * Custom interceptor table.
-     */
-    public static void handleInterceptorTable(InterceptorTable interceptorTable) {
-        if (interceptorTable != null) {
-            interceptorTable.handle(AptHub.interceptorTable);
-        }
-    }
-
-    /**
-     * Custom targets' interceptors.
-     */
-    public static void handleTargetInterceptors(TargetInterceptors targetInterceptors) {
-        if (targetInterceptors != null) {
-            targetInterceptors.handle(AptHub.targetInterceptors);
-        }
-    }
-
-    /**
      * Auto inject params from bundle.
      *
      * @param obj Instance of Activity or Fragment.
      */
     public static void injectParams(Object obj) {
-        RealRouter.injectParams(obj);
+        AptHub.injectParams(obj);
     }
 
     /**

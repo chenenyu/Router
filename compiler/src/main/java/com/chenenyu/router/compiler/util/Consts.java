@@ -29,8 +29,8 @@ public class Consts {
     public static final String INTERCEPTOR_TABLE = "InterceptorTable";
     public static final String INTERCEPTOR_TABLE_FULL_NAME = PACKAGE_NAME + ".template." + INTERCEPTOR_TABLE;
 
-    public static final String TARGET_INTERCEPTORS = "TargetInterceptors";
-    public static final String TARGET_INTERCEPTORS_FULL_NAME = PACKAGE_NAME + ".template." + TARGET_INTERCEPTORS;
+    public static final String TARGET_INTERCEPTORS_TABLE = "TargetInterceptorsTable";
+    public static final String TARGET_INTERCEPTORS_FULL_NAME = PACKAGE_NAME + ".template." + TARGET_INTERCEPTORS_TABLE;
 
     public static final String PARAM_INJECTOR = "ParamInjector";
     public static final String PARAM_INJECTOR_FULL_NAME = PACKAGE_NAME + ".template." + PARAM_INJECTOR;

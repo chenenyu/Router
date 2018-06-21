@@ -12,7 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.chenenyu.router.RouteCallback;
-import com.chenenyu.router.RouteResult;
+import com.chenenyu.router.RouteStatus;
 import com.chenenyu.router.Router;
 import com.chenenyu.router.template.RouteTable;
 
@@ -85,8 +85,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v == btn0) {
             Router.build(uri).callback(new RouteCallback() { // 添加结果回调
                 @Override
-                public void callback(RouteResult state, Uri uri, String message) {
-                    if (state == RouteResult.SUCCEED) {
+                public void callback(RouteStatus status, Uri uri, String message) {
+                    if (status == RouteStatus.SUCCEED) {
                         Toast.makeText(MainActivity.this, "succeed: " + uri.toString(), Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(MainActivity.this, "error: " + uri + ", " + message, Toast.LENGTH_SHORT).show();

@@ -16,25 +16,26 @@ public class RLog {
     }
 
     public static void i(String msg) {
-        if (sLoggable) {
+        if (sLoggable && msg != null) {
             Log.i(TAG, msg);
         }
     }
 
     public static void i(String tag, String msg) {
-        if (sLoggable) {
+        if (sLoggable && msg != null) {
             Log.i(tag, msg);
         }
     }
 
     public static void w(String msg) {
-        if (sLoggable) {
+        if (sLoggable && msg != null) {
             Log.w(TAG, msg);
         }
     }
 
     public static void e(String msg) {
-        Log.e(TAG, msg);
+        if (msg != null)
+            Log.e(TAG, msg);
     }
 
     public static void e(String msg, Throwable tr) {

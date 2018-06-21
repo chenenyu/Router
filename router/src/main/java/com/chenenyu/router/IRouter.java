@@ -1,15 +1,16 @@
 package com.chenenyu.router;
 
 import android.app.ActivityOptions;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.AnimRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.Fragment;
 
 /**
  * Router interface.
@@ -21,6 +22,8 @@ public interface IRouter {
      * Entrance.
      */
     IRouter build(Uri uri);
+
+    IRouter build(@NonNull RouteRequest request);
 
     /**
      * Route request callback.
@@ -104,15 +107,15 @@ public interface IRouter {
      * @param source Activity or Fragment instance.
      * @return {@link Intent} instance.
      */
-    Intent getIntent(Object source);
+    Intent getIntent(@NonNull Object source);
 
     /**
      * Get a fragment instance.
      *
      * @param source Activity or Fragment instance.
-     * @return {@link Fragment} or {@link android.app.Fragment} instance.
+     * @return {@link Fragment} or {@link android.support.v4.app.Fragment} instance.
      */
-    Object getFragment(Object source);
+    Object getFragment(@NonNull Object source);
 
     void go(Context context, RouteCallback callback);
 
@@ -122,7 +125,7 @@ public interface IRouter {
 
     void go(Fragment fragment);
 
-    void go(android.app.Fragment fragment, RouteCallback callback);
+    void go(android.support.v4.app.Fragment fragment, RouteCallback callback);
 
-    void go(android.app.Fragment fragment);
+    void go(android.support.v4.app.Fragment fragment);
 }

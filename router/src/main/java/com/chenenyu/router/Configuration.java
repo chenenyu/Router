@@ -5,7 +5,7 @@ package com.chenenyu.router;
  * <p>
  * Created by chenenyu on 2017/11/9.
  */
-public class Configuration {
+public final class Configuration {
     boolean debuggable;
     String[] modules;
 

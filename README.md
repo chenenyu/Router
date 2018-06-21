@@ -16,6 +16,7 @@ android {
         ...
         javaCompileOptions {
             annotationProcessorOptions {
+                // 每个使用Router的module都要配置该参数
                 arguments = ["moduleName": project.name]
             }
         }
@@ -24,7 +25,7 @@ android {
 
 dependencies {
     implementation 'com.chenenyu.router:router:版本号'
-    // 每个使用了@Router注解的module都要添加该注解处理器
+    // 每个使用了Router注解的module都要添加该注解处理器
     annotationProcessor 'com.chenenyu.router:compiler:版本号'
 }
 ```
@@ -42,7 +43,7 @@ Router.initialize(new Configuration.Builder()
         // 调试模式，开启后会打印log
         .setDebuggable(BuildConfig.DEBUG)
         // 模块名(即project.name)，每个使用Router的module都要在这里注册
-        .registerModules("your app module", "your lib module", "other module")
+        .registerModules("lib_module", "other_module", "app_module")
         .build());
 ```
 
@@ -53,9 +54,9 @@ Router.initialize(new Configuration.Builder()
 @Interceptor("SampleInterceptor")
 public class SampleInterceptor implements RouteInterceptor {
     @Override
-    public boolean intercept(Context context, RouteRequest routeRequest) {
+    public RouteResponse intercept(Chain chain) {
         // do something
-        return false;
+        return chain.process();
     }
 }
 ```
@@ -95,10 +96,10 @@ Router.build("test").requestCode(0).go(this);
 Router.build("test").with("key", Object).go(this);
 // 添加回调
 Router.build("test").go(this, new RouteCallback() {
-        @Override
-        public void callback(RouteResult state, Uri uri, String message) {
-             // do something
-        }
+    @Override
+    public void callback(RouteStatus status, Uri uri, String message) {
+        // do something
+    }
 });
 // 获取路由对应的intent
 Router.build("test").getIntent();
@@ -108,14 +109,14 @@ Router.build("test").getFragment();
 
 ## 进阶用法
 
-Please refer to the [wiki](https://github.com/chenenyu/Router/wiki) for more information.
+建议浏览 [wiki](https://github.com/chenenyu/Router/wiki).
 
 ## ProGuard
 
 ```
 # Router
 -keep class com.chenenyu.router.** {*;}
--keep class * implements com.chenenyu.router.template.ParamInjector {*;}
+-keep class * implements com.chenenyu.router.template.** {*;}
 ```
 
 ## 讨论

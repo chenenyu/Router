@@ -20,10 +20,10 @@ sourceCompatibility = rootProject.ext.sourceCompatibility
 targetCompatibility = rootProject.ext.targetCompatibility
 
 ext {
-    GROUP = 'com.chenenyu.router'  // required.
-    ARTIFACT = 'compiler' // required.
-    VERSION = compilerVersion // required.
-    BINTRAY_NAME = 'compiler' // optional.
+    GROUP = 'com.chenenyu.router'
+    ARTIFACT = 'compiler'
+    VERSION = compilerVersion
+    BINTRAY_NAME = 'router-compiler'
 }
 
 apply from: 'https://raw.githubusercontent.com/chenenyu/gradle-bintray-plugin/master/publish.gradle'

@@ -10,7 +10,7 @@ public class ImplicitActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scheme);
 
-        TextView text = (TextView) findViewById(R.id.text_test);
+        TextView text = findViewById(R.id.text_test);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null && !bundle.isEmpty()) {
             StringBuilder sb = new StringBuilder();

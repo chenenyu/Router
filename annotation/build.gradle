@@ -8,10 +8,10 @@ config.load(project.file('../VERSION.properties').newDataInputStream())
 def annoVersion = config.getProperty("ANNOTATION_VERSION")
 
 ext {
-    GROUP = 'com.chenenyu.router'  // required.
-    ARTIFACT = 'annotation' // required.
-    VERSION = annoVersion // required.
-    BINTRAY_NAME = 'annotation' // optional.
+    GROUP = 'com.chenenyu.router'
+    ARTIFACT = 'annotation'
+    VERSION = annoVersion
+    BINTRAY_NAME = 'router-annotation'
 }
 
 apply from: 'https://raw.githubusercontent.com/chenenyu/gradle-bintray-plugin/master/publish.gradle'

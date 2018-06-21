@@ -1,11 +1,11 @@
 package com.chenenyu.router.matcher;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 
 /**
  * Base mather for explicit intent and fragment.
@@ -26,13 +26,13 @@ public abstract class AbsExplicitMatcher extends AbsMatcher {
         Object result = null;
         if (Activity.class.isAssignableFrom(target)) {
             result = new Intent(context, target);
-        } else if (Fragment.class.isAssignableFrom(target)) { // v4.fragment
+        } else if (Fragment.class.isAssignableFrom(target)) {
             try {
                 result = target.newInstance();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if (android.app.Fragment.class.isAssignableFrom(target)) {
+        } else if (android.support.v4.app.Fragment.class.isAssignableFrom(target)) {
             try {
                 result = target.newInstance();
             } catch (Exception e) {

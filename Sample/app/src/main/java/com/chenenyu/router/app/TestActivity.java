@@ -34,7 +34,7 @@ public class TestActivity extends AppCompatActivity {
         Bundle mExtras = getIntent().getExtras();
         id = mExtras.getString("id", id);
 
-        TextView text = (TextView) findViewById(R.id.text_test);
+        TextView text = findViewById(R.id.text_test);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null && !bundle.isEmpty()) {
             StringBuilder sb = new StringBuilder();
