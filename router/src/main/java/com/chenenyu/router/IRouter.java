@@ -23,6 +23,8 @@ public interface IRouter {
      */
     IRouter build(Uri uri);
 
+    IRouter build(@NonNull RouteRequest request);
+
     /**
      * Route request callback.
      */

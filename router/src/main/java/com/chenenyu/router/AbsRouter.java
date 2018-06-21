@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.annotation.AnimRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.util.SparseArray;
 
@@ -30,6 +31,18 @@ abstract class AbsRouter implements IRouter {
         mRouteRequest = new RouteRequest(uri);
         Bundle bundle = new Bundle();
         bundle.putString(Router.RAW_URI, uri == null ? null : uri.toString());
+        mRouteRequest.setExtras(bundle);
+        return this;
+    }
+
+    @Override
+    public IRouter build(@NonNull RouteRequest request) {
+        mRouteRequest = request;
+        Bundle bundle = mRouteRequest.getExtras();
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.putString(Router.RAW_URI, request.getUri().toString());
         mRouteRequest.setExtras(bundle);
         return this;
     }
