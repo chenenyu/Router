@@ -2,11 +2,13 @@ package com.chenenyu.router;
 
 import android.net.Uri;
 
+import java.io.Serializable;
+
 /**
  * <p>
  * Created by chenenyu on 2016/12/20.
  */
-public interface RouteCallback {
+public interface RouteCallback extends Serializable {
     /**
      * Callback
      *
