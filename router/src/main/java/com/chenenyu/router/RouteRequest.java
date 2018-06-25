@@ -2,9 +2,10 @@ package com.chenenyu.router;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
-import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -13,8 +14,7 @@ import java.util.Map;
  * <p>
  * Created by chenenyu on 2017/3/31.
  */
-public final class RouteRequest implements Serializable {
-    private static final long serialVersionUID = 1424703717999094150L;
+public final class RouteRequest implements Parcelable {
     private static final int INVALID_CODE = -1;
     private Uri uri;
     private Bundle extras;
@@ -59,6 +59,7 @@ public final class RouteRequest implements Serializable {
         return flags;
     }
 
+    @SuppressWarnings("unused")
     public void setFlags(int flags) {
         this.flags = flags;
     }
@@ -182,4 +183,63 @@ public final class RouteRequest implements Serializable {
         this.activityOptionsBundle = activityOptionsBundle;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.uri, flags);
+        dest.writeBundle(this.extras);
+        dest.writeInt(this.flags);
+        dest.writeParcelable(this.data, flags);
+        dest.writeString(this.type);
+        dest.writeString(this.action);
+        dest.writeByte(this.skipInterceptors ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.tempInterceptors == null ? 0 : this.tempInterceptors.size());
+        for (Map.Entry<String, Boolean> entry : this.tempInterceptors.entrySet()) {
+            dest.writeString(entry.getKey());
+            dest.writeValue(entry.getValue());
+        }
+        dest.writeSerializable(this.routeCallback);
+        dest.writeInt(this.requestCode);
+        dest.writeInt(this.enterAnim);
+        dest.writeInt(this.exitAnim);
+        dest.writeBundle(this.activityOptionsBundle);
+    }
+
+    protected RouteRequest(Parcel in) {
+        this.uri = in.readParcelable(Uri.class.getClassLoader());
+        this.extras = in.readBundle(getClass().getClassLoader());
+        this.flags = in.readInt();
+        this.data = in.readParcelable(Uri.class.getClassLoader());
+        this.type = in.readString();
+        this.action = in.readString();
+        this.skipInterceptors = in.readByte() != 0;
+        int tempInterceptorsSize = in.readInt();
+        this.tempInterceptors = new LinkedHashMap<>(tempInterceptorsSize);
+        for (int i = 0; i < tempInterceptorsSize; i++) {
+            String key = in.readString();
+            Boolean value = (Boolean) in.readValue(Boolean.class.getClassLoader());
+            this.tempInterceptors.put(key, value);
+        }
+        this.routeCallback = in.readParcelable(RouteCallback.class.getClassLoader());
+        this.requestCode = in.readInt();
+        this.enterAnim = in.readInt();
+        this.exitAnim = in.readInt();
+        this.activityOptionsBundle = in.readBundle(getClass().getClassLoader());
+    }
+
+    public static final Creator<RouteRequest> CREATOR = new Creator<RouteRequest>() {
+        @Override
+        public RouteRequest createFromParcel(Parcel source) {
+            return new RouteRequest(source);
+        }
+
+        @Override
+        public RouteRequest[] newArray(int size) {
+            return new RouteRequest[size];
+        }
+    };
 }
