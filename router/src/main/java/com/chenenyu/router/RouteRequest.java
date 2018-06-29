@@ -198,9 +198,11 @@ public final class RouteRequest implements Parcelable {
         dest.writeString(this.action);
         dest.writeByte(this.skipInterceptors ? (byte) 1 : (byte) 0);
         dest.writeInt(this.tempInterceptors == null ? 0 : this.tempInterceptors.size());
-        for (Map.Entry<String, Boolean> entry : this.tempInterceptors.entrySet()) {
-            dest.writeString(entry.getKey());
-            dest.writeValue(entry.getValue());
+        if (this.tempInterceptors != null) {
+            for (Map.Entry<String, Boolean> entry : this.tempInterceptors.entrySet()) {
+                dest.writeString(entry.getKey());
+                dest.writeValue(entry.getValue());
+            }
         }
         dest.writeSerializable(this.routeCallback);
         dest.writeInt(this.requestCode);
@@ -211,7 +213,7 @@ public final class RouteRequest implements Parcelable {
 
     protected RouteRequest(Parcel in) {
         this.uri = in.readParcelable(Uri.class.getClassLoader());
-        this.extras = in.readBundle(getClass().getClassLoader());
+        this.extras = in.readBundle(Bundle.class.getClassLoader());
         this.flags = in.readInt();
         this.data = in.readParcelable(Uri.class.getClassLoader());
         this.type = in.readString();
@@ -224,11 +226,11 @@ public final class RouteRequest implements Parcelable {
             Boolean value = (Boolean) in.readValue(Boolean.class.getClassLoader());
             this.tempInterceptors.put(key, value);
         }
-        this.routeCallback = in.readParcelable(RouteCallback.class.getClassLoader());
+        this.routeCallback = (RouteCallback) in.readSerializable();
         this.requestCode = in.readInt();
         this.enterAnim = in.readInt();
         this.exitAnim = in.readInt();
-        this.activityOptionsBundle = in.readBundle(getClass().getClassLoader());
+        this.activityOptionsBundle = in.readBundle(Bundle.class.getClassLoader());
     }
 
     public static final Creator<RouteRequest> CREATOR = new Creator<RouteRequest>() {
