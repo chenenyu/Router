@@ -119,6 +119,26 @@ Router.build("test").getFragment();
 -keep class * implements com.chenenyu.router.template.** {*;}
 ```
 
+## 谁在使用Rouer
+
+<div>
+  <a href="http://sj.qq.com/myapp/detail.htm?apkName=com.sankuai.erp.mcashier">
+  	<img src="static/美团轻收银.png" width="100"/>
+  </a>
+  <a href="#">
+  	<img src="static/恒大智能家居.png" width="100"/>
+  </a>
+  <a href="https://fir.im/shouba">
+  	<img src="static/批车吧.png" width="100"/>
+  </a>
+  <a href="https://fir.im/ebeilun">
+  	<img src="static/e乡北仑.png" width="100"/>
+  </a>
+  <a href="https://fir.im/duihuan">
+  	<img src="static/硬币自循环.png" width="100"/>
+  </a>
+</div>
+
 ## 讨论
 
 QQ group: 271849001
