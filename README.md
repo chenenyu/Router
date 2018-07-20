@@ -137,6 +137,9 @@ Router.build("test").getFragment();
   <a href="https://fir.im/duihuan">
   	<img src="static/硬币自循环.png" width="100"/>
   </a>
+  <a href="http://sj.qq.com/myapp/detail.htm?apkName=com.tencent.gamehelper.smoba">
+  	<img src="static/王者荣耀助手.png" width="100"/>
+  </a>
 </div>
 
 ## 讨论
