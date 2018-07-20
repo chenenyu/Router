@@ -24,7 +24,6 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedOptions;
-import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -53,10 +52,14 @@ import static com.chenenyu.router.compiler.util.Consts.TARGET_INTERCEPTORS_TABLE
  */
 @SupportedAnnotationTypes(ROUTE_ANNOTATION_TYPE)
 @SupportedOptions(OPTION_MODULE_NAME)
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class RouteProcessor extends AbstractProcessor {
     private String mModuleName;
     private Logger mLogger;
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latest();
+    }
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {

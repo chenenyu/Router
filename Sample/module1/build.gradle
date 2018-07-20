@@ -28,11 +28,6 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
-
-    compileOptions {
-        sourceCompatibility rootProject.ext.sourceCompatibility
-        targetCompatibility rootProject.ext.targetCompatibility
-    }
 }
 
 dependencies {
