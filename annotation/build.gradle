@@ -1,8 +1,5 @@
 apply plugin: 'java'
 
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
-
 Properties config = new Properties()
 config.load(project.file('../VERSION.properties').newDataInputStream())
 def annoVersion = config.getProperty("ANNOTATION_VERSION")

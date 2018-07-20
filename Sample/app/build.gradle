@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
+
     defaultConfig {
         applicationId "com.chenenyu.router.app"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -28,11 +29,6 @@ android {
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
-    }
-
-    compileOptions {
-        sourceCompatibility rootProject.ext.sourceCompatibility
-        targetCompatibility rootProject.ext.targetCompatibility
     }
 }
 

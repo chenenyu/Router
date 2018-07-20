@@ -16,9 +16,6 @@ dependencies {
     compile "com.chenenyu.router:annotation:${annoVersion}"
 }
 
-sourceCompatibility = rootProject.ext.sourceCompatibility
-targetCompatibility = rootProject.ext.targetCompatibility
-
 ext {
     GROUP = 'com.chenenyu.router'
     ARTIFACT = 'compiler'
