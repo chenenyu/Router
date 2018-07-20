@@ -22,7 +22,6 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedOptions;
-import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
@@ -49,11 +48,15 @@ import static com.chenenyu.router.compiler.util.Consts.PARAM_INJECTOR_FULL_NAME;
  */
 @SupportedAnnotationTypes(PARAM_ANNOTATION_TYPE)
 @SupportedOptions(OPTION_MODULE_NAME)
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class InjectParamProcessor extends AbstractProcessor {
     private String mModuleName;
     private Logger mLogger;
     private Map<TypeElement, List<Element>> mClzAndParams = new HashMap<>();
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latest();
+    }
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
