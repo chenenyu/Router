@@ -6,3 +6,6 @@ build
 *.iml
 /captures
 .externalNativeBuild
+
+publish.gradle
+/repo

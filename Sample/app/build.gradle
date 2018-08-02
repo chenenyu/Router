@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.chenenyu.router'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -10,18 +11,12 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["moduleName": project.name]
-            }
-        }
     }
 
     buildTypes {
         debug {
             // 测试混淆
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -38,6 +33,4 @@ dependencies {
     implementation project(':module1')
     implementation project(':module2')
     testImplementation 'junit:junit:4.12'
-    implementation project(':router')
-    annotationProcessor project(':compiler')
 }
