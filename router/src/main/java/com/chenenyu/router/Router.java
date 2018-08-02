@@ -25,7 +25,6 @@ public class Router {
 
     public static void initialize(Configuration configuration) {
         RLog.showLog(configuration.debuggable);
-        AptHub.registerModules(configuration.modules);
     }
 
     public static IRouter build(String path) {

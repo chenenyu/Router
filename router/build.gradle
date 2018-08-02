@@ -8,7 +8,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName property("ROUTER_VERSION")
     }
 
     buildTypes {
@@ -24,23 +24,18 @@ android {
     }
 }
 
-Properties version = new Properties()
-version.load(project.file('../VERSION.properties').newDataInputStream())
-def routerVersion = version.getProperty("ROUTER_VERSION")
-def annoVersion = version.getProperty("ANNOTATION_VERSION")
-
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
     compileOnly "com.android.support:support-v4:24.2.0"
 //    api project(':annotation')
-    api "com.chenenyu.router:annotation:${annoVersion}"
+    api "com.chenenyu.router:annotation:${property("ANNOTATION_VERSION")}"
 }
 
 ext {
     GROUP = 'com.chenenyu.router'
     ARTIFACT = 'router'
-    VERSION = routerVersion
+    VERSION = property("ROUTER_VERSION")
     BINTRAY_NAME = 'router'
 }
 

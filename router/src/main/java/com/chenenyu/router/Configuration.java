@@ -7,6 +7,7 @@ package com.chenenyu.router;
  */
 public final class Configuration {
     boolean debuggable;
+    @Deprecated
     String[] modules;
 
     private Configuration() {
@@ -21,15 +22,16 @@ public final class Configuration {
             return this;
         }
 
+        /**
+         * There is no need to call <code>registerModules</code> when using gradle plugin.
+         */
+        @Deprecated
         public Builder registerModules(String... modules) {
             this.modules = modules;
             return this;
         }
 
         public Configuration build() {
-            if (modules == null || modules.length == 0) {
-                throw new RuntimeException("You must call registerModules() to initialize Router.");
-            }
             Configuration configuration = new Configuration();
             configuration.debuggable = this.debuggable;
             configuration.modules = this.modules;
