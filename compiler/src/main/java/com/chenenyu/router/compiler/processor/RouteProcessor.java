@@ -33,12 +33,12 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 
 import static com.chenenyu.router.compiler.util.Consts.ACTIVITY_FULL_NAME;
+import static com.chenenyu.router.compiler.util.Consts.APT_PACKAGE_NAME;
 import static com.chenenyu.router.compiler.util.Consts.CLASS_JAVA_DOC;
 import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_V4_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Consts.METHOD_HANDLE;
 import static com.chenenyu.router.compiler.util.Consts.OPTION_MODULE_NAME;
-import static com.chenenyu.router.compiler.util.Consts.PACKAGE_NAME;
 import static com.chenenyu.router.compiler.util.Consts.ROUTE_ANNOTATION_TYPE;
 import static com.chenenyu.router.compiler.util.Consts.ROUTE_TABLE;
 import static com.chenenyu.router.compiler.util.Consts.ROUTE_TABLE_FULL_NAME;
@@ -189,7 +189,7 @@ public class RouteProcessor extends AbstractProcessor {
                 .addJavadoc(CLASS_JAVA_DOC)
                 .build();
         try {
-            JavaFile.builder(PACKAGE_NAME, type).build().writeTo(processingEnv.getFiler());
+            JavaFile.builder(APT_PACKAGE_NAME, type).build().writeTo(processingEnv.getFiler());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -240,7 +240,7 @@ public class RouteProcessor extends AbstractProcessor {
                 .addJavadoc(CLASS_JAVA_DOC)
                 .build();
         try {
-            JavaFile.builder(PACKAGE_NAME, type).build().writeTo(processingEnv.getFiler());
+            JavaFile.builder(APT_PACKAGE_NAME, type).build().writeTo(processingEnv.getFiler());
         } catch (IOException e) {
             e.printStackTrace();
         }
