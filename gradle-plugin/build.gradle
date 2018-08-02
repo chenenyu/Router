@@ -1,0 +1,30 @@
+apply plugin: 'groovy'
+apply plugin: 'maven-publish'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    compile 'com.android.tools.build:gradle:3.2.0-beta05'
+}
+
+ext {
+    GROUP = 'com.chenenyu.router'
+    ARTIFACT = 'gradle-plugin'
+    VERSION = property('PLUGIN_VERSION')
+    BINTRAY_NAME = 'router-gradle-plugin'
+}
+
+publishing {
+    // 定义目标仓库
+    repositories {
+        maven {
+            url "${project.rootProject.projectDir.absolutePath}/repo"
+        }
+    }
+}
+
+apply from: 'https://raw.githubusercontent.com/chenenyu/gradle-bintray-plugin/master/publish.gradle'
