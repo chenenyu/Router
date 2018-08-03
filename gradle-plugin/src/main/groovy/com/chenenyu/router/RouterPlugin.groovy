@@ -15,19 +15,19 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 class RouterPlugin implements Plugin<Project> {
     static final String APT_OPTION_NAME = "moduleName"
 
-    String DEFAULT_ROUTER_RUNTIME_VERSION = "1.6.0-alpha1"
-    String DEFAULT_ROUTER_COMPILER_VERSION = "1.6.0-alpha1"
+    String DEFAULT_ROUTER_RUNTIME_VERSION = "1.6.0"
+    String DEFAULT_ROUTER_COMPILER_VERSION = "1.6.0"
 
     String androidBuildGradleVersion
 
     @Override
     void apply(Project project) {
-        if (!project.plugins.hasPlugin(AppPlugin)                               // AppPlugin
-                && !project.plugins.hasPlugin(LibraryPlugin)                    // LibraryPlugin
-                && !project.plugins.hasPlugin(TestPlugin)                       // TestPlugin
-                && !project.plugins.hasPlugin("com.android.dynamic-feature") // DynamicFeaturePlugin, added in 3.2
-                && !project.plugins.hasPlugin("com.android.instantapp")      // InstantAppPlugin, added in 3.0
-                && !project.plugins.hasPlugin("com.android.feature"))        // FeaturePlugin, added in 3.0
+        if (!project.plugins.hasPlugin(AppPlugin)                                // AppPlugin
+                && !project.plugins.hasPlugin(LibraryPlugin)                     // LibraryPlugin
+                && !project.plugins.hasPlugin(TestPlugin)                        // TestPlugin
+                && !project.plugins.hasPlugin("com.android.instantapp")       // InstantAppPlugin, added in 3.0
+                && !project.plugins.hasPlugin("com.android.feature")          // FeaturePlugin, added in 3.0
+                && !project.plugins.hasPlugin("com.android.dynamic-feature")) // DynamicFeaturePlugin, added in 3.2
         {
             throw new GradleException("android plugin required.")
         }

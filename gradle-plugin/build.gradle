@@ -8,7 +8,8 @@ repositories {
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    compile 'com.android.tools.build:gradle:3.2.0-beta05'
+//    compile 'com.android.tools.build:gradle:3.2.0-beta05'
+    compile 'com.android.tools.build:gradle:3.0.0'
 }
 
 ext {
