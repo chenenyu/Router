@@ -1,7 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
+if (Boolean.valueOf(applyRouterPlugin)) {
+    apply plugin: 'com.chenenyu.router'
+}
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -13,12 +15,6 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["moduleName": project.name]
-            }
-        }
     }
 
     buildTypes {
@@ -39,6 +35,4 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation project(':router')
-    kapt project(':compiler')
 }

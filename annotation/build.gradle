@@ -1,13 +1,9 @@
 apply plugin: 'java'
 
-Properties config = new Properties()
-config.load(project.file('../VERSION.properties').newDataInputStream())
-def annoVersion = config.getProperty("ANNOTATION_VERSION")
-
 ext {
     GROUP = 'com.chenenyu.router'
     ARTIFACT = 'annotation'
-    VERSION = annoVersion
+    VERSION = ANNOTATION_VERSION
     BINTRAY_NAME = 'router-annotation'
 }
 

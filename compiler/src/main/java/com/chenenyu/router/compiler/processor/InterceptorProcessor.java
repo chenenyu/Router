@@ -26,6 +26,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 
+import static com.chenenyu.router.compiler.util.Consts.APT_PACKAGE_NAME;
 import static com.chenenyu.router.compiler.util.Consts.CLASS_JAVA_DOC;
 import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_ANNOTATION_TYPE;
 import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_FULL_NAME;
@@ -33,7 +34,6 @@ import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_TABLE;
 import static com.chenenyu.router.compiler.util.Consts.INTERCEPTOR_TABLE_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Consts.METHOD_HANDLE;
 import static com.chenenyu.router.compiler.util.Consts.OPTION_MODULE_NAME;
-import static com.chenenyu.router.compiler.util.Consts.PACKAGE_NAME;
 
 /**
  * {@link Interceptor} annotation processor.
@@ -134,7 +134,7 @@ public class InterceptorProcessor extends AbstractProcessor {
                 .build();
 
         try {
-            JavaFile.builder(PACKAGE_NAME, type).build().writeTo(processingEnv.getFiler());
+            JavaFile.builder(APT_PACKAGE_NAME, type).build().writeTo(processingEnv.getFiler());
         } catch (IOException e) {
             e.printStackTrace();
         }

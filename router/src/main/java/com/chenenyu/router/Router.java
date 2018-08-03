@@ -4,7 +4,6 @@ import android.net.Uri;
 
 import com.chenenyu.router.matcher.AbsMatcher;
 import com.chenenyu.router.template.RouteTable;
-import com.chenenyu.router.util.RLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +21,6 @@ public class Router {
 
     private static final List<RouteInterceptor> sGlobalInterceptors = new ArrayList<>();
 
-
-    public static void initialize(Configuration configuration) {
-        RLog.showLog(configuration.debuggable);
-        AptHub.registerModules(configuration.modules);
-    }
 
     public static IRouter build(String path) {
         return build(path == null ? null : Uri.parse(path));

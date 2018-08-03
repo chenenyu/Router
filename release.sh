@@ -9,3 +9,7 @@
 # router
 ./gradlew clean pBPTML -p router
 ./gradlew bintrayUpload -p router
+
+# gradle-plugin
+./gradlew clean publish -p gradle-plugin
+./gradlew bintrayUpload -p gradle-plugin
