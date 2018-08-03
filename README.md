@@ -24,15 +24,11 @@ android {
 }
 
 dependencies {
-    implementation 'com.chenenyu.router:router:版本号'
+    implementation 'com.chenenyu.router:router:1.5.2'
     // 每个使用了Router注解的module都要添加该注解处理器
-    annotationProcessor 'com.chenenyu.router:compiler:版本号'
+    annotationProcessor 'com.chenenyu.router:compiler:1.5.1'
 }
 ```
-
-latest `router` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router/images/download.svg)
-
-latest `compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg)  
 
 ## 基本用法
 
