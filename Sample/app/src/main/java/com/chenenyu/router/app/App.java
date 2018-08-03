@@ -2,8 +2,7 @@ package com.chenenyu.router.app;
 
 import android.app.Application;
 
-import com.chenenyu.router.Configuration;
-import com.chenenyu.router.Router;
+import com.chenenyu.router.util.RLog;
 
 /**
  * <p>
@@ -14,10 +13,6 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        // init
-        Router.initialize(new Configuration.Builder()
-                .setDebuggable(BuildConfig.DEBUG)
-                .registerModules("module1", "module2", "app")
-                .build());
+        RLog.showLog(true);
     }
 }
