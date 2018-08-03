@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.chenenyu.router'
+if (Boolean.valueOf(applyRouterPlugin)) {
+    apply plugin: 'com.chenenyu.router'
+}
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion

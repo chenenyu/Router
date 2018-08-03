@@ -8,13 +8,13 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.squareup:javapoet:1.9.0'
 //    compile project(':annotation')
-    compile "com.chenenyu.router:annotation:${property("ANNOTATION_VERSION")}"
+    compile "com.chenenyu.router:annotation:${ANNOTATION_VERSION}"
 }
 
 ext {
     GROUP = 'com.chenenyu.router'
     ARTIFACT = 'compiler'
-    VERSION = property("COMPILER_VERSION")
+    VERSION = COMPILER_VERSION
     BINTRAY_NAME = 'router-compiler'
 }
 

@@ -3,7 +3,7 @@ apply plugin: 'java'
 ext {
     GROUP = 'com.chenenyu.router'
     ARTIFACT = 'annotation'
-    VERSION = property("ANNOTATION_VERSION")
+    VERSION = ANNOTATION_VERSION
     BINTRAY_NAME = 'router-annotation'
 }
 

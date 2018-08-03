@@ -15,7 +15,7 @@ dependencies {
 ext {
     GROUP = 'com.chenenyu.router'
     ARTIFACT = 'gradle-plugin'
-    VERSION = property('PLUGIN_VERSION')
+    VERSION = PLUGIN_VERSION
     BINTRAY_NAME = 'router-gradle-plugin'
 }
 

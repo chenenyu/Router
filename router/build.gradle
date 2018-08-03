@@ -8,7 +8,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName property("ROUTER_VERSION")
+        versionName ROUTER_VERSION
     }
 
     buildTypes {
@@ -31,13 +31,13 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     compileOnly "com.android.support:support-v4:24.2.0"
 //    api project(':annotation')
-    api "com.chenenyu.router:annotation:${property("ANNOTATION_VERSION")}"
+    api "com.chenenyu.router:annotation:${ANNOTATION_VERSION}"
 }
 
 ext {
     GROUP = 'com.chenenyu.router'
     ARTIFACT = 'router'
-    VERSION = property("ROUTER_VERSION")
+    VERSION = ROUTER_VERSION
     BINTRAY_NAME = 'router'
 }
 

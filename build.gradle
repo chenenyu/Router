@@ -1,15 +1,17 @@
 buildscript {
     ext.kotlin_version = '1.2.51'
     repositories {
+        maven { url 'repo' }
         google()
         jcenter()
-        maven { url 'repo' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.0-beta05'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
-        classpath "com.chenenyu.router:gradle-plugin:1.6.0"
+        if (Boolean.valueOf(applyRouterPlugin)) {
+            classpath "com.chenenyu.router:gradle-plugin:${PLUGIN_VERSION}"
+        }
     }
 }
 

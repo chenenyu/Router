@@ -2,53 +2,54 @@
 
 # Router
 
-建议浏览[中文wiki](https://github.com/chenenyu/Router/wiki). It's better than you think.
+[中文wiki](https://github.com/chenenyu/Router/wiki). 方便的话给个star!❤️
 
 ![screenshot](static/screenshot.gif)
 
 ## Getting started
 
-*  Add dependencies by adding the following lines to your `build.gradle`:  
+#### [Branch 1.5 see here](https://github.com/chenenyu/Router/tree/1.5)
+
+*  Add router gradle plugin to your project-level `build.gradle`, as shown below.
 
 ```Groovy
-android {
-    defaultConfig {
-        ...
-        javaCompileOptions {
-            annotationProcessorOptions {
-                // 每个使用Router的module都要配置该参数
-                arguments = ["moduleName": project.name]
-            }
-        }
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:+'
+        classpath "com.chenenyu.router:gradle-plugin:版本号"
     }
 }
+```
+latest `router-gradle-plugin` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router-gradle-plugin/images/download.svg)
 
-dependencies {
-    implementation 'com.chenenyu.router:router:版本号'
-    // 每个使用了Router注解的module都要添加该注解处理器
-    annotationProcessor 'com.chenenyu.router:compiler:版本号'
-}
+
+* Apply router plugin in your module-level 'build.gradle'.
+
+```Groovy
+apply plugin: 'com.android.application' // apply plugin: 'com.android.library'
+apply plugin: 'com.chenenyu.router'
 ```
 
+**注意**: 在rootProject的`build.gradle`文件中, 可以指定插件引用的library版本.
+
+```groovy
+ext {
+    routerVersion = 'x.y.z'
+    compilerVersion = 'x.y.z'
+}
+```
 latest `router` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router/images/download.svg)
 
-latest `compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg)  
+latest `compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg)
+
 
 ## 基本用法
 
-1. 初始化
-
-```java
-Router.initialize(new Configuration.Builder()
-        // 调试模式，开启后会打印log
-        .setDebuggable(BuildConfig.DEBUG)
-        // 模块名(即project.name)，每个使用Router的module都要在这里注册
-        .registerModules("lib_module", "other_module", "app_module")
-        .build());
-```
-
-
-2. 添加拦截器(可选)
+* 添加拦截器(可选)
 
 ```java
 @Interceptor("SampleInterceptor")
@@ -61,7 +62,7 @@ public class SampleInterceptor implements RouteInterceptor {
 }
 ```
 
-3. 添加注解
+* 添加注解
 
 ```java
 // 给Activity添加注解，指定了路径和拦截器(可选)
@@ -85,7 +86,7 @@ public class TestFragment extends Fragment {
 }
 ```
 
-4. 跳转
+* 跳转
 
 ```java
 // 简单跳转
@@ -101,6 +102,7 @@ Router.build("test").go(this, new RouteCallback() {
         // do something
     }
 });
+
 // 获取路由对应的intent
 Router.build("test").getIntent();
 // 获取注解的Fragment
@@ -111,15 +113,8 @@ Router.build("test").getFragment();
 
 建议浏览 [wiki](https://github.com/chenenyu/Router/wiki).
 
-## ProGuard
 
-```
-# Router
--keep class com.chenenyu.router.** {*;}
--keep class * implements com.chenenyu.router.template.** {*;}
-```
-
-## 谁在使用Rouer
+## 谁在使用Router
 
 <div>
   <a href="http://sj.qq.com/myapp/detail.htm?apkName=com.sankuai.erp.mcashier">
