@@ -25,5 +25,4 @@
 #-renamesourcefileattribute SourceFile
 
 # Router
--keep class com.chenenyu.router.** {*;}
--keep class * implements com.chenenyu.router.template.** {*;}
+-keep class * implements com.chenenyu.router.template.ParamInjector
