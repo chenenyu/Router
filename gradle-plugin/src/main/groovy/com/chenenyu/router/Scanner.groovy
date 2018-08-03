@@ -39,7 +39,7 @@ class Scanner {
     }
 
     static boolean shouldScanClass(File classFile) {
-        return classFile && classFile.absolutePath.contains(APT_CLASS_PACKAGE_NAME)
+        return classFile.absolutePath.replaceAll("\\\\", "/").contains(APT_CLASS_PACKAGE_NAME)
     }
 
     /**
