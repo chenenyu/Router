@@ -120,6 +120,9 @@ Router.build("test").getFragment();
   <a href="http://sj.qq.com/myapp/detail.htm?apkName=com.sankuai.erp.mcashier">
   	<img src="static/美团轻收银.png" width="100"/>
   </a>
+  <a href="http://www.sixiangyun.cn/">
+    <img src="static/私享云.png" width="100"/>
+  </a>
   <a href="#">
   	<img src="static/恒大智能家居.png" width="100"/>
   </a>
