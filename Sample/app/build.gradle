@@ -5,7 +5,6 @@ if (Boolean.valueOf(applyRouterPlugin)) {
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         applicationId "com.chenenyu.router.app"
