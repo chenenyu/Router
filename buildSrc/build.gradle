@@ -1,0 +1,26 @@
+Properties properties = new Properties()
+properties.load(file('../gradle.properties').newDataInputStream())
+def applyRemotePlugin = properties.containsKey('applyRemotePlugin') ? properties.get('applyRemotePlugin'): false
+
+if (!Boolean.valueOf(applyRemotePlugin)) {
+    apply plugin: 'groovy'
+
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        compile gradleApi()
+        compile localGroovy()
+        compile 'com.android.tools.build:gradle:3.2.0'
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java', '../gradle-plugin/src/main/java']
+            groovy.srcDirs = ['src/main/groovy', '../gradle-plugin/src/main/groovy']
+            resources.srcDirs = ['src/main/resources', '../gradle-plugin/src/main/resources']
+        }
+    }
+}
