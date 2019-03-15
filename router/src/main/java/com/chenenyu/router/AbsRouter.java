@@ -16,7 +16,6 @@ import android.util.SparseArray;
 import com.chenenyu.router.util.RLog;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * Help to construct a {@link RouteRequest}.
@@ -144,19 +143,6 @@ abstract class AbsRouter implements IRouter {
                 bundle.putBinder(key, (IBinder) value);
             } else {
                 RLog.e("putBinder() requires api 18.");
-            }
-        } else if (value instanceof ArrayList) {
-            if (!((ArrayList) value).isEmpty()) {
-                Object obj = ((ArrayList) value).get(0);
-                if (obj instanceof Integer) {
-                    bundle.putIntegerArrayList(key, (ArrayList<Integer>) value);
-                } else if (obj instanceof String) {
-                    bundle.putStringArrayList(key, (ArrayList<String>) value);
-                } else if (obj instanceof CharSequence) {
-                    bundle.putCharSequenceArrayList(key, (ArrayList<CharSequence>) value);
-                } else if (obj instanceof Parcelable) {
-                    bundle.putParcelableArrayList(key, (ArrayList<? extends Parcelable>) value);
-                }
             }
         } else if (value instanceof SparseArray) {
             bundle.putSparseParcelableArray(key, (SparseArray<? extends Parcelable>) value);

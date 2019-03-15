@@ -1,11 +1,8 @@
 apply plugin: 'com.android.application'
-if (Boolean.valueOf(applyRouterPlugin)) {
-    apply plugin: 'com.chenenyu.router'
-}
+apply plugin: 'com.chenenyu.router'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         applicationId "com.chenenyu.router.app"

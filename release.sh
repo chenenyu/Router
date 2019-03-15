@@ -11,5 +11,5 @@
 ./gradlew bintrayUpload -p router
 
 # gradle-plugin
-./gradlew clean publish -p gradle-plugin
+./gradlew clean pBPTML -p gradle-plugin
 ./gradlew bintrayUpload -p gradle-plugin

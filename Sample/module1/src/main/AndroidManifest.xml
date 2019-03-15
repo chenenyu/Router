@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.chenenyu.router.module1"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.chenenyu.router.module1">
 
     <application
         android:allowBackup="true"
@@ -8,8 +8,7 @@
         android:supportsRtl="true">
         <activity
             android:name="com.chenenyu.router.module.Module1Activity"
-            android:label="Module1Activity">
-        </activity>
+            android:label="Module1Activity" />
     </application>
 
 </manifest>
