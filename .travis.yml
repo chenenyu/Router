@@ -12,14 +12,14 @@ android:
   components:
     - tools
     - platform-tools
-    - build-tools-27.0.3
-    - android-27
+    - build-tools-28.0.2
+    - android-28
     - extra-android-m2repository
     - extra-android-support
 
-  licenses:
-      - 'android-sdk-license-.+'
-      - '.+'
+#  licenses:
+#      - 'android-sdk-license-.+'
+#      - '.+'
 
 before_install:
   - chmod +x gradlew

@@ -4,6 +4,9 @@ tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.squareup:javapoet:1.9.0'

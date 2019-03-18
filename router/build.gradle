@@ -23,13 +23,18 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
-    compileOnly "com.android.support:support-v4:24.2.0"
-//    api project(':annotation')
+    compileOnly 'com.android.support:support-v4:24.2.0'
+    //    api project(':annotation')
     api "com.chenenyu.router:annotation:${ANNOTATION_VERSION}"
 }
 
