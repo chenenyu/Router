@@ -31,7 +31,7 @@ public class IntentProcessor implements RouteInterceptor {
         List<AbsImplicitMatcher> implicitMatcherList = MatcherRegistry.getImplicitMatcher();
         Set<Map.Entry<String, Class<?>>> entries = AptHub.routeTable.entrySet();
 
-        Intent intent = null;
+        boolean hasIntent = false;
         if (AptHub.routeTable.isEmpty()) {
             for (AbsImplicitMatcher implicitMatcher : implicitMatcherList) {
                 if (implicitMatcher.match(chain.getContext(), request.getUri(), null, request)) {
@@ -40,9 +40,8 @@ public class IntentProcessor implements RouteInterceptor {
                     realChain.setTargetClass(null);
                     Object result = implicitMatcher.generate(chain.getContext(), request.getUri(), null);
                     if (result instanceof Intent) {
-                        intent = (Intent) result;
-                        assembleIntent(intent, request);
-                        realChain.setTargetObject(intent);
+                        hasIntent = true;
+                        realChain.setTargetObject(result);
                     } else {
                         return RouteResponse.assemble(RouteStatus.FAILED, String.format(
                                 "The matcher can't generate an intent for uri: %s",
@@ -62,9 +61,8 @@ public class IntentProcessor implements RouteInterceptor {
                         realChain.setTargetClass(null);
                         Object result = matcher.generate(chain.getContext(), request.getUri(), null);
                         if (result instanceof Intent) {
-                            intent = (Intent) result;
-                            assembleIntent(intent, request);
-                            realChain.setTargetObject(intent);
+                            hasIntent = true;
+                            realChain.setTargetObject(result);
                         } else {
                             return RouteResponse.assemble(RouteStatus.FAILED, String.format(
                                     "The matcher can't generate an intent for uri: %s",
@@ -80,9 +78,8 @@ public class IntentProcessor implements RouteInterceptor {
                             realChain.setTargetClass(entry.getValue());
                             Object result = matcher.generate(chain.getContext(), request.getUri(), entry.getValue());
                             if (result instanceof Intent) {
-                                intent = (Intent) result;
-                                assembleIntent(intent, request);
-                                realChain.setTargetObject(intent);
+                                hasIntent = true;
+                                realChain.setTargetObject(result);
                             } else {
                                 return RouteResponse.assemble(RouteStatus.FAILED, String.format(
                                         "The matcher can't generate an intent for uri: %s",
@@ -96,7 +93,7 @@ public class IntentProcessor implements RouteInterceptor {
             }
         }
 
-        if (intent == null) {
+        if (!hasIntent) {
             return RouteResponse.assemble(RouteStatus.NOT_FOUND, String.format(
                     "Can't find an activity that matches the given uri: %s",
                     request.getUri().toString()));
@@ -104,21 +101,4 @@ public class IntentProcessor implements RouteInterceptor {
         return chain.process();
     }
 
-    private void assembleIntent(Intent intent, RouteRequest request) {
-        if (request.getExtras() != null && !request.getExtras().isEmpty()) {
-            intent.putExtras(request.getExtras());
-        }
-        if (request.getFlags() != 0) {
-            intent.addFlags(request.getFlags());
-        }
-        if (request.getData() != null) {
-            intent.setData(request.getData());
-        }
-        if (request.getType() != null) {
-            intent.setType(request.getType());
-        }
-        if (request.getAction() != null) {
-            intent.setAction(request.getAction());
-        }
-    }
 }

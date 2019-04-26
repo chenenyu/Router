@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private String uri;
-    private Button btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11;
+    private Button btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btn10, btn11, btn12;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn9 = findViewById(R.id.btn9);
         btn10 = findViewById(R.id.btn10);
         btn11 = findViewById(R.id.btn11);
+        btn12 = findViewById(R.id.btn12);
 
         editRoute.addTextChangedListener(new TextWatcher() {
             @Override
@@ -118,6 +119,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Router.build("intercepted").skipInterceptors().go(this);
         } else if (v == btn11) {
             Router.build("test").addInterceptors("AInterceptor").go(this);
+        } else if (v == btn12) {
+            Router.build("processedActivity").go(this);
         }
     }
 

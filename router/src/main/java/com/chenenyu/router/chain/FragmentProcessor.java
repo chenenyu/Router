@@ -36,19 +36,9 @@ public class FragmentProcessor implements RouteInterceptor {
                     realChain.setTargetClass(entry.getValue());
                     Object result = matcher.generate(chain.getContext(), chain.getRequest().getUri(), entry.getValue());
                     if (result instanceof android.support.v4.app.Fragment) {
-                        android.support.v4.app.Fragment fragment = (android.support.v4.app.Fragment) result;
-                        Bundle bundle = chain.getRequest().getExtras();
-                        if (bundle != null && !bundle.isEmpty()) {
-                            fragment.setArguments(bundle);
-                        }
-                        realChain.setTargetObject(fragment);
+                        realChain.setTargetObject(result);
                     } else if (result instanceof Fragment) {
-                        Fragment fragment = (Fragment) result;
-                        Bundle bundle = chain.getRequest().getExtras();
-                        if (bundle != null && !bundle.isEmpty()) {
-                            fragment.setArguments(bundle);
-                        }
-                        realChain.setTargetObject(fragment);
+                        realChain.setTargetObject(result);
                     } else {
                         return RouteResponse.assemble(RouteStatus.FAILED, String.format(
                                 "The matcher can't generate a fragment instance for uri: %s",

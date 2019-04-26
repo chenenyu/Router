@@ -6,6 +6,8 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.chenenyu.router.chain.ResultProcessor;
+
 import java.util.List;
 
 /**
@@ -91,6 +93,11 @@ public final class RealInterceptorChain implements RouteInterceptor.Chain {
         this.targetClass = targetClass;
     }
 
+    @Nullable
+    public Object getTargetObject() {
+        return targetObject;
+    }
+
     public void setTargetObject(@Nullable Object targetObject) {
         this.targetObject = targetObject;
     }
@@ -99,13 +106,8 @@ public final class RealInterceptorChain implements RouteInterceptor.Chain {
     @Override
     public RouteResponse process() {
         if (index >= interceptors.size()) {
-            RouteResponse response = RouteResponse.assemble(RouteStatus.SUCCEED, null);
-            if (targetObject != null) {
-                response.setResult(targetObject);
-            } else {
-                response.setStatus(RouteStatus.FAILED);
-            }
-            return response;
+            ResultProcessor response = new ResultProcessor();
+            return response.intercept(this);
         }
         RouteInterceptor interceptor = interceptors.get(index++);
         return interceptor.intercept(this);

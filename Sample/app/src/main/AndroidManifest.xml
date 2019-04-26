@@ -59,6 +59,9 @@
         <activity
             android:name=".InterceptedActivity"
             android:label="InterceptedActivity" />
+        <activity
+            android:name=".ProcessedActivity"
+            android:label="ProcessedActivity" />
         <activity android:name=".WebActivity" />
     </application>
 
