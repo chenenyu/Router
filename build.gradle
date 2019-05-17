@@ -6,7 +6,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.2'
+        classpath 'com.android.tools.build:gradle:3.4.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4"
         if (Boolean.valueOf(applyRemotePlugin)) {
@@ -28,7 +28,7 @@ task clean(type: Delete) {
 
 ext {
     compileSdkVersion = 28
-    minSdkVersion = 14
+    minSdkVersion = 16
     targetSdkVersion = 28
 
     supportVersion = "28.0.0"
