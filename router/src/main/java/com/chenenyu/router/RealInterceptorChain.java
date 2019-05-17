@@ -24,7 +24,7 @@ public final class RealInterceptorChain implements RouteInterceptor.Chain {
     @Nullable
     private Class<?> targetClass; // Intent/Fragment class
     @Nullable
-    private Object targetObject; // Intent/Fragment instance
+    private Object targetInstance; // Intent/Fragment instance
 
     RealInterceptorChain(@NonNull Object source,
                          @NonNull RouteRequest request,
@@ -91,23 +91,28 @@ public final class RealInterceptorChain implements RouteInterceptor.Chain {
         this.targetClass = targetClass;
     }
 
-    public void setTargetObject(@Nullable Object targetObject) {
-        this.targetObject = targetObject;
+    public void setTargetInstance(@Nullable Object targetInstance) {
+        this.targetInstance = targetInstance;
+    }
+
+    @Nullable
+    public Object getTargetInstance() {
+        return targetInstance;
     }
 
     @NonNull
     @Override
     public RouteResponse process() {
-        if (index >= interceptors.size()) {
+        if (interceptors.isEmpty()) {
             RouteResponse response = RouteResponse.assemble(RouteStatus.SUCCEED, null);
-            if (targetObject != null) {
-                response.setResult(targetObject);
+            if (targetInstance != null) {
+                response.setResult(targetInstance);
             } else {
                 response.setStatus(RouteStatus.FAILED);
             }
             return response;
         }
-        RouteInterceptor interceptor = interceptors.get(index++);
+        RouteInterceptor interceptor = interceptors.remove(0);
         return interceptor.intercept(this);
     }
 

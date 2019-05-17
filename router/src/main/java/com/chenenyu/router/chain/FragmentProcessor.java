@@ -1,7 +1,6 @@
 package com.chenenyu.router.chain;
 
 import android.app.Fragment;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.chenenyu.router.AptHub;
@@ -35,20 +34,8 @@ public class FragmentProcessor implements RouteInterceptor {
                             chain.getRequest().getUri(), matcher.getClass().getCanonicalName()));
                     realChain.setTargetClass(entry.getValue());
                     Object result = matcher.generate(chain.getContext(), chain.getRequest().getUri(), entry.getValue());
-                    if (result instanceof android.support.v4.app.Fragment) {
-                        android.support.v4.app.Fragment fragment = (android.support.v4.app.Fragment) result;
-                        Bundle bundle = chain.getRequest().getExtras();
-                        if (bundle != null && !bundle.isEmpty()) {
-                            fragment.setArguments(bundle);
-                        }
-                        realChain.setTargetObject(fragment);
-                    } else if (result instanceof Fragment) {
-                        Fragment fragment = (Fragment) result;
-                        Bundle bundle = chain.getRequest().getExtras();
-                        if (bundle != null && !bundle.isEmpty()) {
-                            fragment.setArguments(bundle);
-                        }
-                        realChain.setTargetObject(fragment);
+                    if (result instanceof android.support.v4.app.Fragment || result instanceof Fragment) {
+                        realChain.setTargetInstance(result);
                     } else {
                         return RouteResponse.assemble(RouteStatus.FAILED, String.format(
                                 "The matcher can't generate a fragment instance for uri: %s",
