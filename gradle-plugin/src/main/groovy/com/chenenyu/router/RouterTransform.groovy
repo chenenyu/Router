@@ -52,7 +52,7 @@ class RouterTransform extends Transform {
             throws TransformException, InterruptedException, IOException {
         long begin = System.currentTimeMillis()
         project.logger.info("- router transform begin:")
-
+        Scanner.clearRecordsClasses()
         transformInvocation.inputs.each { TransformInput input ->
             if (!input.jarInputs.empty) {
                 project.logger.info("-- jarInputs:")
