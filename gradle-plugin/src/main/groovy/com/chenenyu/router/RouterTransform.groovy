@@ -2,9 +2,12 @@ package com.chenenyu.router
 
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
+import com.android.ide.common.internal.WaitableExecutor
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
+
+import java.util.concurrent.Callable
 
 /**
  * Created by chenenyu on 2018/7/24.
@@ -14,8 +17,11 @@ class RouterTransform extends Transform {
 
     Project project
 
+    WaitableExecutor waitableExecutor
+
     RouterTransform(Project project) {
         this.project = project
+        this.waitableExecutor = WaitableExecutor.useGlobalSharedThreadPool()
     }
 
     @Override
@@ -57,39 +63,18 @@ class RouterTransform extends Transform {
             if (!input.jarInputs.empty) {
                 project.logger.info("-- jarInputs:")
                 input.jarInputs.each { JarInput jarInput ->
-                    // com.android.support:appcompat-v7:27.1.1 (/path/to/xxx.jar)
-                    project.logger.info("--- ${jarInput.name} (${jarInput.file.absolutePath})")
-                    String destName = jarInput.name
-                    String hexName = DigestUtils.md5Hex(jarInput.file.absolutePath)
-                    if (destName.endsWith(".jar")) { // local jar
-                        // rename to avoid the same name, such as classes.jar
-                        destName = "${destName.substring(0, destName.length() - 4)}_${hexName}"
+                    execute {
+                        transformJar(transformInvocation, jarInput)
                     }
-                    File destFile = transformInvocation.outputProvider.getContentLocation(
-                            destName, jarInput.contentTypes, jarInput.scopes, Format.JAR)
-                    if (Scanner.shouldScanJar(jarInput)) {
-                        Scanner.scanJar(jarInput.file, destFile)
-                    }
-
-                    FileUtils.copyFile(jarInput.file, destFile)
                 }
             }
 
             if (!input.directoryInputs.empty) {
                 project.logger.info("-- directoryInputs:")
                 input.directoryInputs.each { DirectoryInput directoryInput ->
-                    project.logger.info("-- directory: ${directoryInput.name} (${directoryInput.file.absolutePath})")
-                    File dest = transformInvocation.outputProvider.getContentLocation(
-                            directoryInput.name, directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
-                    project.logger.info("-- dest dir: ${dest.absolutePath}")
-                    directoryInput.file.eachFileRecurse { File file ->
-                        if (file.isFile() && Scanner.shouldScanClass(file)) {
-                            project.logger.info("--- ${file.absolutePath}")
-                            Scanner.scanClass(file)
-                        }
+                    execute {
+                        transformDir(transformInvocation, directoryInput)
                     }
-
-                    FileUtils.copyDirectory(directoryInput.file, dest)
                 }
             }
         }
@@ -103,5 +88,48 @@ class RouterTransform extends Transform {
         }
         project.logger.info("- router transform finish.")
         project.logger.info("cost time: ${(System.currentTimeMillis() - begin) / 1000.0f}s")
+    }
+
+    void transformJar(TransformInvocation transformInvocation, JarInput jarInput) {
+        // com.android.support:appcompat-v7:27.1.1 (/path/to/xxx.jar)
+        project.logger.info("--- ${jarInput.name} (${jarInput.file.absolutePath})")
+        String destName = jarInput.name
+        String hexName = DigestUtils.md5Hex(jarInput.file.absolutePath)
+        if (destName.endsWith(".jar")) { // local jar
+            // rename to avoid the same name, such as classes.jar
+            destName = "${destName.substring(0, destName.length() - 4)}_${hexName}"
+        }
+        File destFile = transformInvocation.outputProvider.getContentLocation(
+                destName, jarInput.contentTypes, jarInput.scopes, Format.JAR)
+        if (Scanner.shouldScanJar(jarInput)) {
+            Scanner.scanJar(jarInput.file, destFile)
+        }
+
+        FileUtils.copyFile(jarInput.file, destFile)
+    }
+
+    void transformDir(TransformInvocation transformInvocation, DirectoryInput directoryInput) {
+        project.logger.info("-- directory: ${directoryInput.name} (${directoryInput.file.absolutePath})")
+        File dest = transformInvocation.outputProvider.getContentLocation(
+                directoryInput.name, directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
+        project.logger.info("-- dest dir: ${dest.absolutePath}")
+        directoryInput.file.eachFileRecurse { File file ->
+            if (file.isFile() && Scanner.shouldScanClass(file)) {
+                project.logger.info("--- ${file.absolutePath}")
+                Scanner.scanClass(file)
+            }
+        }
+
+        FileUtils.copyDirectory(directoryInput.file, dest)
+    }
+
+    void execute(Closure closure) {
+        waitableExecutor.execute(new Callable<Void>() {
+            @Override
+            Void call() throws Exception {
+                closure()
+                return null
+            }
+        });
     }
 }
