@@ -58,7 +58,9 @@ class RouterTransform extends Transform {
             throws TransformException, InterruptedException, IOException {
         long begin = System.currentTimeMillis()
         project.logger.info("- router transform begin:")
+
         Scanner.clearRecordsClasses()
+
         transformInvocation.inputs.each { TransformInput input ->
             if (!input.jarInputs.empty) {
                 project.logger.info("-- jarInputs:")
@@ -94,9 +96,9 @@ class RouterTransform extends Transform {
         // com.android.support:appcompat-v7:27.1.1 (/path/to/xxx.jar)
         project.logger.info("--- ${jarInput.name} (${jarInput.file.absolutePath})")
         String destName = jarInput.name
-        String hexName = DigestUtils.md5Hex(jarInput.file.absolutePath)
         if (destName.endsWith(".jar")) { // local jar
             // rename to avoid the same name, such as classes.jar
+            String hexName = DigestUtils.md5Hex(jarInput.file.absolutePath)
             destName = "${destName.substring(0, destName.length() - 4)}_${hexName}"
         }
         File destFile = transformInvocation.outputProvider.getContentLocation(
@@ -130,6 +132,6 @@ class RouterTransform extends Transform {
                 closure()
                 return null
             }
-        });
+        })
     }
 }

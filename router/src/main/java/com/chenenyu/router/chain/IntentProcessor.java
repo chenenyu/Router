@@ -41,8 +41,7 @@ public class IntentProcessor implements RouteInterceptor {
                     Object result = implicitMatcher.generate(chain.getContext(), request.getUri(), null);
                     if (result instanceof Intent) {
                         intent = (Intent) result;
-                        assembleIntent(intent, request);
-                        realChain.setTargetObject(intent);
+                        realChain.setTargetInstance(intent);
                     } else {
                         return RouteResponse.assemble(RouteStatus.FAILED, String.format(
                                 "The matcher can't generate an intent for uri: %s",
@@ -63,8 +62,7 @@ public class IntentProcessor implements RouteInterceptor {
                         Object result = matcher.generate(chain.getContext(), request.getUri(), null);
                         if (result instanceof Intent) {
                             intent = (Intent) result;
-                            assembleIntent(intent, request);
-                            realChain.setTargetObject(intent);
+                            realChain.setTargetInstance(intent);
                         } else {
                             return RouteResponse.assemble(RouteStatus.FAILED, String.format(
                                     "The matcher can't generate an intent for uri: %s",
@@ -81,8 +79,7 @@ public class IntentProcessor implements RouteInterceptor {
                             Object result = matcher.generate(chain.getContext(), request.getUri(), entry.getValue());
                             if (result instanceof Intent) {
                                 intent = (Intent) result;
-                                assembleIntent(intent, request);
-                                realChain.setTargetObject(intent);
+                                realChain.setTargetInstance(intent);
                             } else {
                                 return RouteResponse.assemble(RouteStatus.FAILED, String.format(
                                         "The matcher can't generate an intent for uri: %s",
@@ -102,23 +99,5 @@ public class IntentProcessor implements RouteInterceptor {
                     request.getUri().toString()));
         }
         return chain.process();
-    }
-
-    private void assembleIntent(Intent intent, RouteRequest request) {
-        if (request.getExtras() != null && !request.getExtras().isEmpty()) {
-            intent.putExtras(request.getExtras());
-        }
-        if (request.getFlags() != 0) {
-            intent.addFlags(request.getFlags());
-        }
-        if (request.getData() != null) {
-            intent.setData(request.getData());
-        }
-        if (request.getType() != null) {
-            intent.setType(request.getType());
-        }
-        if (request.getAction() != null) {
-            intent.setAction(request.getAction());
-        }
     }
 }
