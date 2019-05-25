@@ -81,6 +81,8 @@ class RouterTransform extends Transform {
             }
         }
 
+        waitableExecutor.waitForAllTasks()
+
         // 找到了AptHub.class 向其注入代码
         if (registerTargetFile) {
             project.logger.info("begin to register code to ${registerTargetFile.absolutePath}")
