@@ -30,6 +30,12 @@ class Scanner {
     private static
     final Set<String> excludeJar = ["com.android.support", "android.arch.", "androidx."]
 
+    static void clearRecordsClasses() {
+        records.forEach { record ->
+            record.aptClasses.clear()
+        }
+    }
+
     static boolean shouldScanJar(JarInput jarInput) {
         excludeJar.each {
             if (jarInput.name.contains(it))

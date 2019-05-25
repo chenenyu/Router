@@ -57,6 +57,7 @@ public class AppInterceptorsHandler implements RouteInterceptor {
         }
 
         if (!finalInterceptors.isEmpty()) {
+            int index = 0;
             for (String name : finalInterceptors) {
                 RouteInterceptor interceptor = AptHub.interceptorInstances.get(name);
                 if (interceptor == null) {
@@ -70,7 +71,8 @@ public class AppInterceptorsHandler implements RouteInterceptor {
                 }
                 // enqueue
                 if (interceptor != null) {
-                    realChain.getInterceptors().add(interceptor);
+                    // insert interceptor from header
+                    realChain.getInterceptors().add(index++, interceptor);
                 }
             }
         }
