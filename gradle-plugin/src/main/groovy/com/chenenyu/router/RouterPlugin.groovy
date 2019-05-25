@@ -15,8 +15,8 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 class RouterPlugin implements Plugin<Project> {
     static final String APT_OPTION_NAME = "moduleName"
 
-    String DEFAULT_ROUTER_RUNTIME_VERSION = "1.6.2"
-    String DEFAULT_ROUTER_COMPILER_VERSION = "1.6.2"
+    String DEFAULT_ROUTER_RUNTIME_VERSION = "1.6.3"
+    String DEFAULT_ROUTER_COMPILER_VERSION = "1.6.3"
 
     String androidBuildGradleVersion
 
@@ -54,9 +54,9 @@ class RouterPlugin implements Plugin<Project> {
             }
         }
 
-        String compileConf = 'compile'
-        if (is3_xVersion()) {
-            compileConf = 'implementation'
+        String compileConf = 'implementation'
+        if (!is3_xVersion()) {
+            compileConf = 'compile'
         }
         String aptConf = 'annotationProcessor'
         if (isKotlinProject) {
