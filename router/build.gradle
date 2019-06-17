@@ -33,7 +33,8 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
-    compileOnly 'com.android.support:support-v4:24.2.0'
+    compileOnly 'androidx.annotation:annotation:1.1.0'
+    compileOnly "androidx.fragment:fragment:${rootProject.ext.androidxVersion}"
     //    api project(':annotation')
     api "com.chenenyu.router:annotation:${ANNOTATION_VERSION}"
 }

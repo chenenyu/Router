@@ -1,9 +1,10 @@
 package com.chenenyu.router;
 
-import android.app.Fragment;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 /**
  * Interceptor before route.
@@ -35,9 +36,6 @@ public interface RouteInterceptor {
 
         @Nullable
         Fragment getFragment();
-
-        @Nullable
-        android.support.v4.app.Fragment getFragmentV4();
 
         /**
          * Continue to process this route request.

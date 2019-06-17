@@ -1,7 +1,8 @@
 package com.chenenyu.router;
 
 import android.app.Activity;
-import android.app.Fragment;
+
+import androidx.fragment.app.Fragment;
 
 import com.chenenyu.router.template.ParamInjector;
 import com.chenenyu.router.util.RLog;
@@ -41,7 +42,7 @@ public final class AptHub {
      */
     @SuppressWarnings("unchecked")
     static void injectParams(Object obj) {
-        if (obj instanceof Activity || obj instanceof Fragment || obj instanceof android.support.v4.app.Fragment) {
+        if (obj instanceof Activity || obj instanceof Fragment) {
             String key = obj.getClass().getCanonicalName();
             Class<ParamInjector> clz;
             if (!injectors.containsKey(key)) {

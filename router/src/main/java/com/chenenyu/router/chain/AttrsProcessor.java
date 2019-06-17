@@ -1,9 +1,10 @@
 package com.chenenyu.router.chain;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.chenenyu.router.RealInterceptorChain;
 import com.chenenyu.router.RouteInterceptor;
@@ -25,12 +26,6 @@ public class AttrsProcessor implements RouteInterceptor {
         if (targetInstance instanceof Intent) {
             RouteRequest request = chain.getRequest();
             assembleIntent((Intent) targetInstance, request);
-        } else if (targetInstance instanceof android.support.v4.app.Fragment) {
-            RouteRequest request = chain.getRequest();
-            Bundle bundle = request.getExtras();
-            if (bundle != null && !bundle.isEmpty()) {
-                ((android.support.v4.app.Fragment) targetInstance).setArguments(bundle);
-            }
         } else if (targetInstance instanceof Fragment) {
             RouteRequest request = chain.getRequest();
             Bundle bundle = request.getExtras();
