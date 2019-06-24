@@ -1,7 +1,8 @@
 package com.chenenyu.router.app;
 
-import android.support.annotation.NonNull;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.chenenyu.router.RouteInterceptor;
 import com.chenenyu.router.RouteResponse;

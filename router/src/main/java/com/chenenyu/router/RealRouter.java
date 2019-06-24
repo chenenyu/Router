@@ -1,13 +1,12 @@
 package com.chenenyu.router;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.chenenyu.router.chain.AppInterceptorsHandler;
 import com.chenenyu.router.chain.AttrsProcessor;
@@ -61,14 +60,14 @@ final class RealRouter extends AbsRouter {
     }
 
     @Override
-    public Object getFragment(@NonNull Object source) {
+    public Fragment getFragment(@NonNull Object source) {
         List<RouteInterceptor> interceptors = new LinkedList<>();
         Collections.addAll(interceptors, mBaseValidator, mFragmentValidator,
                 mFragmentProcessor, mAppInterceptorsHandler, mAttrsProcessor);
         RealInterceptorChain chain = new RealInterceptorChain(source, mRouteRequest, interceptors);
         RouteResponse response = chain.process();
         callback(response);
-        return response.getResult();
+        return (Fragment) response.getResult();
     }
 
     @Override
@@ -88,54 +87,20 @@ final class RealRouter extends AbsRouter {
         if (intent != null) {
             Bundle options = mRouteRequest.getActivityOptionsBundle();
             if (context instanceof Activity) {
-                ActivityCompat.startActivityForResult((Activity) context, intent,
-                        mRouteRequest.getRequestCode(), options);
+                ((Activity) context).startActivityForResult(intent, mRouteRequest.getRequestCode(), options);
                 if (mRouteRequest.getEnterAnim() >= 0 && mRouteRequest.getExitAnim() >= 0) {
                     ((Activity) context).overridePendingTransition(
                             mRouteRequest.getEnterAnim(), mRouteRequest.getExitAnim());
                 }
             } else {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                // The below api added in v4:25.1.0
-                // ContextCompat.startActivity(context, intent, options);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    context.startActivity(intent, options);
-                } else {
-                    context.startActivity(intent);
-                }
+                context.startActivity(intent, options);
             }
         }
     }
 
     @Override
     public void go(Fragment fragment) {
-        Intent intent = getIntent(fragment);
-        if (intent != null) {
-            Bundle options = mRouteRequest.getActivityOptionsBundle();
-            if (mRouteRequest.getRequestCode() < 0) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) { // 4.1
-                    fragment.startActivity(intent, options);
-                } else {
-                    fragment.startActivity(intent);
-                }
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) { // 4.1
-                    fragment.startActivityForResult(intent, mRouteRequest.getRequestCode(), options);
-                } else {
-                    fragment.startActivityForResult(intent, mRouteRequest.getRequestCode());
-                }
-            }
-            if (mRouteRequest.getEnterAnim() >= 0 && mRouteRequest.getExitAnim() >= 0
-                    && fragment.getActivity() != null) {
-                // Add transition animation.
-                fragment.getActivity().overridePendingTransition(
-                        mRouteRequest.getEnterAnim(), mRouteRequest.getExitAnim());
-            }
-        }
-    }
-
-    @Override
-    public void go(android.support.v4.app.Fragment fragment) {
         Intent intent = getIntent(fragment);
         if (intent != null) {
             Bundle options = mRouteRequest.getActivityOptionsBundle();

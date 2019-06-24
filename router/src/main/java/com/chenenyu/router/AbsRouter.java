@@ -1,6 +1,5 @@
 package com.chenenyu.router;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
@@ -8,10 +7,12 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
-import android.support.annotation.AnimRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.util.SparseArray;
+
+import androidx.annotation.AnimRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
 
 import com.chenenyu.router.util.RLog;
 
@@ -229,12 +230,6 @@ abstract class AbsRouter implements IRouter {
 
     @Override
     public void go(Fragment fragment, RouteCallback callback) {
-        mRouteRequest.setRouteCallback(callback);
-        go(fragment);
-    }
-
-    @Override
-    public void go(android.support.v4.app.Fragment fragment, RouteCallback callback) {
         mRouteRequest.setRouteCallback(callback);
         go(fragment);
     }

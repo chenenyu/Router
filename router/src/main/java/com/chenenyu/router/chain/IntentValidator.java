@@ -1,6 +1,6 @@
 package com.chenenyu.router.chain;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.chenenyu.router.MatcherRegistry;
 import com.chenenyu.router.RouteInterceptor;

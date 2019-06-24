@@ -1,7 +1,7 @@
 package com.chenenyu.router.chain;
 
-import android.app.Fragment;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.chenenyu.router.AptHub;
 import com.chenenyu.router.MatcherRegistry;
@@ -34,7 +34,7 @@ public class FragmentProcessor implements RouteInterceptor {
                             chain.getRequest().getUri(), matcher.getClass().getCanonicalName()));
                     realChain.setTargetClass(entry.getValue());
                     Object result = matcher.generate(chain.getContext(), chain.getRequest().getUri(), entry.getValue());
-                    if (result instanceof android.support.v4.app.Fragment || result instanceof Fragment) {
+                    if (result instanceof Fragment) {
                         realChain.setTargetInstance(result);
                     } else {
                         return RouteResponse.assemble(RouteStatus.FAILED, String.format(

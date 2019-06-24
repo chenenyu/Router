@@ -3,8 +3,9 @@ package com.chenenyu.router.app;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 import com.chenenyu.router.Router;
 

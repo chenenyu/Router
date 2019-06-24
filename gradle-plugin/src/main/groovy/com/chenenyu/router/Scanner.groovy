@@ -15,25 +15,28 @@ import java.util.jar.JarFile
 class Scanner {
     static final String TEMPLATE_ROUTE_TABLE = "com/chenenyu/router/template/RouteTable"
     static final String TEMPLATE_INTERCEPTOR_TABLE = "com/chenenyu/router/template/InterceptorTable"
-    static
-    final String TEMPLATE_TARGET_INTERCEPTORS_TABLE = "com/chenenyu/router/template/TargetInterceptorsTable"
+    static final String TEMPLATE_TARGET_INTERCEPTORS_TABLE = "com/chenenyu/router/template/TargetInterceptorsTable"
 
-    static final List<Record> records = ImmutableList.of(
-            new Record(TEMPLATE_ROUTE_TABLE),
-            new Record(TEMPLATE_INTERCEPTOR_TABLE),
-            new Record(TEMPLATE_TARGET_INTERCEPTORS_TABLE))
+    // 当前app module的records
+    static List<Record> records
+    // 所有app module的records（当项目存在多个app module时）
+    static final HashMap<String, List<Record>> recordsMap = [:]
 
     static final String REGISTER_CLASS_NAME = "com/chenenyu/router/AptHub.class"
 
     private static final String APT_CLASS_PACKAGE_NAME = "com/chenenyu/router/apt"
 
-    private static
-    final Set<String> excludeJar = ["com.android.support", "android.arch.", "androidx."]
+    private static final Set<String> excludeJar = ["com.android.support", "android.arch.", "androidx."]
 
-    static void clearRecordsClasses() {
-        records.forEach { record ->
-            record.aptClasses.clear()
+    static List<Record> getRecords(String name) {
+        def records = recordsMap[name]
+        if (records == null) {
+            recordsMap[name] = ImmutableList.of(
+                    new Record(TEMPLATE_ROUTE_TABLE),
+                    new Record(TEMPLATE_INTERCEPTOR_TABLE),
+                    new Record(TEMPLATE_TARGET_INTERCEPTORS_TABLE))
         }
+        return recordsMap[name]
     }
 
     static boolean shouldScanJar(JarInput jarInput) {

@@ -32,18 +32,17 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 
-import static com.chenenyu.router.compiler.util.Consts.ACTIVITY_FULL_NAME;
-import static com.chenenyu.router.compiler.util.Consts.APT_PACKAGE_NAME;
-import static com.chenenyu.router.compiler.util.Consts.CLASS_JAVA_DOC;
-import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_FULL_NAME;
-import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_V4_FULL_NAME;
-import static com.chenenyu.router.compiler.util.Consts.METHOD_HANDLE;
-import static com.chenenyu.router.compiler.util.Consts.OPTION_MODULE_NAME;
-import static com.chenenyu.router.compiler.util.Consts.ROUTE_ANNOTATION_TYPE;
-import static com.chenenyu.router.compiler.util.Consts.ROUTE_TABLE;
-import static com.chenenyu.router.compiler.util.Consts.ROUTE_TABLE_FULL_NAME;
-import static com.chenenyu.router.compiler.util.Consts.TARGET_INTERCEPTORS_FULL_NAME;
-import static com.chenenyu.router.compiler.util.Consts.TARGET_INTERCEPTORS_TABLE;
+import static com.chenenyu.router.compiler.util.Constants.ACTIVITY_FULL_NAME;
+import static com.chenenyu.router.compiler.util.Constants.APT_PACKAGE_NAME;
+import static com.chenenyu.router.compiler.util.Constants.CLASS_JAVA_DOC;
+import static com.chenenyu.router.compiler.util.Constants.FRAGMENT_X_FULL_NAME;
+import static com.chenenyu.router.compiler.util.Constants.METHOD_HANDLE;
+import static com.chenenyu.router.compiler.util.Constants.OPTION_MODULE_NAME;
+import static com.chenenyu.router.compiler.util.Constants.ROUTE_ANNOTATION_TYPE;
+import static com.chenenyu.router.compiler.util.Constants.ROUTE_TABLE;
+import static com.chenenyu.router.compiler.util.Constants.ROUTE_TABLE_FULL_NAME;
+import static com.chenenyu.router.compiler.util.Constants.TARGET_INTERCEPTORS_FULL_NAME;
+import static com.chenenyu.router.compiler.util.Constants.TARGET_INTERCEPTORS_TABLE;
 
 /**
  * {@link Route} annotation processor.
@@ -99,8 +98,7 @@ public class RouteProcessor extends AbstractProcessor {
      * Verify the annotated class. Must be a subtype of Activity or Fragment.
      */
     private boolean validateClass(TypeElement typeElement) {
-        if (!isSubtype(typeElement, ACTIVITY_FULL_NAME) && !isSubtype(typeElement, FRAGMENT_V4_FULL_NAME)
-                && !isSubtype(typeElement, FRAGMENT_FULL_NAME)) {
+        if (!isSubtype(typeElement, ACTIVITY_FULL_NAME) && !isSubtype(typeElement, FRAGMENT_X_FULL_NAME)) {
             mLogger.error(typeElement, String.format("%s is not a subclass of Activity or Fragment.",
                     typeElement.getSimpleName().toString()));
             return false;

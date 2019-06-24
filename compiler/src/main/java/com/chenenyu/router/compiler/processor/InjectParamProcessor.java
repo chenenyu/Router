@@ -31,15 +31,14 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
 
-import static com.chenenyu.router.compiler.util.Consts.ACTIVITY_FULL_NAME;
-import static com.chenenyu.router.compiler.util.Consts.CLASS_JAVA_DOC;
-import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_FULL_NAME;
-import static com.chenenyu.router.compiler.util.Consts.FRAGMENT_V4_FULL_NAME;
-import static com.chenenyu.router.compiler.util.Consts.METHOD_INJECT;
-import static com.chenenyu.router.compiler.util.Consts.OPTION_MODULE_NAME;
-import static com.chenenyu.router.compiler.util.Consts.PARAM_ANNOTATION_TYPE;
-import static com.chenenyu.router.compiler.util.Consts.PARAM_CLASS_SUFFIX;
-import static com.chenenyu.router.compiler.util.Consts.PARAM_INJECTOR_FULL_NAME;
+import static com.chenenyu.router.compiler.util.Constants.ACTIVITY_FULL_NAME;
+import static com.chenenyu.router.compiler.util.Constants.CLASS_JAVA_DOC;
+import static com.chenenyu.router.compiler.util.Constants.FRAGMENT_X_FULL_NAME;
+import static com.chenenyu.router.compiler.util.Constants.METHOD_INJECT;
+import static com.chenenyu.router.compiler.util.Constants.OPTION_MODULE_NAME;
+import static com.chenenyu.router.compiler.util.Constants.PARAM_ANNOTATION_TYPE;
+import static com.chenenyu.router.compiler.util.Constants.PARAM_CLASS_SUFFIX;
+import static com.chenenyu.router.compiler.util.Constants.PARAM_INJECTOR_FULL_NAME;
 
 /**
  * {@link InjectParam} annotation processor.
@@ -121,7 +120,7 @@ public class InjectParamProcessor extends AbstractProcessor {
             boolean isActivity;
             if (isSubtype(parent, ACTIVITY_FULL_NAME)) {
                 isActivity = true;
-            } else if (isSubtype(parent, FRAGMENT_V4_FULL_NAME) || isSubtype(parent, FRAGMENT_FULL_NAME)) {
+            } else if (isSubtype(parent, FRAGMENT_X_FULL_NAME)) {
                 isActivity = false;
             } else {
                 throw new IllegalAccessException(

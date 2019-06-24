@@ -59,7 +59,7 @@ class RouterTransform extends Transform {
         long begin = System.currentTimeMillis()
         project.logger.info("- router transform begin:")
 
-        Scanner.clearRecordsClasses()
+        Scanner.records = Scanner.getRecords(project.name)
 
         transformInvocation.inputs.each { TransformInput input ->
             if (!input.jarInputs.empty) {

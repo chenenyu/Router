@@ -1,10 +1,10 @@
 package com.chenenyu.router;
 
-import android.app.Fragment;
 import android.content.Context;
-import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import java.util.List;
 
@@ -52,14 +52,8 @@ public final class RealInterceptorChain implements RouteInterceptor.Chain {
         Context context = null;
         if (source instanceof Context) {
             context = (Context) source;
-        } else if (source instanceof android.support.v4.app.Fragment) {
-            context = ((android.support.v4.app.Fragment) source).getContext();
         } else if (source instanceof Fragment) {
-            if (Build.VERSION.SDK_INT >= 23) {
-                context = ((Fragment) source).getContext();
-            } else {
-                context = ((Fragment) source).getActivity();
-            }
+            context = ((Fragment) source).requireContext();
         }
         assert context != null;
         return context;
@@ -69,12 +63,6 @@ public final class RealInterceptorChain implements RouteInterceptor.Chain {
     @Override
     public Fragment getFragment() {
         return (source instanceof Fragment) ? (Fragment) source : null;
-    }
-
-    @Nullable
-    @Override
-    public android.support.v4.app.Fragment getFragmentV4() {
-        return (source instanceof android.support.v4.app.Fragment) ? (android.support.v4.app.Fragment) source : null;
     }
 
     @NonNull
