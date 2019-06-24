@@ -9,8 +9,8 @@ repositories {
 }
 
 dependencies {
-    compile gradleApi()
-    compile localGroovy()
+    implementation gradleApi()
+    implementation localGroovy()
     compileOnly 'com.android.tools.build:gradle:3.4.1'
 }
 

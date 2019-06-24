@@ -8,8 +8,6 @@
 
 ## Getting started
 
-#### [Branch 1.5 see here](https://github.com/chenenyu/Router/tree/1.5)
-
 *  Add router gradle plugin to your project-level `build.gradle`, as shown below.
 
 ```Groovy
