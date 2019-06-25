@@ -41,7 +41,7 @@ class RouterTransform extends Transform {
 
     @Override
     boolean isIncremental() {
-        return false
+        return true
     }
 
     @Override
@@ -58,15 +58,40 @@ class RouterTransform extends Transform {
             throws TransformException, InterruptedException, IOException {
         long begin = System.currentTimeMillis()
         project.logger.info("- router transform begin:")
-
+        boolean isIncremental = transformInvocation.incremental
+        if (!isIncremental) {
+            transformInvocation.outputProvider.deleteAll()
+        }
         Scanner.records = Scanner.getRecords(project.name)
 
         transformInvocation.inputs.each { TransformInput input ->
             if (!input.jarInputs.empty) {
                 project.logger.info("-- jarInputs:")
                 input.jarInputs.each { JarInput jarInput ->
-                    execute {
-                        transformJar(transformInvocation, jarInput)
+                    File destFile = getJarDestFile(transformInvocation, jarInput);
+                    if (isIncremental) {
+                        Status status = jarInput.getStatus()
+                        switch (status) {
+                            case Status.NOTCHANGED:
+                                break
+                            case Status.CHANGED:
+                            case Status.ADDED:
+                                execute {
+                                    transformJar(jarInput, destFile)
+                                }
+                                break
+                            case Status.REMOVED:
+                                execute {
+                                    if (destFile.exists()) {
+                                        FileUtils.forceDelete(destFile);
+                                    }
+                                }
+                                break
+                        }
+                    } else {
+                        execute {
+                            transformJar(jarInput, destFile)
+                        }
                     }
                 }
             }
@@ -74,9 +99,46 @@ class RouterTransform extends Transform {
             if (!input.directoryInputs.empty) {
                 project.logger.info("-- directoryInputs:")
                 input.directoryInputs.each { DirectoryInput directoryInput ->
-                    execute {
-                        transformDir(transformInvocation, directoryInput)
+                    File dest = transformInvocation.outputProvider.getContentLocation(
+                            directoryInput.name, directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
+                    if (isIncremental) {
+                        String srcDirPath = directoryInput.getFile().getAbsolutePath();
+                        String destDirPath = dest.getAbsolutePath();
+                        Map<File, Status> fileStatusMap = directoryInput.getChangedFiles();
+                        for (Map.Entry<File, Status> changedFile : fileStatusMap.entrySet()) {
+                            Status status = changedFile.getValue();
+                            File inputFile = changedFile.getKey();
+                            String destFilePath = inputFile.getAbsolutePath().replace(srcDirPath, destDirPath);
+                            File destFile = new File(destFilePath);
+                            switch (status) {
+                                case Status.NOTCHANGED:
+                                    break
+                                case Status.REMOVED:
+                                    execute {
+                                        if (destFile.exists()) {
+                                            destFile.delete()
+                                        }
+                                    }
+                                    break
+                                case Status.ADDED:
+                                case Status.CHANGED:
+                                    execute {
+                                        try {
+                                            FileUtils.touch(destFile);
+                                        } catch (IOException e) {
+                                            Files.createParentDirs(destFile);
+                                        }
+                                        transformSingleFile(inputFile, destFile);
+                                    }
+                                    break
+                            }
+                        }
+                    } else {
+                        execute {
+                            transformDir(directoryInput, dest)
+                        }
                     }
+
                 }
             }
         }
@@ -94,9 +156,7 @@ class RouterTransform extends Transform {
         project.logger.info("cost time: ${(System.currentTimeMillis() - begin) / 1000.0f}s")
     }
 
-    void transformJar(TransformInvocation transformInvocation, JarInput jarInput) {
-        // com.android.support:appcompat-v7:27.1.1 (/path/to/xxx.jar)
-        project.logger.info("--- ${jarInput.name} (${jarInput.file.absolutePath})")
+    File getJarDestFile(TransformInvocation transformInvocation, JarInput jarInput) {
         String destName = jarInput.name
         if (destName.endsWith(".jar")) { // local jar
             // rename to avoid the same name, such as classes.jar
@@ -105,6 +165,20 @@ class RouterTransform extends Transform {
         }
         File destFile = transformInvocation.outputProvider.getContentLocation(
                 destName, jarInput.contentTypes, jarInput.scopes, Format.JAR)
+        return destFile;
+    }
+
+    void transformSingleFile(File inputFile, File destFile) {
+        if (inputFile.isFile() && Scanner.shouldScanClass(inputFile)) {
+            project.logger.info("--- ${inputFile.absolutePath}")
+            Scanner.scanClass(inputFile)
+        }
+        FileUtils.copyFile(inputFile, destFile)
+    }
+
+    void transformJar(JarInput jarInput, File destFile) {
+        // com.android.support:appcompat-v7:27.1.1 (/path/to/xxx.jar)
+        project.logger.info("--- ${jarInput.name} (${jarInput.file.absolutePath})")
         if (Scanner.shouldScanJar(jarInput)) {
             Scanner.scanJar(jarInput.file, destFile)
         }
@@ -112,10 +186,9 @@ class RouterTransform extends Transform {
         FileUtils.copyFile(jarInput.file, destFile)
     }
 
-    void transformDir(TransformInvocation transformInvocation, DirectoryInput directoryInput) {
+
+    void transformDir(DirectoryInput directoryInput, File dest) {
         project.logger.info("-- directory: ${directoryInput.name} (${directoryInput.file.absolutePath})")
-        File dest = transformInvocation.outputProvider.getContentLocation(
-                directoryInput.name, directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
         project.logger.info("-- dest dir: ${dest.absolutePath}")
         directoryInput.file.eachFileRecurse { File file ->
             if (file.isFile() && Scanner.shouldScanClass(file)) {
