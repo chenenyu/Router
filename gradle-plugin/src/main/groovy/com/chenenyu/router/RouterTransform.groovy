@@ -68,14 +68,14 @@ class RouterTransform extends Transform {
             if (!input.jarInputs.empty) {
                 project.logger.info("-- jarInputs:")
                 input.jarInputs.each { JarInput jarInput ->
-                    File destFile = getJarDestFile(transformInvocation, jarInput);
+                    File destFile = getJarDestFile(transformInvocation, jarInput)
                     if (isIncremental) {
                         Status status = jarInput.getStatus()
                         switch (status) {
                             case Status.NOTCHANGED:
                                 break
-                            case Status.CHANGED:
                             case Status.ADDED:
+                            case Status.CHANGED:
                                 execute {
                                     transformJar(jarInput, destFile)
                                 }
@@ -83,7 +83,7 @@ class RouterTransform extends Transform {
                             case Status.REMOVED:
                                 execute {
                                     if (destFile.exists()) {
-                                        FileUtils.forceDelete(destFile);
+                                        FileUtils.forceDelete(destFile)
                                     }
                                 }
                                 break
@@ -102,33 +102,33 @@ class RouterTransform extends Transform {
                     File dest = transformInvocation.outputProvider.getContentLocation(
                             directoryInput.name, directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
                     if (isIncremental) {
-                        String srcDirPath = directoryInput.getFile().getAbsolutePath();
-                        String destDirPath = dest.getAbsolutePath();
-                        Map<File, Status> fileStatusMap = directoryInput.getChangedFiles();
+                        String srcDirPath = directoryInput.getFile().getAbsolutePath()
+                        String destDirPath = dest.getAbsolutePath()
+                        Map<File, Status> fileStatusMap = directoryInput.getChangedFiles()
                         for (Map.Entry<File, Status> changedFile : fileStatusMap.entrySet()) {
-                            Status status = changedFile.getValue();
-                            File inputFile = changedFile.getKey();
-                            String destFilePath = inputFile.getAbsolutePath().replace(srcDirPath, destDirPath);
-                            File destFile = new File(destFilePath);
+                            Status status = changedFile.getValue()
+                            File inputFile = changedFile.getKey()
+                            String destFilePath = inputFile.getAbsolutePath().replace(srcDirPath, destDirPath)
+                            File destFile = new File(destFilePath)
                             switch (status) {
                                 case Status.NOTCHANGED:
-                                    break
-                                case Status.REMOVED:
-                                    execute {
-                                        if (destFile.exists()) {
-                                            destFile.delete()
-                                        }
-                                    }
                                     break
                                 case Status.ADDED:
                                 case Status.CHANGED:
                                     execute {
                                         try {
-                                            FileUtils.touch(destFile);
+                                            FileUtils.touch(destFile)
                                         } catch (IOException e) {
-                                            Files.createParentDirs(destFile);
+                                            Files.createParentDirs(destFile)
                                         }
-                                        transformSingleFile(inputFile, destFile);
+                                        transformSingleFile(inputFile, destFile)
+                                    }
+                                    break
+                                case Status.REMOVED:
+                                    execute {
+                                        if (destFile.exists()) {
+                                            FileUtils.deleteQuietly(destFile)
+                                        }
                                     }
                                     break
                             }
@@ -165,7 +165,7 @@ class RouterTransform extends Transform {
         }
         File destFile = transformInvocation.outputProvider.getContentLocation(
                 destName, jarInput.contentTypes, jarInput.scopes, Format.JAR)
-        return destFile;
+        return destFile
     }
 
     void transformSingleFile(File inputFile, File destFile) {
