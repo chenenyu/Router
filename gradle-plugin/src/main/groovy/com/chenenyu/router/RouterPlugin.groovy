@@ -15,8 +15,8 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 class RouterPlugin implements Plugin<Project> {
     static final String APT_OPTION_NAME = "moduleName"
 
-    String DEFAULT_ROUTER_RUNTIME_VERSION = "1.6.4"
-    String DEFAULT_ROUTER_COMPILER_VERSION = "1.6.4"
+    String DEFAULT_ROUTER_RUNTIME_VERSION = "1.6.5"
+    String DEFAULT_ROUTER_COMPILER_VERSION = "1.6.5"
 
     String androidBuildGradleVersion
 
