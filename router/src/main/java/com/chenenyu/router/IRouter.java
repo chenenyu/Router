@@ -88,6 +88,11 @@ public interface IRouter {
     IRouter activityOptionsBundle(Bundle activityOptionsBundle);
 
     /**
+     * Skip {@link com.chenenyu.router.matcher.AbsImplicitMatcher}.
+     */
+    IRouter skipImplicitMatcher();
+
+    /**
      * Skip all the interceptors.
      */
     IRouter skipInterceptors();

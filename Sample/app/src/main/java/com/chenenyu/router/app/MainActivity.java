@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        Router.addGlobalInterceptor(new GlobalInterceptor());
+
         // 动态添加路由
         Router.handleRouteTable(new RouteTable() {
             @Override
@@ -124,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0 && resultCode == RESULT_OK) {
             String result = data.getStringExtra("extra");
             Toast.makeText(this, result, Toast.LENGTH_SHORT).show();

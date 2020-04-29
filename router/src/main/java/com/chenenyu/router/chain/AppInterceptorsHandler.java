@@ -31,9 +31,12 @@ public class AppInterceptorsHandler implements RouteInterceptor {
         RealInterceptorChain realChain = (RealInterceptorChain) chain;
         RouteRequest request = chain.getRequest();
 
-        // enqueue global interceptors
+        // record the position of the list at where the interceptors should be insert
+        int index = 0;
+
+        // insert global interceptors in front of the queue
         if (!Router.getGlobalInterceptors().isEmpty()) {
-            realChain.getInterceptors().addAll(Router.getGlobalInterceptors());
+            realChain.getInterceptors().addAll(index++, Router.getGlobalInterceptors());
         }
 
         Set<String> finalInterceptors = new LinkedHashSet<>();
@@ -57,7 +60,6 @@ public class AppInterceptorsHandler implements RouteInterceptor {
         }
 
         if (!finalInterceptors.isEmpty()) {
-            int index = 0;
             for (String name : finalInterceptors) {
                 RouteInterceptor interceptor = AptHub.interceptorInstances.get(name);
                 if (interceptor == null) {
@@ -71,7 +73,6 @@ public class AppInterceptorsHandler implements RouteInterceptor {
                 }
                 // enqueue
                 if (interceptor != null) {
-                    // insert interceptor from header
                     realChain.getInterceptors().add(index++, interceptor);
                 }
             }

@@ -9,7 +9,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.squareup:javapoet:1.9.0'
+    compile 'com.squareup:javapoet:1.12.1'
 //    compile project(':annotation')
     compile "com.chenenyu.router:annotation:${ANNOTATION_VERSION}"
 }
@@ -21,4 +21,5 @@ ext {
     BINTRAY_NAME = 'router-compiler'
 }
 
-apply from: 'https://raw.githubusercontent.com/chenenyu/gradle-bintray-plugin/master/publish.gradle'
+apply from: '../gradle/publish.gradle'
+//apply from: 'https://raw.githubusercontent.com/chenenyu/gradle-bintray-plugin/master/publish.gradle'
