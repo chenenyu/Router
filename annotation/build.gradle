@@ -10,4 +10,5 @@ ext {
     BINTRAY_NAME = 'router-annotation'
 }
 
-apply from: 'https://raw.githubusercontent.com/chenenyu/gradle-bintray-plugin/master/publish.gradle'
+apply from: '../gradle/publish.gradle'
+//apply from: 'https://raw.githubusercontent.com/chenenyu/gradle-bintray-plugin/master/publish.gradle'

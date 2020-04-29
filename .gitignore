@@ -7,5 +7,5 @@ build
 /captures
 .externalNativeBuild
 
-publish.gradle
+#publish.gradle
 /repo

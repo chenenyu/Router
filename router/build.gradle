@@ -34,7 +34,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
     compileOnly 'androidx.annotation:annotation:1.1.0'
-    compileOnly "androidx.fragment:fragment:${rootProject.ext.androidxVersion}"
+    compileOnly "androidx.fragment:fragment:1.2.4"
     //    api project(':annotation')
     api "com.chenenyu.router:annotation:${ANNOTATION_VERSION}"
 }
@@ -46,4 +46,5 @@ ext {
     BINTRAY_NAME = 'router'
 }
 
-apply from: 'https://raw.githubusercontent.com/chenenyu/gradle-bintray-plugin/master/publish.gradle'
+apply from: '../gradle/publish.gradle'
+//apply from: 'https://raw.githubusercontent.com/chenenyu/gradle-bintray-plugin/master/publish.gradle'

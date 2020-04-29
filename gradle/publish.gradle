@@ -1,0 +1,173 @@
+// https://github.com/chenenyu/gradle-bintray-plugin
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+if (!project.ext.has('GROUP') || !project.ext.has('ARTIFACT') || !project.ext.has('VERSION')) {
+    throw new MissingPropertyException("Extra properties['GROUP', 'ARTIFACT', 'VERSION'] are required.")
+}
+
+boolean isAndroidModule = false
+boolean isJavaModule = false
+if (project.plugins.hasPlugin('com.android.library')) {
+    isAndroidModule = true
+} else if (project.plugins.hasPlugin('java')) {
+    isJavaModule = true
+} else {
+    throw new UnknownPluginException('Just support android/java projects now.')
+}
+
+// task to generate source.jar
+task sourcesJar(type: Jar) {
+    group 'build'
+    archiveClassifier.set('sources')
+}
+
+// task to generate javadoc
+if (isAndroidModule) {
+    sourcesJar {
+        from android.sourceSets.main.java.srcDirs
+    }
+
+    task javadoc(type: Javadoc) {
+        group 'documentation'
+        options.encoding = 'UTF-8'
+        source = android.sourceSets.main.java.srcDirs
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        failOnError false
+    }
+} else if (isJavaModule) {
+    sourcesJar {
+        from sourceSets.main.java.srcDirs
+    }
+
+    javadoc {
+        options.encoding = 'UTF-8'
+        failOnError false
+    }
+}
+
+// task to generate javadoc.jar
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    group 'build'
+    from javadoc.getDestinationDir()
+    archiveClassifier.set('javadoc')
+}
+
+// handle aar artifact
+
+// The following types/formats are supported:
+//  - Instances of MavenArtifact.
+//  - Instances of AbstractArchiveTask, for example jar.
+//  - Instances of PublishArtifact
+//  - Maps containing a 'source' entry, for example [source: '/path/to/file', extension: 'zip'].
+//  - Anything that can be converted to a file, as per Project.file()
+def aarArtifact = null
+if (isAndroidModule) {
+    if (project.ext.has('AAR')) {
+        aarArtifact = project.ext.AAR
+    } else {
+        project.afterEvaluate {
+            def bundleAarTask = project.tasks.findByPath('bundleRelease')
+            if (!bundleAarTask) {
+                bundleAarTask = project.tasks.findByPath('bundleReleaseAar') // gradle plugin 3.2
+            }
+            if (bundleAarTask && (bundleAarTask instanceof AbstractArchiveTask)) {
+                aarArtifact = bundleAarTask
+            }
+            if (!aarArtifact) {
+                throw new MissingPropertyException("Extra properties['AAR'] are required.")
+            }
+        }
+    }
+}
+
+def synchronized verifyDependency(Dependency it) {
+    return it.group != null && it.group != 'unspecified' && it.name != 'unspecified' &&
+            it.version != null && it.version != 'unspecified'
+}
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            Bintray(MavenPublication) {
+                groupId project.ext.GROUP
+                artifactId project.ext.ARTIFACT
+                version project.ext.VERSION
+
+                artifact sourcesJar
+                artifact javadocJar
+                if (isAndroidModule) {
+                    artifact aarArtifact
+                } else if (isJavaModule) {
+                    from components.java
+//                    artifact jar
+                }
+
+                pom {
+                    if (isAndroidModule) {
+                        packaging 'aar'
+                    } else if (isJavaModule) {
+                        packaging 'jar'
+                    }
+                    if (isAndroidModule) {
+                        withXml {
+                            def dependenciesNode = asNode().appendNode('dependencies')
+                            configurations.compile.dependencies.each {
+                                if (verifyDependency(it)) {
+                                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                                    dependencyNode.appendNode('groupId', it.group)
+                                    dependencyNode.appendNode('artifactId', it.name)
+                                    dependencyNode.appendNode('version', it.version)
+                                }
+                            }
+                            configurations.implementation.dependencies.each {
+                                if (verifyDependency(it)) {
+                                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                                    dependencyNode.appendNode('groupId', it.group)
+                                    dependencyNode.appendNode('artifactId', it.name)
+                                    dependencyNode.appendNode('version', it.version)
+                                }
+                            }
+                            configurations.api.dependencies.each {
+                                if (verifyDependency(it)) {
+                                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                                    dependencyNode.appendNode('groupId', it.group)
+                                    dependencyNode.appendNode('artifactId', it.name)
+                                    dependencyNode.appendNode('version', it.version)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Properties properties = new Properties()
+    if (project.rootProject.file('local.properties').exists()) {
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    }
+    bintray {
+        user = properties.containsKey('BINTRAY_USER') ? properties.get('BINTRAY_USER') : ""
+        key = properties.containsKey('BINTRAY_API_KEY') ? properties.get('BINTRAY_API_KEY') : ""
+        publications = ['Bintray']
+        publish = project.ext.has('PUBLISH') ? project.ext.PUBLISH : true
+        override = project.ext.has('OVERRIDE') ? project.ext.OVERRIDE : false
+        dryRun = project.ext.has('DRYRUN') ? project.ext.DRYRUN : false
+        pkg {
+            repo = project.ext.has('BINTRAY_REPO') ? project.ext.BINTRAY_REPO : 'maven'
+            name = project.ext.has('BINTRAY_NAME') ? project.ext.BINTRAY_NAME : project.ext.ARTIFACT
+            licenses = project.ext.has('LICENSES') ? project.ext.LICENSES : ['Apache-2.0']
+            vcsUrl = project.ext.has('VCS_URL') ? project.ext.VCS_URL : ''
+            if (project.ext.has('USER_ORG')) {
+                userOrg = project.ext.USER_ORG
+            }
+            publicDownloadNumbers = true
+
+            version {
+                name = project.ext.VERSION
+                vcsTag = project.ext.VERSION
+            }
+        }
+    }
+}
