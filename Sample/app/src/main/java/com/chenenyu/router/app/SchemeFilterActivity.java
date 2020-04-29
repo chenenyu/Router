@@ -21,9 +21,11 @@ public class SchemeFilterActivity extends Activity {
         Uri uri = getIntent().getData();
         if (uri != null) {
             Log.d("SchemeFilterActivity", "uri: " + uri.toString());
-            if (!"router://filter".equals(uri.toString())) {
-                Router.build(uri).go(this);
-            }
+//            if (!"router://filter".equals(uri.toString())) {
+//                Router.build(uri).go(this);
+//            }
+            // 调用skipImplicitMatcher() 防止隐式启动死循环
+            Router.build(uri).skipImplicitMatcher().go(this);
             finish();
         }
     }

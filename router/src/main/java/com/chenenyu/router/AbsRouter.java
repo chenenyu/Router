@@ -205,6 +205,12 @@ abstract class AbsRouter implements IRouter {
     }
 
     @Override
+    public IRouter skipImplicitMatcher() {
+        mRouteRequest.setSkipImplicitMatcher(true);
+        return this;
+    }
+
+    @Override
     public IRouter skipInterceptors() {
         mRouteRequest.setSkipInterceptors(true);
         return this;

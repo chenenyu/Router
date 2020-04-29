@@ -11,6 +11,7 @@ import com.chenenyu.router.RouteInterceptor;
 import com.chenenyu.router.RouteRequest;
 import com.chenenyu.router.RouteResponse;
 import com.chenenyu.router.RouteStatus;
+import com.chenenyu.router.matcher.AbsExplicitMatcher;
 import com.chenenyu.router.matcher.AbsImplicitMatcher;
 import com.chenenyu.router.matcher.AbsMatcher;
 import com.chenenyu.router.util.RLog;
@@ -28,12 +29,11 @@ public class IntentProcessor implements RouteInterceptor {
     public RouteResponse intercept(Chain chain) {
         RealInterceptorChain realChain = (RealInterceptorChain) chain;
         RouteRequest request = chain.getRequest();
-        List<AbsMatcher> matcherList = MatcherRegistry.getMatcher();
-        List<AbsImplicitMatcher> implicitMatcherList = MatcherRegistry.getImplicitMatcher();
-        Set<Map.Entry<String, Class<?>>> entries = AptHub.routeTable.entrySet();
 
         Intent intent = null;
         if (AptHub.routeTable.isEmpty()) {
+            List<AbsImplicitMatcher> implicitMatcherList = MatcherRegistry.getImplicitMatcher();
+
             for (AbsImplicitMatcher implicitMatcher : implicitMatcherList) {
                 if (implicitMatcher.match(chain.getContext(), request.getUri(), null, request)) {
                     RLog.i(String.format("{uri=%s, matcher=%s}",
@@ -52,8 +52,12 @@ public class IntentProcessor implements RouteInterceptor {
                 }
             }
         } else {
+            List<AbsMatcher> matcherList = MatcherRegistry.getMatcher();
+            List<AbsExplicitMatcher> explicitMatcherList = MatcherRegistry.getExplicitMatcher();
+            Set<Map.Entry<String, Class<?>>> entries = AptHub.routeTable.entrySet();
+
             MATCHER:
-            for (AbsMatcher matcher : matcherList) {
+            for (AbsMatcher matcher : request.isSkipImplicitMatcher() ? explicitMatcherList : matcherList) {
                 boolean isImplicit = matcher instanceof AbsImplicitMatcher;
                 if (isImplicit) {
                     if (matcher.match(chain.getContext(), request.getUri(), null, request)) {
