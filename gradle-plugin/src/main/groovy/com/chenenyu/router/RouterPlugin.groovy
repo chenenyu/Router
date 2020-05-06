@@ -6,19 +6,16 @@ import com.android.build.gradle.TestPlugin
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.initialization.dsl.ScriptHandler
 import org.gradle.api.plugins.ExtraPropertiesExtension
 
 /**
  * Created by chenenyu on 2018/7/24.
  */
 class RouterPlugin implements Plugin<Project> {
-    static final String APT_OPTION_NAME = "moduleName"
+    private static final String APT_OPTION_NAME = "moduleName"
 
-    String DEFAULT_ROUTER_RUNTIME_VERSION = "1.7.2"
-    String DEFAULT_ROUTER_COMPILER_VERSION = "1.7.2"
-
-    String androidBuildGradleVersion
+    String DEFAULT_ROUTER_RUNTIME_VERSION = "1.7.3"
+    String DEFAULT_ROUTER_COMPILER_VERSION = "1.7.3"
 
     @Override
     void apply(Project project) {
@@ -32,32 +29,16 @@ class RouterPlugin implements Plugin<Project> {
             throw new GradleException("android plugin required.")
         }
 
-        project.rootProject.buildscript.configurations.each {
-            if (it.name == ScriptHandler.CLASSPATH_CONFIGURATION) { // classpath
-                it.resolvedConfiguration.firstLevelModuleDependencies.each {
-                    // println("${it.moduleGroup}:${it.moduleName}:${it.moduleVersion}")
-                    if (it.moduleGroup == "com.android.tools.build" && it.moduleName == "gradle") {
-                        androidBuildGradleVersion = it.moduleVersion
-                    }
-                }
-            }
-        }
-        if (!androidBuildGradleVersion) {
-            throw new IllegalArgumentException("Unknown android build gradle plugin version.")
-        }
-
         // kotlin project ?
-        def isKotlinProject = project.plugins.hasPlugin('kotlin-android')
+        // https://github.com/JetBrains/kotlin/tree/master/libraries/tools/kotlin-gradle-plugin/src/main/resources/META-INF/gradle-plugins
+        def isKotlinProject = project.plugins.hasPlugin('kotlin-android') || project.plugins.hasPlugin('org.jetbrains.kotlin.android')
         if (isKotlinProject) {
-            if (!project.plugins.hasPlugin('kotlin-kapt')) {
+            if (!project.plugins.hasPlugin('kotlin-kapt') && !project.plugins.hasPlugin('org.jetbrains.kotlin.kapt')) {
                 project.plugins.apply('kotlin-kapt')
             }
         }
 
         String compileConf = 'implementation'
-        if (!is3_xVersion()) {
-            compileConf = 'compile'
-        }
         String aptConf = 'annotationProcessor'
         if (isKotlinProject) {
             aptConf = 'kapt'
@@ -96,12 +77,5 @@ class RouterPlugin implements Plugin<Project> {
             def transform = new RouterTransform(project)
             android.registerTransform(transform)
         }
-    }
-
-    /**
-     * Whether the android gradle plugin version is 3.x
-     */
-    boolean is3_xVersion() {
-        return androidBuildGradleVersion.split("\\.")[0].toInteger() >= 3
     }
 }
