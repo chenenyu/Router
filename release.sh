@@ -1,6 +1,6 @@
 # annotation
-./gradlew clean pBPTML -p annotation
-./gradlew bintrayUpload -p annotation
+#./gradlew clean pBPTML -p annotation
+#./gradlew bintrayUpload -p annotation
 
 # compiler
 ./gradlew clean pBPTML -p compiler
