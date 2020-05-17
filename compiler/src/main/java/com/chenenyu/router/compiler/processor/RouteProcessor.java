@@ -3,6 +3,7 @@ package com.chenenyu.router.compiler.processor;
 import com.chenenyu.router.annotation.InjectParam;
 import com.chenenyu.router.annotation.Route;
 import com.chenenyu.router.compiler.util.Logger;
+import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -11,6 +12,7 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.WildcardTypeName;
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessor;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,11 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedOptions;
+import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -43,12 +41,15 @@ import static com.chenenyu.router.compiler.util.Constants.ROUTE_TABLE;
 import static com.chenenyu.router.compiler.util.Constants.ROUTE_TABLE_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Constants.TARGET_INTERCEPTORS_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Constants.TARGET_INTERCEPTORS_TABLE;
+import static net.ltgt.gradle.incap.IncrementalAnnotationProcessorType.ISOLATING;
 
 /**
  * {@link Route} annotation processor.
  * <p>
  * Created by chenenyu on 2016/12/20.
  */
+@IncrementalAnnotationProcessor(ISOLATING)
+@AutoService(Processor.class)
 @SupportedAnnotationTypes(ROUTE_ANNOTATION_TYPE)
 @SupportedOptions(OPTION_MODULE_NAME)
 public class RouteProcessor extends AbstractProcessor {
