@@ -1,0 +1,3 @@
+com.chenenyu.router.compiler.processor.RouteProcessor,isolating
+com.chenenyu.router.compiler.processor.InterceptorProcessor,isolating
+com.chenenyu.router.compiler.processor.InjectParamProcessor,isolating

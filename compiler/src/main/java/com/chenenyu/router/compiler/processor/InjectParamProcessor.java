@@ -2,14 +2,12 @@ package com.chenenyu.router.compiler.processor;
 
 import com.chenenyu.router.annotation.InjectParam;
 import com.chenenyu.router.compiler.util.Logger;
-import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-import net.ltgt.gradle.incap.IncrementalAnnotationProcessor;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -19,7 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.processing.*;
+import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedOptions;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
@@ -37,15 +39,12 @@ import static com.chenenyu.router.compiler.util.Constants.OPTION_MODULE_NAME;
 import static com.chenenyu.router.compiler.util.Constants.PARAM_ANNOTATION_TYPE;
 import static com.chenenyu.router.compiler.util.Constants.PARAM_CLASS_SUFFIX;
 import static com.chenenyu.router.compiler.util.Constants.PARAM_INJECTOR_FULL_NAME;
-import static net.ltgt.gradle.incap.IncrementalAnnotationProcessorType.ISOLATING;
 
 /**
  * {@link InjectParam} annotation processor.
  * <p>
  * Created by chenenyu on 2017/6/12.
  */
-@IncrementalAnnotationProcessor(ISOLATING)
-@AutoService(Processor.class)
 @SupportedAnnotationTypes(PARAM_ANNOTATION_TYPE)
 @SupportedOptions(OPTION_MODULE_NAME)
 public class InjectParamProcessor extends AbstractProcessor {
