@@ -10,8 +10,8 @@ import java.lang.annotation.Target;
  * <p>
  * Created by chenenyu on 2016/12/20.
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.CLASS)
 public @interface Route {
     /**
      * Route path.
