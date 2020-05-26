@@ -10,8 +10,8 @@ import java.lang.annotation.Target;
  * <p>
  * Created by chenenyu on 2017/6/12.
  */
-@Target({ElementType.FIELD, ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD})
+@Retention(RetentionPolicy.CLASS)
 public @interface InjectParam {
     /**
      * Map param field with the specify key in extras.

@@ -1,6 +1,5 @@
 package com.chenenyu.router.compiler.processor;
 
-import com.chenenyu.router.annotation.InjectParam;
 import com.chenenyu.router.annotation.Route;
 import com.chenenyu.router.compiler.util.Logger;
 import com.squareup.javapoet.ClassName;
@@ -15,7 +14,6 @@ import com.squareup.javapoet.WildcardTypeName;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,17 +24,15 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedOptions;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 
 import static com.chenenyu.router.compiler.util.Constants.ACTIVITY_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Constants.APT_PACKAGE_NAME;
 import static com.chenenyu.router.compiler.util.Constants.CLASS_JAVA_DOC;
 import static com.chenenyu.router.compiler.util.Constants.FRAGMENT_X_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Constants.METHOD_HANDLE;
+import static com.chenenyu.router.compiler.util.Constants.OPTION_LOGGABLE;
 import static com.chenenyu.router.compiler.util.Constants.OPTION_MODULE_NAME;
 import static com.chenenyu.router.compiler.util.Constants.ROUTE_ANNOTATION_TYPE;
 import static com.chenenyu.router.compiler.util.Constants.ROUTE_TABLE;
@@ -50,10 +46,10 @@ import static com.chenenyu.router.compiler.util.Constants.TARGET_INTERCEPTORS_TA
  * Created by chenenyu on 2016/12/20.
  */
 @SupportedAnnotationTypes(ROUTE_ANNOTATION_TYPE)
-@SupportedOptions(OPTION_MODULE_NAME)
+@SupportedOptions({OPTION_MODULE_NAME, OPTION_LOGGABLE})
 public class RouteProcessor extends AbstractProcessor {
-    private String mModuleName;
     private Logger mLogger;
+    private String mModuleName;
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
@@ -64,7 +60,8 @@ public class RouteProcessor extends AbstractProcessor {
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
         super.init(processingEnvironment);
         mModuleName = processingEnvironment.getOptions().get(OPTION_MODULE_NAME);
-        mLogger = new Logger(processingEnvironment.getMessager());
+        String loggable = processingEnvironment.getOptions().get(OPTION_LOGGABLE);
+        mLogger = new Logger(processingEnvironment.getMessager(), "true".equals(loggable));
     }
 
     @Override
@@ -79,8 +76,6 @@ public class RouteProcessor extends AbstractProcessor {
         for (Element element : elements) {
             if (element.getKind().isClass() && validateClass((TypeElement) element)) { // 注解在Class上的Route
                 typeElements.add((TypeElement) element);
-            } else if (element.getKind() == ElementKind.METHOD) { // 注解在Method上的Route
-                validateMethod((ExecutableElement) element);
             }
         }
         if (mModuleName != null) {
@@ -116,35 +111,6 @@ public class RouteProcessor extends AbstractProcessor {
     private boolean isSubtype(Element typeElement, String type) {
         return processingEnv.getTypeUtils().isSubtype(typeElement.asType(),
                 processingEnv.getElementUtils().getTypeElement(type).asType());
-    }
-
-    /**
-     * Verify the annotated method.
-     */
-    private void validateMethod(ExecutableElement methodElement) {
-        if (methodElement.getModifiers().contains(Modifier.ABSTRACT)) { // no abstract
-            throw new RuntimeException(String.format("The method(%s) annotated by @Route is abstract.",
-                    methodElement.getSimpleName()));
-        }
-        List<? extends VariableElement> parameters = methodElement.getParameters();
-        if (!parameters.isEmpty()) { // params must be annotated by @InjectParam
-            for (VariableElement variableElement : parameters) {
-                // param's type must be String
-                if (!variableElement.asType().toString().equals("java.lang.String")) {
-                    throw new RuntimeException(String.format("The method's(%s) parameters must be String.",
-                            methodElement.getSimpleName()));
-                }
-                InjectParam injectParam = variableElement.getAnnotation(InjectParam.class);
-                if (injectParam == null) {
-                    throw new RuntimeException(String.format("The method's(%s) parameters must be annotated by @InjectParam.",
-                            methodElement.getSimpleName()));
-                }
-                if ("".equals(injectParam.key().trim())) {
-                    throw new RuntimeException(String.format("The parameter(%s) annotated by @InjectParam must has a non-empty key.",
-                            variableElement.getSimpleName()));
-                }
-            }
-        }
     }
 
     /**

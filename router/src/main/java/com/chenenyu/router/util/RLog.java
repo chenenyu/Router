@@ -34,11 +34,14 @@ public class RLog {
     }
 
     public static void e(String msg) {
-        if (msg != null)
+        if (sLoggable && msg != null) {
             Log.e(TAG, msg);
+        }
     }
 
     public static void e(String msg, Throwable tr) {
-        Log.e(TAG, msg, tr);
+        if (sLoggable) {
+            Log.e(TAG, msg, tr);
+        }
     }
 }
