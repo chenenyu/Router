@@ -35,6 +35,7 @@ import static com.chenenyu.router.compiler.util.Constants.ACTIVITY_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Constants.CLASS_JAVA_DOC;
 import static com.chenenyu.router.compiler.util.Constants.FRAGMENT_X_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Constants.METHOD_INJECT;
+import static com.chenenyu.router.compiler.util.Constants.OPTION_LOGGABLE;
 import static com.chenenyu.router.compiler.util.Constants.OPTION_MODULE_NAME;
 import static com.chenenyu.router.compiler.util.Constants.PARAM_ANNOTATION_TYPE;
 import static com.chenenyu.router.compiler.util.Constants.PARAM_CLASS_SUFFIX;
@@ -46,10 +47,10 @@ import static com.chenenyu.router.compiler.util.Constants.PARAM_INJECTOR_FULL_NA
  * Created by chenenyu on 2017/6/12.
  */
 @SupportedAnnotationTypes(PARAM_ANNOTATION_TYPE)
-@SupportedOptions(OPTION_MODULE_NAME)
+@SupportedOptions({OPTION_MODULE_NAME, OPTION_LOGGABLE})
 public class InjectParamProcessor extends AbstractProcessor {
-    private String mModuleName;
     private Logger mLogger;
+    private String mModuleName;
     private Map<TypeElement, List<Element>> mClzAndParams = new HashMap<>();
 
     @Override
@@ -61,7 +62,8 @@ public class InjectParamProcessor extends AbstractProcessor {
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
         super.init(processingEnvironment);
         mModuleName = processingEnvironment.getOptions().get(OPTION_MODULE_NAME);
-        mLogger = new Logger(processingEnvironment.getMessager());
+        String loggable = processingEnvironment.getOptions().get(OPTION_LOGGABLE);
+        mLogger = new Logger(processingEnvironment.getMessager(), "true".equals(loggable));
     }
 
     @Override

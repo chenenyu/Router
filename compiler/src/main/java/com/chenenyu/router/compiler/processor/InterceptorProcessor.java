@@ -33,6 +33,7 @@ import static com.chenenyu.router.compiler.util.Constants.INTERCEPTOR_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Constants.INTERCEPTOR_TABLE;
 import static com.chenenyu.router.compiler.util.Constants.INTERCEPTOR_TABLE_FULL_NAME;
 import static com.chenenyu.router.compiler.util.Constants.METHOD_HANDLE;
+import static com.chenenyu.router.compiler.util.Constants.OPTION_LOGGABLE;
 import static com.chenenyu.router.compiler.util.Constants.OPTION_MODULE_NAME;
 
 /**
@@ -41,10 +42,10 @@ import static com.chenenyu.router.compiler.util.Constants.OPTION_MODULE_NAME;
  * Created by chenenyu on 2017/3/6.
  */
 @SupportedAnnotationTypes(INTERCEPTOR_ANNOTATION_TYPE)
-@SupportedOptions(OPTION_MODULE_NAME)
+@SupportedOptions({OPTION_MODULE_NAME, OPTION_LOGGABLE})
 public class InterceptorProcessor extends AbstractProcessor {
-    private String mModuleName;
     private Logger mLogger;
+    private String mModuleName;
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
@@ -55,7 +56,8 @@ public class InterceptorProcessor extends AbstractProcessor {
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
         super.init(processingEnvironment);
         mModuleName = processingEnvironment.getOptions().get(OPTION_MODULE_NAME);
-        mLogger = new Logger(processingEnvironment.getMessager());
+        String loggable = processingEnvironment.getOptions().get(OPTION_LOGGABLE);
+        mLogger = new Logger(processingEnvironment.getMessager(), "true".equals(loggable));
     }
 
     @Override

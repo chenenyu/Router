@@ -11,32 +11,46 @@ import javax.tools.Diagnostic;
  */
 public class Logger {
     private Messager messager;
+    private boolean loggable;
 
-    public Logger(Messager messager) {
+    public Logger(Messager messager, boolean loggable) {
         this.messager = messager;
+        this.loggable = loggable;
     }
 
     public void info(CharSequence info) {
-        messager.printMessage(Diagnostic.Kind.NOTE, info);
+        if (loggable) {
+            messager.printMessage(Diagnostic.Kind.NOTE, info);
+        }
     }
 
     public void info(Element element, CharSequence info) {
-        messager.printMessage(Diagnostic.Kind.NOTE, info, element);
+        if (loggable) {
+            messager.printMessage(Diagnostic.Kind.NOTE, info, element);
+        }
     }
 
     public void warn(CharSequence info) {
-        messager.printMessage(Diagnostic.Kind.WARNING, info);
+        if (loggable) {
+            messager.printMessage(Diagnostic.Kind.WARNING, info);
+        }
     }
 
     public void warn(Element element, CharSequence info) {
-        messager.printMessage(Diagnostic.Kind.WARNING, info, element);
+        if (loggable) {
+            messager.printMessage(Diagnostic.Kind.WARNING, info, element);
+        }
     }
 
     public void error(CharSequence info) {
-        messager.printMessage(Diagnostic.Kind.ERROR, info);
+        if (loggable) {
+            messager.printMessage(Diagnostic.Kind.ERROR, info);
+        }
     }
 
     public void error(Element element, CharSequence info) {
-        messager.printMessage(Diagnostic.Kind.ERROR, info, element);
+        if (loggable) {
+            messager.printMessage(Diagnostic.Kind.ERROR, info, element);
+        }
     }
 }

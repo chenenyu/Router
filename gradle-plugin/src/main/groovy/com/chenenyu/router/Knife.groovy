@@ -116,7 +116,7 @@ class Knife {
             if (opcode == Opcodes.RETURN) { // handle init code before return
                 Scanner.records.each { record ->
                     record.aptClasses.each { className ->
-                        println("router: handle $className")
+//                        println("router: handle $className")
                         mv.visitTypeInsn(Opcodes.NEW, className)
                         mv.visitInsn(Opcodes.DUP)
                         mv.visitMethodInsn(Opcodes.INVOKESPECIAL, className, "<init>", "()V", false)

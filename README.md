@@ -38,6 +38,7 @@ apply plugin: 'com.chenenyu.router'
 ext {
     routerVersion = 'x.y.z'
     compilerVersion = 'x.y.z'
+    compilerLoggable = true/false // 打开/关闭编译期log
 }
 ```
 latest `router` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router/images/download.svg)
