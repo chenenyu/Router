@@ -45,15 +45,6 @@ class RouterTransform extends Transform {
     }
 
     @Override
-    void transform(Context context,
-                   Collection<TransformInput> inputs,
-                   Collection<TransformInput> referencedInputs,
-                   TransformOutputProvider outputProvider,
-                   boolean isIncremental)
-            throws IOException, TransformException, InterruptedException {
-    }
-
-    @Override
     void transform(TransformInvocation transformInvocation)
             throws TransformException, InterruptedException, IOException {
         long begin = System.currentTimeMillis()

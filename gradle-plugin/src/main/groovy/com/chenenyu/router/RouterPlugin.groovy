@@ -14,17 +14,15 @@ class RouterPlugin implements Plugin<Project> {
     private static final String APT_OPTION_MODULE_NAME = "moduleName"
     private static final String APT_OPTION_LOGGABLE = "loggable"
 
-    String DEFAULT_ROUTER_RUNTIME_VERSION = "1.7.4"
-    String DEFAULT_ROUTER_COMPILER_VERSION = "1.7.4"
+    String DEFAULT_ROUTER_RUNTIME_VERSION = "1.7.5"
+    String DEFAULT_ROUTER_COMPILER_VERSION = "1.7.5"
 
     @Override
     void apply(Project project) {
-        if (!project.plugins.hasPlugin(AppPlugin)                                // AppPlugin
-                && !project.plugins.hasPlugin(LibraryPlugin)                     // LibraryPlugin
-                && !project.plugins.hasPlugin(TestPlugin)                        // TestPlugin
-                && !project.plugins.hasPlugin(InstantAppPlugin)                  // InstantAppPlugin, added in 3.0
-                && !project.plugins.hasPlugin(FeaturePlugin)                     // FeaturePlugin, added in 3.0
-                && !project.plugins.hasPlugin("com.android.dynamic-feature")) // DynamicFeaturePlugin, added in 3.2
+        if (!project.plugins.hasPlugin(AppPlugin)                    // com.android.application
+                && !project.plugins.hasPlugin(LibraryPlugin)         // com.android.library
+                && !project.plugins.hasPlugin(TestPlugin)            // com.android.test
+                && !project.plugins.hasPlugin(DynamicFeaturePlugin)) // com.android.dynamic-feature, added in 3.2
         {
             throw new GradleException("android plugin required.")
         }

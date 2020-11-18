@@ -53,43 +53,10 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     archiveClassifier.set('javadoc')
 }
 
-// handle aar artifact
-
-// The following types/formats are supported:
-//  - Instances of MavenArtifact.
-//  - Instances of AbstractArchiveTask, for example jar.
-//  - Instances of PublishArtifact
-//  - Maps containing a 'source' entry, for example [source: '/path/to/file', extension: 'zip'].
-//  - Anything that can be converted to a file, as per Project.file()
-def aarArtifact = null
-if (isAndroidModule) {
-    if (project.ext.has('AAR')) {
-        aarArtifact = project.ext.AAR
-    } else {
-        project.afterEvaluate {
-            def bundleAarTask = project.tasks.findByPath('bundleRelease')
-            if (!bundleAarTask) {
-                bundleAarTask = project.tasks.findByPath('bundleReleaseAar') // gradle plugin 3.2
-            }
-            if (bundleAarTask && (bundleAarTask instanceof AbstractArchiveTask)) {
-                aarArtifact = bundleAarTask
-            }
-            if (!aarArtifact) {
-                throw new MissingPropertyException("Extra properties['AAR'] are required.")
-            }
-        }
-    }
-}
-
-def synchronized verifyDependency(Dependency it) {
-    return it.group != null && it.group != 'unspecified' && it.name != 'unspecified' &&
-            it.version != null && it.version != 'unspecified'
-}
-
 project.afterEvaluate {
     publishing {
         publications {
-            Bintray(MavenPublication) {
+            release(MavenPublication) {
                 groupId project.ext.GROUP
                 artifactId project.ext.ARTIFACT
                 version project.ext.VERSION
@@ -97,48 +64,18 @@ project.afterEvaluate {
                 artifact sourcesJar
                 artifact javadocJar
                 if (isAndroidModule) {
-                    artifact aarArtifact
+                    from components.release
                 } else if (isJavaModule) {
                     from components.java
-//                    artifact jar
                 }
 
-                pom {
-                    if (isAndroidModule) {
-                        packaging 'aar'
-                    } else if (isJavaModule) {
-                        packaging 'jar'
-                    }
-                    if (isAndroidModule) {
-                        withXml {
-                            def dependenciesNode = asNode().appendNode('dependencies')
-                            configurations.compile.dependencies.each {
-                                if (verifyDependency(it)) {
-                                    def dependencyNode = dependenciesNode.appendNode('dependency')
-                                    dependencyNode.appendNode('groupId', it.group)
-                                    dependencyNode.appendNode('artifactId', it.name)
-                                    dependencyNode.appendNode('version', it.version)
-                                }
-                            }
-                            configurations.implementation.dependencies.each {
-                                if (verifyDependency(it)) {
-                                    def dependencyNode = dependenciesNode.appendNode('dependency')
-                                    dependencyNode.appendNode('groupId', it.group)
-                                    dependencyNode.appendNode('artifactId', it.name)
-                                    dependencyNode.appendNode('version', it.version)
-                                }
-                            }
-                            configurations.api.dependencies.each {
-                                if (verifyDependency(it)) {
-                                    def dependencyNode = dependenciesNode.appendNode('dependency')
-                                    dependencyNode.appendNode('groupId', it.group)
-                                    dependencyNode.appendNode('artifactId', it.name)
-                                    dependencyNode.appendNode('version', it.version)
-                                }
-                            }
-                        }
-                    }
-                }
+//                pom {
+//                    if (isAndroidModule) {
+//                        packaging 'aar'
+//                    } else if (isJavaModule) {
+//                        packaging 'jar'
+//                    }
+//                }
             }
         }
     }
@@ -150,7 +87,7 @@ project.afterEvaluate {
     bintray {
         user = properties.containsKey('BINTRAY_USER') ? properties.get('BINTRAY_USER') : ""
         key = properties.containsKey('BINTRAY_API_KEY') ? properties.get('BINTRAY_API_KEY') : ""
-        publications = ['Bintray']
+        publications = ['release']
         publish = project.ext.has('PUBLISH') ? project.ext.PUBLISH : true
         override = project.ext.has('OVERRIDE') ? project.ext.OVERRIDE : false
         dryRun = project.ext.has('DRYRUN') ? project.ext.DRYRUN : false

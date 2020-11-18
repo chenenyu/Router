@@ -36,7 +36,8 @@ public class AppInterceptorsHandler implements RouteInterceptor {
 
         // insert global interceptors in front of the queue
         if (!Router.getGlobalInterceptors().isEmpty()) {
-            realChain.getInterceptors().addAll(index++, Router.getGlobalInterceptors());
+            realChain.getInterceptors().addAll(index, Router.getGlobalInterceptors());
+            index = Router.getGlobalInterceptors().size();
         }
 
         Set<String> finalInterceptors = new LinkedHashSet<>();
