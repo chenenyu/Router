@@ -14,15 +14,16 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
+        // jcenter() // deprecated
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:+'
-        classpath "com.chenenyu.router:gradle-plugin:版本号"
+        classpath "com.chenenyu.router:gradle-plugin:x.y.z"
     }
 }
 ```
-latest `router-gradle-plugin` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router-gradle-plugin/images/download.svg)
+latest `router-gradle-plugin` version: ![maven](https://img.shields.io/maven-central/v/com.chenenyu.router/gradle-plugin)
 
 
 * Apply router plugin in your module-level 'build.gradle'.
@@ -41,9 +42,9 @@ ext {
     compilerLoggable = true/false // 打开/关闭编译期log
 }
 ```
-latest `router` version: ![Download](https://api.bintray.com/packages/chenenyu/maven/router/images/download.svg)
+latest `router` version: ![maven](https://img.shields.io/maven-central/v/com.chenenyu.router/router)
 
-latest `compiler` version: ![compiler](https://api.bintray.com/packages/chenenyu/maven/router-compiler/images/download.svg)
+latest `compiler` version: ![maven](https://img.shields.io/maven-central/v/com.chenenyu.router/compiler)
 
 
 ## 基本用法
