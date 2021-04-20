@@ -7,8 +7,6 @@ ext {
     GROUP = 'com.chenenyu.router'
     ARTIFACT = 'annotation'
     VERSION = ANNOTATION_VERSION
-    BINTRAY_NAME = 'router-annotation'
 }
 
 apply from: '../gradle/publish.gradle'
-//apply from: 'https://raw.githubusercontent.com/chenenyu/gradle-bintray-plugin/master/publish.gradle'

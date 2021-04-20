@@ -18,8 +18,6 @@ ext {
     GROUP = 'com.chenenyu.router'
     ARTIFACT = 'gradle-plugin'
     VERSION = PLUGIN_VERSION
-    BINTRAY_NAME = 'router-gradle-plugin'
 }
 
 apply from: '../gradle/publish.gradle'
-//apply from: 'https://raw.githubusercontent.com/chenenyu/gradle-bintray-plugin/master/publish.gradle'

@@ -1,15 +1,15 @@
 # annotation
-./gradlew clean pRPTML -p annotation
-./gradlew bintrayUpload -p annotation
+./gradlew clean -p annotation
+./gradlew uploadArchives -p annotation
 
 # compiler
-./gradlew clean pRPTML -p compiler
-./gradlew bintrayUpload -p compiler
+./gradlew clean -p compiler
+./gradlew uploadArchives -p compiler
 
 # router
-./gradlew clean pRPTML -p router
-./gradlew bintrayUpload -p router
+./gradlew clean -p router
+./gradlew uploadArchives -p router
 
 # gradle-plugin
-./gradlew clean pRPTML -p gradle-plugin
-./gradlew bintrayUpload -p gradle-plugin
+./gradlew clean -p gradle-plugin
+./gradlew uploadArchives -p gradle-plugin

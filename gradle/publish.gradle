@@ -1,6 +1,5 @@
-// https://github.com/chenenyu/gradle-bintray-plugin
-apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 if (!project.ext.has('GROUP') || !project.ext.has('ARTIFACT') || !project.ext.has('VERSION')) {
     throw new MissingPropertyException("Extra properties['GROUP', 'ARTIFACT', 'VERSION'] are required.")
@@ -53,57 +52,61 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     archiveClassifier.set('javadoc')
 }
 
-project.afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
+artifacts {
+    if (isJavaModule) {
+        archives jar
+    }
+    archives javadocJar
+    archives sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment ->
+                signing.signPom(deployment)
+            }
+            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                if (isAndroidModule) {
+                    packaging 'aar'
+                } else if (isJavaModule) {
+                    packaging 'jar'
+                }
                 groupId project.ext.GROUP
                 artifactId project.ext.ARTIFACT
                 version project.ext.VERSION
-
-                artifact sourcesJar
-                artifact javadocJar
-                if (isAndroidModule) {
-                    from components.release
-                } else if (isJavaModule) {
-                    from components.java
+                name "${project.ext.GROUP}:${project.ext.ARTIFACT}"
+                description 'Awesome android router library.'
+                url 'https://github.com/chenenyu/Router'
+                scm {
+                    url 'https://github.com/chenenyu/Router'
+                    connection 'scm:git@github.com:chenenyu/Router.git'
+                    developerConnection 'scm:git@github.com:chenenyu/Router.git'
                 }
-
-//                pom {
-//                    if (isAndroidModule) {
-//                        packaging 'aar'
-//                    } else if (isJavaModule) {
-//                        packaging 'jar'
-//                    }
-//                }
-            }
-        }
-    }
-
-    Properties properties = new Properties()
-    if (project.rootProject.file('local.properties').exists()) {
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    }
-    bintray {
-        user = properties.containsKey('BINTRAY_USER') ? properties.get('BINTRAY_USER') : ""
-        key = properties.containsKey('BINTRAY_API_KEY') ? properties.get('BINTRAY_API_KEY') : ""
-        publications = ['release']
-        publish = project.ext.has('PUBLISH') ? project.ext.PUBLISH : true
-        override = project.ext.has('OVERRIDE') ? project.ext.OVERRIDE : false
-        dryRun = project.ext.has('DRYRUN') ? project.ext.DRYRUN : false
-        pkg {
-            repo = project.ext.has('BINTRAY_REPO') ? project.ext.BINTRAY_REPO : 'maven'
-            name = project.ext.has('BINTRAY_NAME') ? project.ext.BINTRAY_NAME : project.ext.ARTIFACT
-            licenses = project.ext.has('LICENSES') ? project.ext.LICENSES : ['Apache-2.0']
-            vcsUrl = project.ext.has('VCS_URL') ? project.ext.VCS_URL : ''
-            if (project.ext.has('USER_ORG')) {
-                userOrg = project.ext.USER_ORG
-            }
-            publicDownloadNumbers = true
-
-            version {
-                name = project.ext.VERSION
-                vcsTag = project.ext.VERSION
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'chenenyu'
+                        name 'chenenyu'
+                        email 'chenenyux@gmail.com'
+                    }
+                }
             }
         }
     }
