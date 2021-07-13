@@ -7,13 +7,13 @@ if (!Boolean.valueOf(applyRemotePlugin)) {
 
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
         compile gradleApi()
         compile localGroovy()
-        compile 'com.android.tools.build:gradle:4.0.0'
+        compile 'com.android.tools.build:gradle:4.2.2'
     }
 
     sourceSets {

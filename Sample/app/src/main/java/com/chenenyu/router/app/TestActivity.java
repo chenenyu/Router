@@ -1,13 +1,13 @@
 package com.chenenyu.router.app;
 
 import android.os.Bundle;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.chenenyu.router.Router;
 import com.chenenyu.router.annotation.InjectParam;
 import com.chenenyu.router.annotation.Route;
+import com.chenenyu.router.app.databinding.ActivityTestBinding;
 
 @Route({"test", "http://example.com/user", "router://filter/test"})
 public class TestActivity extends AppCompatActivity {
@@ -25,17 +25,19 @@ public class TestActivity extends AppCompatActivity {
     @InjectParam
     Model test4;
 
+    private ActivityTestBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test);
+        binding = ActivityTestBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         Router.injectParams(this);
 
         Bundle mExtras = getIntent().getExtras();
         id = mExtras.getString("id", id);
 
-        TextView text = findViewById(R.id.text_test);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null && !bundle.isEmpty()) {
             StringBuilder sb = new StringBuilder();
@@ -44,7 +46,7 @@ public class TestActivity extends AppCompatActivity {
                     .append("\n")
                     .append("status:")
                     .append(sts);
-            text.setText(sb.toString());
+            binding.textTest.setText(sb.toString());
         }
     }
 }
