@@ -63,12 +63,13 @@ class RouterPlugin implements Plugin<Project> {
                     "com.chenenyu.router:compiler:${DEFAULT_ROUTER_COMPILER_VERSION}")
         }
 
+        boolean loggable = true
+        if (ext.has('compilerLoggable')) {
+            loggable = ext.get('compilerLoggable')
+        }
+
         BaseExtension android = project.extensions.findByName("android")
         if (android) {
-            boolean loggable = true
-            if (ext.has('compilerLoggable')) {
-                loggable = ext.get('compilerLoggable')
-            }
             Map<String, String> options = [
                     (APT_OPTION_MODULE_NAME): project.name,
                     (APT_OPTION_LOGGABLE)   : loggable.toString(),
@@ -77,6 +78,15 @@ class RouterPlugin implements Plugin<Project> {
             android.productFlavors.all { ProductFlavor flavor ->
                 flavor.javaCompileOptions.annotationProcessorOptions.arguments(options)
             }
+        }
+
+        // https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-gradle-plugin/src/main/kotlin/org/jetbrains/kotlin/gradle/plugin/KaptExtension.kt
+        def kapt = project.extensions.findByName("kapt")
+        if (kapt) {
+            kapt.arguments({
+                arg(APT_OPTION_MODULE_NAME, project.name)
+                arg(APT_OPTION_LOGGABLE, loggable.toString())
+            })
         }
 
         if (project.plugins.hasPlugin(AppPlugin)) {
