@@ -11,9 +11,11 @@ if (!Boolean.valueOf(applyRemotePlugin)) {
     }
 
     dependencies {
-        compile gradleApi()
-        compile localGroovy()
-        compile 'com.android.tools.build:gradle:4.2.2'
+        implementation gradleApi()
+        implementation localGroovy()
+        implementation 'com.android.tools.build:gradle:4.0.0'
+        compileOnly 'com.android.tools:common:30.0.0'
+        compileOnly 'com.android.tools:repository:30.0.0'
     }
 
     sourceSets {

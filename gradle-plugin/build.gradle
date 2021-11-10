@@ -10,7 +10,9 @@ repositories {
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
-    compileOnly 'com.android.tools.build:gradle:4.2.2'
+    compileOnly 'com.android.tools.build:gradle:4.0.0'
+    compileOnly 'com.android.tools:common:30.0.0'
+    compileOnly 'com.android.tools:repository:30.0.0'
 }
 
 ext {

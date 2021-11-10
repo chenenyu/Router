@@ -11,7 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
     }
-
+//    viewBinding.enabled = true
     buildFeatures {
         viewBinding true
     }
@@ -30,6 +30,11 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
