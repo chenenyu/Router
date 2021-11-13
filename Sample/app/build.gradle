@@ -19,7 +19,7 @@ android {
     buildTypes {
         debug {
             // 测试混淆
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

@@ -47,7 +47,7 @@ public class Module1Fragment extends Fragment {
             requireActivity().finish();
         });
 
-        Router.injectParams(Module1Fragment.this);
+        Router.injectParams(this);
 
         Log.d(Module1Fragment.class.getSimpleName(), "test1=" + test1);
     }
