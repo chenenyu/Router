@@ -1,4 +1,4 @@
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 if (!project.ext.has('GROUP') || !project.ext.has('ARTIFACT') || !project.ext.has('VERSION')) {
@@ -52,62 +52,80 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     archiveClassifier.set('javadoc')
 }
 
-artifacts {
-    if (isJavaModule) {
-        archives jar
-    }
-    archives javadocJar
-    archives sourcesJar
-}
+//artifacts {
+//    if (isJavaModule) {
+//        archives jar
+//    }
+//    archives javadocJar
+//    archives sourcesJar
+//}
 
-signing {
-    sign configurations.archives
-}
+afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                // https://central.sonatype.org/publish/publish-gradle/
+                def releasesRepoUrl = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+                def snapshotsRepoUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment ->
-                signing.signPom(deployment)
-            }
-            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            pom.project {
-                if (isAndroidModule) {
-                    packaging 'aar'
-                } else if (isJavaModule) {
-                    packaging 'jar'
+                credentials {
+                    username = ossrhUsername
+                    password = ossrhPassword
                 }
+            }
+        }
+
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                if (isAndroidModule) {
+                    // Applies the component for the release build variant.
+                    from components.release
+                    artifact sourcesJar
+                    artifact javadocJar
+                } else if (isJavaModule) {
+                    from components.java
+                    artifact sourcesJar
+                    artifact javadocJar
+                }
+
                 groupId project.ext.GROUP
                 artifactId project.ext.ARTIFACT
                 version project.ext.VERSION
-                name "${project.ext.GROUP}:${project.ext.ARTIFACT}"
-                description 'Awesome android router library.'
-                url 'https://github.com/chenenyu/Router'
-                scm {
-                    url 'https://github.com/chenenyu/Router'
-                    connection 'scm:git@github.com:chenenyu/Router.git'
-                    developerConnection 'scm:git@github.com:chenenyu/Router.git'
-                }
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                pom {
+                    if (isAndroidModule) {
+                        packaging 'aar'
+                    } else if (isJavaModule) {
+                        packaging 'jar'
                     }
-                }
-                developers {
-                    developer {
-                        id 'chenenyu'
-                        name 'chenenyu'
-                        email 'chenenyux@gmail.com'
+                    name = "${project.ext.GROUP}:${project.ext.ARTIFACT}"
+                    description = 'Awesome android router library.'
+                    url = 'https://github.com/chenenyu/Router'
+                    scm {
+                        url = 'https://github.com/chenenyu/Router'
+                        connection = 'scm:git@github.com:chenenyu/Router.git'
+                        developerConnection = 'scm:git@github.com:chenenyu/Router.git'
+                    }
+                    licenses {
+                        license {
+                            name = 'The Apache Software License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'chenenyu'
+                            name = 'chenenyu'
+                            url = 'https://github.com/chenenyu'
+                        }
                     }
                 }
             }
         }
+    }
+
+    signing {
+        sign publishing.publications.release
     }
 }

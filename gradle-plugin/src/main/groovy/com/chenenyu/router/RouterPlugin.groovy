@@ -24,8 +24,8 @@ class RouterPlugin implements Plugin<Project> {
     private static final String APT_OPTION_MODULE_NAME = "moduleName"
     private static final String APT_OPTION_LOGGABLE = "loggable"
 
-    String DEFAULT_ROUTER_RUNTIME_VERSION = "1.7.6"
-    String DEFAULT_ROUTER_COMPILER_VERSION = "1.7.6"
+    String DEFAULT_ROUTER_RUNTIME_VERSION = "1.8.0"
+    String DEFAULT_ROUTER_COMPILER_VERSION = "1.8.0"
 
     @Override
     void apply(Project project) {
