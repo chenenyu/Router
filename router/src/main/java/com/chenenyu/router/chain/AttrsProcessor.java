@@ -1,5 +1,6 @@
 package com.chenenyu.router.chain;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -43,6 +44,7 @@ public class AttrsProcessor implements RouteInterceptor {
         return response;
     }
 
+    @SuppressLint("WrongConstant")
     private void assembleIntent(Intent intent, RouteRequest request) {
         if (request.getExtras() != null && !request.getExtras().isEmpty()) {
             intent.putExtras(request.getExtras());

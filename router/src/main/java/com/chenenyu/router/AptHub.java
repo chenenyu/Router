@@ -20,7 +20,7 @@ public final class AptHub {
     private static final String PARAM_CLASS_SUFFIX = "$$Router$$ParamInjector";
 
     // injector's name -> injector
-    private static Map<String, Class<ParamInjector>> injectors = new HashMap<>();
+    private static final Map<String, Class<ParamInjector>> injectors = new HashMap<>();
 
     // Uri -> Activity/Fragment
     public final static Map<String, Class<?>> routeTable = new HashMap<>();
