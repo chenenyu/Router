@@ -69,9 +69,17 @@ afterEvaluate {
                 def snapshotsRepoUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
                 url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
+                def _ossrhUsername = ''
+                def _ossrhPassword = ''
+                if (project.hasProperty('ossrhUsername')) {
+                    _ossrhUsername = ossrhUsername
+                }
+                if (project.hasProperty('ossrhPassword')) {
+                    _ossrhPassword = ossrhPassword
+                }
                 credentials {
-                    username = ossrhUsername
-                    password = ossrhPassword
+                    username = _ossrhUsername
+                    password = _ossrhPassword
                 }
             }
         }

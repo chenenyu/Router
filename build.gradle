@@ -1,11 +1,11 @@
 buildscript {
-    ext.kotlin_version = '1.5.31'
+    ext.kotlin_version = '1.7.0'
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.0'
+        classpath 'com.android.tools.build:gradle:7.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         if (Boolean.valueOf(applyRemotePlugin)) {
             classpath "com.chenenyu.router:gradle-plugin:${PLUGIN_VERSION}"
@@ -25,9 +25,9 @@ task clean(type: Delete) {
 }
 
 ext {
-    compileSdkVersion = 30
+    compileSdkVersion = 32
     minSdkVersion = 16
-    targetSdkVersion = 30
+    targetSdkVersion = 32
 //    compilerLoggable = false
 //    androidxVersion = "1.1.0"
 }

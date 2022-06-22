@@ -12,7 +12,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,7 +22,8 @@
         </activity>
         <activity
             android:name=".SchemeFilterActivity"
-            android:label="SchemeFilterActivity">
+            android:label="SchemeFilterActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -44,7 +46,8 @@
             android:label="ForResultActivity" />
         <activity
             android:name=".ImplicitActivity"
-            android:label="ImplicitActivity">
+            android:label="ImplicitActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
