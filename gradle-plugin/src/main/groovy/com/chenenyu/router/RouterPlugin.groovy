@@ -97,11 +97,6 @@ class RouterPlugin implements Plugin<Project> {
             })
         }
 
-//        if (isApp) {
-//            def transform = new RouterTransform(project)
-//            android.registerTransform(transform)
-//        }
-
         // com.android.Version added in 3.6.0, and com.android.builder.model.Version was deprecated in 3.6.0
         String agpVersion
         try {
